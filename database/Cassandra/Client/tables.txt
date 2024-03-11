@@ -1,0 +1,26 @@
+CREATE TABLE freelancer_reports (
+    report_id UUID PRIMARY KEY,
+    client_id UUID,
+    client_name TEXT,
+    freelancer_id UUID,
+    freelancer_name TEXT,
+    report_text TEXT,
+    reported_at TIMESTAMP,
+    status TEXT
+);
+
+CREATE TABLE client_favorites (
+    client_id UUID,
+    freelancer_id UUID,
+    added_at TIMESTAMP,
+    freelancer_name TEXT,
+    freelancer_location TEXT,
+    PRIMARY KEY (client_id, freelancer_id)
+);
+
+CREATE TABLE client_team_members (
+    client_id UUID,
+    email TEXT,
+    role TEXT,
+    PRIMARY KEY (client_id, email)
+);
