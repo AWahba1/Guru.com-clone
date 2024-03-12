@@ -1,0 +1,10 @@
+SELECT freelancer_id, freelancer_name, freelancer_location, added_at
+FROM client_favorites
+WHERE client_id = <client_id>;
+
+INSERT INTO client_team_members (client_id, email, role)
+VALUES (<client_id>, 'example@example.com', 'Administrator');
+
+SELECT role FROM client_team_members WHERE client_id = <client_id> AND email = 'example@example.com';
+
+
