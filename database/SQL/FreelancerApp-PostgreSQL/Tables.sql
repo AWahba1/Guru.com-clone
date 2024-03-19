@@ -7,6 +7,9 @@ drop table if exists dedicatedResource;
 drop table if exists PortfolioResource;
 drop type if exists UserTypeEnum;
 drop type if exists ResourceDurationEnum;
+drop type if exists QuoteStatusEnum;
+drop type if exists TeamMemberType;
+drop type if exists TeamMemberRole;
 
 CREATE TYPE UserTypeEnum AS ENUM ('INDIVIDUAL', 'COMPANY');
 CREATE TYPE ResourceDurationEnum AS ENUM ('3Months', '6Months','1Year','Ongoing');
@@ -17,6 +20,7 @@ CREATE TYPE TeamMemberRole AS ENUM ('CONSULTANT', 'MANAGER');
 CREATE TABLE Freelancer(
     FreelancerID uuid PRIMARY KEY,
     FreelancerName VARCHAR(50),
+    imageURL VARCHAR(255),
     Visibility BOOLEAN,
     ProfileViews INT,
     JobInvitationsNum INT,
