@@ -1,5 +1,6 @@
-CREATE PROCEDURE GetFreelancerProfile (IN freelancerID uuid, OUT freelancerSkills Cursor)
+CREATE PROCEDURE GetFreelancerProfile (IN freelancerID uuid, OUT freelancer Cursor, OUT freelancerSkills Cursor)
 BEGIN
+    OPEN freelancer FOR
     SELECT * FROM Freelancers WHERE FreelancerID = freelancerID;
 
     OPEN freelancerSkills FOR
@@ -99,8 +100,6 @@ BEGIN
 
     COMMIT;
 END;
-
-
 
 CREATE PROCEDURE AddPortfolio (
     IN freelancerID uuid, 
