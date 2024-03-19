@@ -59,6 +59,7 @@ CREATE TABLE portfolios(
     coverImageUrl varchar (255),    
     Attachments text[],
     isDraft boolean,    
+    portfolioViews int,
     FOREIGN KEY (FreelancerID) REFERENCES Freelancers(FreelancerID)    
 );
 
@@ -70,7 +71,8 @@ CREATE TABLE service(
     ServiceSkills varchar(255),
     ServiceRate decimal,
     MinimumBudget decimal,
-    serviceThumbnail varchar(255),       
+    serviceThumbnail varchar(255),  
+    serviceViews int,     
     FOREIGN KEY (FreelancerID) REFERENCES Freelancers(FreelancerID)    
 );
 
@@ -90,7 +92,8 @@ CREATE TABLE dedicatedResource(
     resourceSkills varchar(255),
     resourceRate decimal,
     MinimumDuration ResourceDurationEnum,
-    resourceImage varchar(255),       
+    resourceImage varchar(255),
+    resourceViews int,       
     FOREIGN KEY (FreelancerID) REFERENCES Freelancers(FreelancerID)    
 );
 

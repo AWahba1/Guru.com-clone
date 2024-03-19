@@ -1,3 +1,6 @@
+CREATE KEYSPACE freelancer
+WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+
 CREATE TABLE Feedback_By_Freelancer (
     feedback_id UUID,
     freelancer_id UUID,
@@ -50,3 +53,22 @@ CREATE TABLE jobReports (
     created_at TIMESTAMP,
     PRIMARY KEY (job_id)
 );
+
+CREATE TABLE freelancerReports(
+    freelancer_id UUID,
+    reported_freelancer_id UUID,
+    reported_freelancer_name TEXT,
+    report TEXT,
+    created_at TIMESTAMP,
+    PRIMARY KEY (reported_freelancer_id)
+);
+
+SELECT * FROM Feedback_By_Freelancer WHERE freelancer_id = <freelancer_id> ORDER BY created_at DESC;
+SELECT * FROM Feedback_By_Project WHERE job_id = <job_id> ORDER BY created_at DESC;
+SELECT * FROM Feedback_By_Client WHERE client_id = <client_id> ORDER BY created_at DESC;
+SELECT * FROM Testomonial_By_Freelancer WHERE freelancer_id = <freelancer_id>;
+SELECT * FROM jobReports WHERE job_id = <job_id>;
+
+INSERT INTO Feedback_By_Freelancer (feedback_id, freelancer_id, client_id, job_id, client_name, job_title, satisfied, created_at) VALUES (UUID(), <freelancer_id>, <client_id>, <job_id>, <client_name>, <job_title>, <satisfied>, <created_at>);
+INSERT INTO Feedback_By_Project (feedback_id, freelancer_id, client_id, job_id, client_name, job_title, satisfied, created_at) VALUES (UUID(), <freelancer_id>, <client_id>, <job_id>, <client_name>, <job_title>, <satisfied>, <created_at>);
+INSERT INTO Feedback_By_Client (feedback_id, freelancer_id, client_id, job_id, client_name, job_title, satisfied, created_at) VALUES (UUID(), <freelancer_id>, <client_id>, <job_id>, <client_name>, <job_title>, <satisfied>, <created_at>);
