@@ -8,20 +8,99 @@ BEGIN
     SELECT r.resourceSkills FROM dedicatedResource r WHERE r.FreelancerID = freelancerID;
 END;
 
-CREATE PROCEDURE GetMyPortfolios(IN freelancerID uuid)
+CREATE PROCEDURE ToggleProfileVisibility (IN freelancerID uuid)
 BEGIN
-    SELECT portfolioID,title FROM portfolios WHERE FreelancerID = freelancerID;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
+    END;
+    START TRANSACTION;
+    UPDATE Freelancers SET Visibility = NOT Visibility WHERE FreelancerID = freelancerID;
+    COMMIT;
 END;
 
-CREATE PROCEDURE GetFreelancerPortfolios (IN freelancerID uuid)
+CREATE PROCEDURE UpdateFreelancerProfileAboutSection (
+    IN freelancerID uuid,
+    IN newFreelancerName varchar(50),
+    IN newImageURL varchar(255),
+    IN newTagline varchar(190),
+    IN newBio varchar(3000),
+    IN newWorkTerms varchar(2000),
+    IN newAttachments text[],
+    IN newUserType UserTypeEnum,
+    IN newWebsiteLink varchar(255),
+    IN newFacebookLink varchar(255),
+    IN newLinkedInLink varchar(255),
+    IN newProfessionalVideoLink varchar(255),
+    IN newCompanyHistroy varchar(3000),
+    IN newOperatingSince timestamp
+)
 BEGIN
-    SELECT portfolioID,title,coverImageUrl FROM portfolios WHERE FreelancerID = freelancerID AND isDraft = false;
-END;   
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
+    END;
 
-CREATE PROCEDURE GetPortfolio (IN portfolioID uuid)
-BEGIN
-    SELECT * FROM portfolios WHERE portfolioID = portfolioID;
+    START TRANSACTION;
+
+    IF newFreelancerName IS NOT NULL THEN
+        UPDATE Freelancers SET FreelancerName = newFreelancerName WHERE FreelancerID = freelancerID;
+    END IF;
+
+    IF newImageURL IS NOT NULL THEN
+        UPDATE Freelancers SET imageURL = newImageURL WHERE FreelancerID = freelancerID;
+    END IF;
+
+    IF newTagline IS NOT NULL THEN
+        UPDATE Freelancers SET Tagline = newTagline WHERE FreelancerID = freelancerID;
+    END IF;
+
+    IF newBio IS NOT NULL THEN
+        UPDATE Freelancers SET Bio = newBio WHERE FreelancerID = freelancerID;
+    END IF;
+
+    IF newWorkTerms IS NOT NULL THEN
+        UPDATE Freelancers SET WorkTerms = newWorkTerms WHERE FreelancerID = freelancerID;
+    END IF;
+
+    IF newAttachments IS NOT NULL THEN
+        UPDATE Freelancers SET Attachments = newAttachments WHERE FreelancerID = freelancerID;
+    END IF;
+
+    IF newUserType IS NOT NULL THEN
+        UPDATE Freelancers SET UserType = newUserType WHERE FreelancerID = freelancerID;
+    END IF;
+
+    IF newWebsiteLink IS NOT NULL THEN
+        UPDATE Freelancers SET WebsiteLink = newWebsiteLink WHERE FreelancerID = freelancerID;
+    END IF;
+
+    IF newFacebookLink IS NOT NULL THEN
+        UPDATE Freelancers SET FacebookLink = newFacebookLink WHERE FreelancerID = freelancerID;
+    END IF;
+
+    IF newLinkedInLink IS NOT NULL THEN
+        UPDATE Freelancers SET LinkedInLink = newLinkedInLink WHERE FreelancerID = freelancerID;
+    END IF;
+
+    IF newProfessionalVideoLink IS NOT NULL THEN
+        UPDATE Freelancers SET ProfessionalVideoLink = newProfessionalVideoLink WHERE FreelancerID = freelancerID;
+    END IF;
+
+    IF newCompanyHistroy IS NOT NULL THEN
+        UPDATE Freelancers SET CompanyHistroy = newCompanyHistroy WHERE FreelancerID = freelancerID;
+    END IF;
+
+    IF newOperatingSince IS NOT NULL THEN
+        UPDATE Freelancers SET OperatingSince = newOperatingSince WHERE FreelancerID = freelancerID;
+    END IF;
+
+    COMMIT;
 END;
+
+
 
 CREATE PROCEDURE AddPortfolio (
     IN freelancerID uuid, 
@@ -107,16 +186,6 @@ BEGIN
     COMMIT;
 END;
 
-CREATE PROCEDURE GetMyServices (IN freelancerID uuid)
-BEGIN
-    SELECT * FROM service WHERE FreelancerID = freelancerID;
-END;
-
-CREATE PROCEDURE GetFreelancerServices (IN freelancerID uuid)
-BEGIN
-    SELECT * FROM service WHERE FreelancerID = freelancerID AND isDraft = false;
-END;
-
 CREATE PROCEDURE GetServiceDetails (
     IN serviceID uuid,
     OUT serviceDetailsResult CURSOR,
@@ -165,14 +234,7 @@ END;
 
 CREATE PROCEDURE UnpublishService (IN serviceID uuid)
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
-    END;
-    START TRANSACTION;
     UPDATE service SET isDraft = true WHERE serviceID = serviceID;
-    COMMIT;
 END;
 
 CREATE PROCEDURE DeleteService (IN serviceID uuid)
@@ -239,16 +301,6 @@ BEGIN
     END IF;
 
     COMMIT;
-END;
-
-CREATE PROCEDURE GetMyDedicatedResources (IN freelancerID uuid)
-BEGIN
-    SELECT * FROM dedicatedResource WHERE FreelancerID = freelancerID;
-END;
-
-CREATE PROCEDURE GetFreelancerDedicatedResources (IN freelancerID uuid)
-BEGIN
-    SELECT * FROM dedicatedResource WHERE FreelancerID = freelancerID AND isDraft = false;
 END;
 
 CREATE PROCEDURE GetResourceDetails (
@@ -381,20 +433,6 @@ BEGIN
     COMMIT;
 END;
 
-CREATE PROCEDURE GetFreelancerQuotes (IN freelancerID uuid,IN quoteStatus QuoteStatusEnum)
-BEGIN
-    IF quoteStatus IS NULL THEN
-        SELECT * FROM quotes WHERE FreelancerID = freelancerID;
-    ELSE
-        SELECT * FROM quotes WHERE FreelancerID = freelancerID AND quoteStatus = quoteStatus;
-    END IF;
-END;
-
-CREATE PROCEDURE GetFreelancerQuoteDetails (IN quoteID uuid)
-BEGIN
-    SELECT * FROM quotes WHERE quoteid = quoteID;
-END;
-
 CREATE PROCEDURE AddQuote (
     IN freelancerID uuid, 
     IN jobid uuid, 
@@ -414,11 +452,53 @@ BEGIN
     COMMIT;
 END;
 
-
-
-CREATE PROCEDURE GetFreelancerQuoteTemplates (IN freelancerID uuid)
+CREATE PROCEDURE UpdateQuote (
+    IN quoteID uuid,
+    IN newProposal varchar(3000),
+    IN newBidsUsed decimal,
+    IN newQuoteStatus QuoteStatusEnum
+)
 BEGIN
-    SELECT * FROM quoteTemplates WHERE FreelancerID = freelancerID;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
+    END;
+
+    START TRANSACTION;
+
+    IF newProposal IS NOT NULL THEN
+        UPDATE quotes SET proposal = newProposal WHERE quoteid = quoteID;
+    END IF;
+
+    IF newBidsUsed IS NOT NULL THEN
+        UPDATE quotes SET bidsUsed = newBidsUsed WHERE quoteid = quoteID;
+    END IF;
+
+    IF newQuoteStatus IS NOT NULL THEN
+        UPDATE quotes SET quoteStatus = newQuoteStatus WHERE quoteid = quoteID;
+    END IF;
+
+    COMMIT;
+END;
+
+CREATE PROCEDURE ViewLastBidsUntilThreshold (IN freelancerID UUID)
+BEGIN
+    DECLARE total_bids DECIMAL DEFAULT 0;
+    
+    CREATE TEMPORARY TABLE temp_quotes AS
+    SELECT *, (@cumulative_sum := @cumulative_sum + bidsUsed) AS cumulative_sum
+    FROM quotes
+    CROSS JOIN (SELECT @cumulative_sum := 0) AS dummy
+    WHERE FreelancerID = freelancerID
+    ORDER BY bidDate DESC;
+    
+    SELECT *
+    FROM temp_quotes
+    WHERE cumulative_sum <= 100
+    ORDER BY bidDate DESC;
+    
+    DROP TEMPORARY TABLE IF EXISTS temp_quotes;
 END;
 
 CREATE PROCEDURE AddQuoteTemplate (
@@ -468,11 +548,6 @@ BEGIN
     COMMIT;
 END;
 
-CREATE PROCEDURE GetFreelancerJobWatchlist (IN freelancerID uuid)
-BEGIN
-    SELECT * FROM jobWatchlist WHERE FreelancerID = freelancerID;
-END;
-
 CREATE PROCEDURE AddJobWatchlist (
     IN freelancerID uuid, 
     IN jobid uuid
@@ -481,9 +556,11 @@ BEGIN
     INSERT INTO jobWatchlist (watchlistID, FreelancerID, jobid) VALUES (UUID(), freelancerID, jobid);
 END;
 
-CREATE PROCEDURE GetFreelancerJobInvitations (IN freelancerID uuid)
+CREATE PROCEDURE RemoveJobWatchlist (
+    IN watchlistID uuid
+)
 BEGIN
-    SELECT * FROM jobInvitations WHERE FreelancerID = freelancerID;
+    DELETE FROM jobWatchlist WHERE watchlistID = watchlistID;
 END;
 
 CREATE PROCEDURE InviteToJob (
@@ -496,11 +573,6 @@ BEGIN
     INSERT INTO jobInvitations (invitationID, FreelancerID, clientID, jobid, invitationDate) VALUES (UUID(), freelancerID, clientID, jobid, invitationDate);
 END;
 
-CREATE PROCEDURE GetFreelancerFeaturedTeamMembers (IN freelancerID uuid)
-BEGIN
-    SELECT * FROM featuredTeamMember WHERE FreelancerID = freelancerID;
-END;
-
 CREATE PROCEDURE AddFeaturedTeamMembers (
     IN freelancerID uuid, 
     IN membername [], 
@@ -509,11 +581,18 @@ CREATE PROCEDURE AddFeaturedTeamMembers (
     IN memberEmail []
 )
 BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
+    END;
+    START TRANSACTION;
     IF membername IS NOT NULL THEN
         FOR i IN 1..LENGTH(membername) DO
             INSERT INTO featuredTeamMember (TeamMemberID, FreelancerID, membername, title, memberType, memberEmail) VALUES (UUID(), freelancerID, membername[i], title[i], memberType[i], memberEmail[i]);
         END FOR;
     END IF;
+    COMMIT;
 END;
 
 CREATE PROCEDURE AddNoAccessMembers (
@@ -521,11 +600,18 @@ CREATE PROCEDURE AddNoAccessMembers (
     IN membernames [], 
 )
 BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
+    END;
+    START TRANSACTION;
     IF membernames IS NOT NULL THEN
         FOR i IN 1..LENGTH(membernames) DO
             INSERT INTO featuredTeamMember (TeamMemberID, FreelancerID, membername, title, memberType, memberEmail) VALUES (UUID(), freelancerID, membernames[i], NULL, NULL,NULL);
         END FOR;
     END IF;
+    COMMIT;
 END;
 
 CREATE PROCEDURE DeleteTeamMember (IN teamMemberID uuid)
