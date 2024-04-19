@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE create_job(
 	_get_quotes_until DATE,
     _visibility job_visibility,
 	_skills text[],
-	_timezone_id UUID,
+	_timezones text[],
 	_locations text[]
 )
 LANGUAGE plpgsql
@@ -23,9 +23,10 @@ DECLARE
     new_job_id UUID;
     skill_id UUID;
 	location_id UUID;
+	timezone_id UUID;
 BEGIN
-    INSERT INTO jobs (id, title, description, category_id, subcategory_id, featured, client_id, payment_type, fixed_price_range, duration, hours_per_week, min_hourly_rate, max_hourly_rate, get_quotes_until, visibility, timezone_id)
-    VALUES (gen_random_uuid(), _title,  _description, _category_id, _subcategory_id, _featured, _client_id, _payment_type, _fixed_price_range, _duration, _hours_per_week, _min_hourly_rate, _max_hourly_rate, _get_quotes_until, _visibility, _timezone_id)
+    INSERT INTO jobs (id, title, description, category_id, subcategory_id, featured, client_id, payment_type, fixed_price_range, duration, hours_per_week, min_hourly_rate, max_hourly_rate, get_quotes_until, visibility)
+    VALUES (gen_random_uuid(), _title,  _description, _category_id, _subcategory_id, _featured, _client_id, _payment_type, _fixed_price_range, _duration, _hours_per_week, _min_hourly_rate, _max_hourly_rate, _get_quotes_until, _visibility)
     RETURNING id INTO new_job_id;
 
     -- Insert skills related to job
@@ -35,11 +36,18 @@ BEGIN
         VALUES (new_job_id, skill_id);
     END LOOP;
 	
-	    -- Insert locations related to job
+	-- Insert locations related to job
     FOREACH location_id IN ARRAY _locations
     LOOP
         INSERT INTO jobs_locations (job_id, location_id)
         VALUES (new_job_id, location_id);
+    END LOOP;
+	
+	-- Insert timezones related to job
+    FOREACH timezone_id IN ARRAY _timezones
+    LOOP
+        INSERT INTO jobs_timezones (job_id, timezone_id)
+        VALUES (new_job_id, timezone_id);
     END LOOP;
 END;
 $$;
@@ -65,38 +73,39 @@ BEGIN
         '2024-05-01',
         'Everyone',
         ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc'],
-        '11111111-1111-1111-1111-111111111111',
+        ARRAY['11111111-1111-1111-1111-111111111111'],
         ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc']
     );
 END;
 $$;
 
--- CALL create_job(
---     'Frontend Freelancer Needed',
--- 	'Looking for a skilled backend developer to create a responsive website.',
---     '77777777-7777-7777-7777-777777777777',
---     '00000000-0000-0000-0000-000000000001',
--- 	TRUE,
---     '11111111-1111-1111-1111-111111111111',
--- 	'fixed',
--- 	 'Under $250',
---     'Less than 1 month',
---     '10-30',
--- 	NULL,
---     NULL,
--- 	 '2024-05-01',
---     'Everyone',
--- 	ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc'],
--- 	'11111111-1111-1111-1111-111111111111',
--- 	ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc']
--- );
 
+CALL create_job(
+    'Frontend Freelancer Needed',
+	'Looking for a skilled backend developer to create a responsive website.',
+    '77777777-7777-7777-7777-777777777777',
+    '00000000-0000-0000-0000-000000000001',
+	TRUE,
+    '11111111-1111-1111-1111-111111111111',
+	'fixed',
+	 'Under $250',
+    'Less than 1 month',
+    '10-30',
+	NULL,
+    NULL,
+	 '2024-05-01',
+    'Everyone',
+	ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc'],
+ 	ARRAY['11111111-1111-1111-1111-111111111111'],
+	ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc']
+);
 
+DROP FUNCTION IF EXISTS get_job_by_id;
 CREATE OR REPLACE FUNCTION get_job_by_id(
     _job_id UUID
 )
 RETURNS TABLE (
-    job_id UUID,
+    id UUID,
     title VARCHAR(255),
     description TEXT,
     category_id UUID,
@@ -111,15 +120,14 @@ RETURNS TABLE (
     min_hourly_rate DECIMAL(10, 2),
     max_hourly_rate DECIMAL(10, 2),
     get_quotes_until DATE,
-    visibility job_visibility,
-    timezone_id UUID
+    visibility job_visibility
 )
 AS $$
 BEGIN
-    RETURN QUERY SELECT * FROM jobs WHERE id = _job_id;
+    RETURN QUERY SELECT * FROM jobs WHERE jobs.id = _job_id;
 END;
 $$ LANGUAGE plpgsql;
--- select * from get_job_by_id('11111111-1111-1111-1111-111111111111');
+select * from get_job_by_id('11111111-1111-1111-1111-111111111111');
 
 -- call create_dummy_job();
 
@@ -152,8 +160,7 @@ RETURNS TABLE (
     min_hourly_rate DECIMAL(10, 2),
     max_hourly_rate DECIMAL(10, 2),
     get_quotes_until DATE,
-    visibility job_visibility,
-    timezone_id UUID
+    visibility job_visibility
 )
 AS $$
 BEGIN
@@ -188,7 +195,7 @@ $$ LANGUAGE plpgsql;
 
 
 
-SELECT created_at, get_quotes_until
+SELECT *
 FROM get_all_jobs(
     _page := 1,
     _page_size := 10,
@@ -202,12 +209,15 @@ FROM get_all_jobs(
 	_sort_order := 'oldest'
 );
 
+DROP FUNCTION IF EXISTS delete_job_by_id;
 CREATE OR REPLACE PROCEDURE delete_job_by_id(
     _job_id UUID
 )
 LANGUAGE plpgsql
 AS $$
 BEGIN
+	DELETE FROM jobs_timezones WHERE job_id = _job_id;
+	
     DELETE FROM jobs_skills WHERE job_id = _job_id;
 	
 	DELETE FROM jobs_locations WHERE job_id = _job_id;
@@ -216,4 +226,4 @@ BEGIN
 END;
 $$;
 
-Call delete_job_by_id('f5c72f8b-f4df-47b5-9967-935248777894');
+Call delete_job_by_id('22222222-2222-2222-2222-222222222222');
