@@ -114,8 +114,7 @@ END $$;
 		min_hourly_rate DECIMAL(10, 2),
     	max_hourly_rate DECIMAL(10, 2),
 		get_quotes_until DATE,
-		visibility job_visibility,
-		timezone_id UUID references timezones(id)
+		visibility job_visibility
 	);
 	
 	CREATE TABLE jobs_skills (
@@ -129,15 +128,21 @@ END $$;
 		location_id UUID REFERENCES locations(id) ON DELETE CASCADE,
 		PRIMARY KEY (job_id, location_id)
 	);
-
-
-	CREATE TABLE job_freelancer (
-		job_id UUID REFERENCES jobs(id),
-		freelancer_id UUID REFERENCES freelancers(id), -- check foreign key on which table
-		applied BOOLEAN DEFAULT FALSE,
-		viewed BOOLEAN DEFAULT FALSE,
-		PRIMARY KEY (job_id, freelancer_id)
+	
+	CREATE TABLE jobs_timezones (
+		job_id UUID REFERENCES jobs(id) ON DELETE CASCADE,
+		timezone_id UUID REFERENCES timezones(id) ON DELETE CASCADE,
+		PRIMARY KEY (job_id, timezone_id)
 	);
+
+
+-- 	CREATE TABLE job_freelancer (
+-- 		job_id UUID REFERENCES jobs(id),
+-- 		freelancer_id UUID REFERENCES freelancers(id), -- check foreign key on which table
+-- 		applied BOOLEAN DEFAULT FALSE,
+-- 		viewed BOOLEAN DEFAULT FALSE,
+-- 		PRIMARY KEY (job_id, freelancer_id)
+-- 	);
 	
 -- Populate tables with sample data
 -- Users
@@ -205,8 +210,7 @@ INSERT INTO jobs (
     min_hourly_rate,
     max_hourly_rate,
     get_quotes_until,
-    visibility,
-    timezone_id
+    visibility
 ) VALUES (
     '11111111-1111-1111-1111-111111111111',
     'Web Developer Needed',
@@ -223,8 +227,7 @@ INSERT INTO jobs (
     NULL,
     NULL,
     '2024-05-01',
-    'Everyone',
-	NULL
+    'Everyone'
 ), (
     '22222222-2222-2222-2222-222222222222',
     'Logo Design Project',
@@ -241,8 +244,7 @@ INSERT INTO jobs (
     10.00,
     50.00,
     '2024-05-10',
-    'Guru Freelancers',
-    '33333333-3333-3333-3333-333333333333'
+    'Guru Freelancers'
 );
 
 -- Jobs Skills
@@ -258,6 +260,14 @@ INSERT INTO jobs_locations (job_id, location_id) VALUES
     ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
     ('11111111-1111-1111-1111-111111111111', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'),
     ('22222222-2222-2222-2222-222222222222', 'cccccccc-cccc-cccc-cccc-cccccccccccc');
+	
+-- Jobs Timeszones
+INSERT INTO jobs_timezones (job_id, timezone_id) VALUES
+    ('11111111-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111'),
+    ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222'),
+    ('22222222-2222-2222-2222-222222222222', '22222222-2222-2222-2222-222222222222');
+
+
 	
 
 -- 	CREATE TABLE quotes ( -- handle the different types of quotes
