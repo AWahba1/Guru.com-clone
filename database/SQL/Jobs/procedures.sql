@@ -201,3 +201,19 @@ FROM get_all_jobs(
     _location_id := NULL, -- Location ID (optional)
 	_sort_order := 'oldest'
 );
+
+CREATE OR REPLACE PROCEDURE delete_job_by_id(
+    _job_id UUID
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM jobs_skills WHERE job_id = _job_id;
+	
+	DELETE FROM jobs_locations WHERE job_id = _job_id;
+
+    DELETE FROM jobs WHERE id = _job_id;
+END;
+$$;
+
+Call delete_job_by_id('f5c72f8b-f4df-47b5-9967-935248777894');
