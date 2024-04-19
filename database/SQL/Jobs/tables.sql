@@ -1,9 +1,6 @@
 DO $$ DECLARE
     r RECORD;
 BEGIN
-    -- if the schema you operate on is not "current", you will want to
-    -- replace current_schema() in query with 'schematodeletetablesfrom'
-    -- *and* update the generate 'DROP...' accordingly.
     FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP
         EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
     END LOOP;
@@ -95,6 +92,11 @@ END $$;
 		name VARCHAR(255) NOT NULL --handle populating table?
 	);
 	
+	CREATE TABLE timezones (
+		id UUID PRIMARY KEY,
+		name VARCHAR(100) NOT NULL
+	);
+	
 
 	CREATE TABLE jobs (
 		id uuid PRIMARY KEY,
@@ -112,8 +114,8 @@ END $$;
 		min_hourly_rate DECIMAL(10, 2),
     	max_hourly_rate DECIMAL(10, 2),
 		get_quotes_until DATE,
-		visibility job_visibility
-		
+		visibility job_visibility,
+		timezone_id UUID references timezones(id)
 	);
 	
 	CREATE TABLE jobs_skills (
@@ -177,10 +179,71 @@ INSERT INTO locations (id, name) VALUES
     ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'London'),
     ('cccccccc-cccc-cccc-cccc-cccccccccccc', 'Tokyo');
 	
+-- Jobs Timezones
+INSERT INTO timezones (id, name) VALUES
+	('11111111-1111-1111-1111-111111111111', 'Pacific/Midway'),
+	('22222222-2222-2222-2222-222222222222', 'Pacific/Niue'),
+	('33333333-3333-3333-3333-333333333333', 'Pacific/Pago_Pago'),
+	('44444444-4444-4444-4444-444444444444', 'Pacific/Samoa'),
+	('55555555-5555-5555-5555-555555555555', 'US/Hawaii'),
+	('66666666-6666-6666-6666-666666666666', 'Pacific/Rarotonga');
+	
 -- Jobs
-INSERT INTO jobs (id, title, description, category_id, subcategory_id, featured, client_id, created_at, payment_type, fixed_price_range, duration, hours_per_week, min_hourly_rate, max_hourly_rate, get_quotes_until, visibility) VALUES
-    ('11111111-1111-1111-1111-111111111111', 'Web Developer Needed', 'Looking for a skilled web developer to create a responsive website.', '77777777-7777-7777-7777-777777777777', '00000000-0000-0000-0000-000000000001', TRUE, '11111111-1111-1111-1111-111111111111', NOW(), 'fixed', 'Under $250', 'Less than 1 month', '10-30', NULL, NULL, '2024-05-01', 'Everyone'),
-    ('22222222-2222-2222-2222-222222222222', 'Logo Design Project', 'Need a logo design for a new startup company.', '88888888-8888-8888-8888-888888888888', '00000000-0000-0000-0000-000000000002', FALSE, '22222222-2222-2222-2222-222222222222', NOW(), 'hourly', NULL, '1 to 3 months', '30+', 10.00, 50.00, '2024-05-10', 'Guru Freelancers');
+INSERT INTO jobs (
+    id,
+    title,
+    description,
+    category_id,
+    subcategory_id,
+    featured,
+    client_id,
+    created_at,
+    payment_type,
+    fixed_price_range,
+    duration,
+    hours_per_week,
+    min_hourly_rate,
+    max_hourly_rate,
+    get_quotes_until,
+    visibility,
+    timezone_id
+) VALUES (
+    '11111111-1111-1111-1111-111111111111',
+    'Web Developer Needed',
+    'Looking for a skilled web developer to create a responsive website.',
+    '77777777-7777-7777-7777-777777777777',
+    '00000000-0000-0000-0000-000000000001',
+    TRUE,
+    '11111111-1111-1111-1111-111111111111',
+    NOW(),
+    'fixed',
+    'Under $250',
+    'Less than 1 month',
+    '10-30',
+    NULL,
+    NULL,
+    '2024-05-01',
+    'Everyone',
+	NULL
+), (
+    '22222222-2222-2222-2222-222222222222',
+    'Logo Design Project',
+    'Need a logo design for a new startup company.',
+    '88888888-8888-8888-8888-888888888888',
+    '00000000-0000-0000-0000-000000000002',
+    FALSE,
+    '22222222-2222-2222-2222-222222222222',
+    NOW(),
+    'hourly',
+    NULL,
+    '1 to 3 months',
+    '30+',
+    10.00,
+    50.00,
+    '2024-05-10',
+    'Guru Freelancers',
+    '33333333-3333-3333-3333-333333333333'
+);
 
 -- Jobs Skills
 INSERT INTO jobs_skills (job_id, skill_id) VALUES
@@ -196,6 +259,21 @@ INSERT INTO jobs_locations (job_id, location_id) VALUES
     ('11111111-1111-1111-1111-111111111111', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'),
     ('22222222-2222-2222-2222-222222222222', 'cccccccc-cccc-cccc-cccc-cccccccccccc');
 	
+
+-- 	CREATE TABLE quotes ( -- handle the different types of quotes
+-- 		id UUID PRIMARY KEY,
+-- 		job_id UUID REFERENCES jobs(id),
+-- 		freelancer_id UUID REFERENCES freelancers(id),
+-- 		proposal TEXT,
+-- 		submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- 	);
+
+	-- CREATE TABLE employer_spend (
+	--     id UUID PRIMARY KEY,
+	--     client_id UUID REFERENCES users(id),
+	--     spend_amount DECIMAL(10, 2) DEFAULT 0,
+	--     transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	-- );
 
 
 

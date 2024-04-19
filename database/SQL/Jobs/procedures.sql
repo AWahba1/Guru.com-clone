@@ -13,24 +13,33 @@ CREATE OR REPLACE PROCEDURE create_job(
     _max_hourly_rate DECIMAL(10, 2),
 	_get_quotes_until DATE,
     _visibility job_visibility,
-	_skills text[]
-
+	_skills text[],
+	_timezone_id UUID,
+	_locations text[]
 )
 LANGUAGE plpgsql
 AS $$
 DECLARE
     new_job_id UUID;
     skill_id UUID;
+	location_id UUID;
 BEGIN
-    INSERT INTO jobs (id, title, description, category_id, subcategory_id, featured, client_id, payment_type, fixed_price_range, duration, hours_per_week, min_hourly_rate, max_hourly_rate, get_quotes_until, visibility)
-    VALUES (gen_random_uuid(), _title,  _description, _category_id, _subcategory_id, _featured, _client_id, _payment_type, _fixed_price_range, _duration, _hours_per_week, _min_hourly_rate, _max_hourly_rate, _get_quotes_until, _visibility)
+    INSERT INTO jobs (id, title, description, category_id, subcategory_id, featured, client_id, payment_type, fixed_price_range, duration, hours_per_week, min_hourly_rate, max_hourly_rate, get_quotes_until, visibility, timezone_id)
+    VALUES (gen_random_uuid(), _title,  _description, _category_id, _subcategory_id, _featured, _client_id, _payment_type, _fixed_price_range, _duration, _hours_per_week, _min_hourly_rate, _max_hourly_rate, _get_quotes_until, _visibility, _timezone_id)
     RETURNING id INTO new_job_id;
 
-    -- Insert into jobs_skills table
+    -- Insert skills related to job
     FOREACH skill_id IN ARRAY _skills
     LOOP
         INSERT INTO jobs_skills (job_id, skill_id)
         VALUES (new_job_id, skill_id);
+    END LOOP;
+	
+	    -- Insert locations related to job
+    FOREACH location_id IN ARRAY _locations
+    LOOP
+        INSERT INTO jobs_locations (job_id, location_id)
+        VALUES (new_job_id, location_id);
     END LOOP;
 END;
 $$;
@@ -51,43 +60,9 @@ CALL create_job(
 	 '2024-05-01',
     'Everyone',
 	ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc'],
+	'11111111-1111-1111-1111-111111111111',
+	ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc']
 );
-
-
-INSERT INTO jobs (id, title, description, category_id, subcategory_id, featured, client_id, payment_type, fixed_price_range, duration, hours_per_week, min_hourly_rate, max_hourly_rate, get_quotes_until, visibility)
-    VALUES (
-	gen_random_uuid(),
-	'Backend Freelancer Needed',
-	'Looking for a skilled backend developer to create a responsive website.',
-    '77777777-7777-7777-7777-777777777777',
-    '00000000-0000-0000-0000-000000000001',
-	TRUE,
-    '11111111-1111-1111-1111-111111111111',
-	'fixed',
-	 'Under $250',
-    'Less than 1 month',
-    '10-30',
-	NULL,
-    NULL,
-	 '2024-05-01',
-    'Everyone');
-select * from jobs;
-
-
--- 	CREATE TABLE quotes ( -- handle the different types of quotes
--- 		id UUID PRIMARY KEY,
--- 		job_id UUID REFERENCES jobs(id),
--- 		freelancer_id UUID REFERENCES freelancers(id),
--- 		proposal TEXT,
--- 		submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
--- 	);
-
-	-- CREATE TABLE employer_spend (
-	--     id UUID PRIMARY KEY,
-	--     client_id UUID REFERENCES users(id),
-	--     spend_amount DECIMAL(10, 2) DEFAULT 0,
-	--     transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	-- );
 
 
 	-- Get All Jobs
