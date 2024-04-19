@@ -65,6 +65,37 @@ CALL create_job(
 );
 
 
+CREATE OR REPLACE FUNCTION get_job_by_id(
+    _job_id UUID
+)
+RETURNS TABLE (
+    job_id UUID,
+    title VARCHAR(255),
+    description TEXT,
+    category_id UUID,
+    subcategory_id UUID,
+    featured BOOLEAN,
+    client_id UUID,
+    created_at TIMESTAMP,
+    payment_type payment_type,
+    fixed_price_range price_range,
+    duration job_duration,
+    hours_per_week hours_per_week,
+    min_hourly_rate DECIMAL(10, 2),
+    max_hourly_rate DECIMAL(10, 2),
+    get_quotes_until DATE,
+    visibility job_visibility,
+    timezone_id UUID
+)
+AS $$
+BEGIN
+    RETURN QUERY SELECT * FROM jobs WHERE id = _job_id;
+END;
+$$ LANGUAGE plpgsql;
+
+select * from get_job_by_id('11111111-1111-1111-1111-111111111111');
+
+
 	-- Get All Jobs
 	-- CREATE OR REPLACE FUNCTION get_all_jobs(
 	--     _category_id UUID DEFAULT NULL,
