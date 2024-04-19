@@ -1,619 +1,665 @@
-CREATE PROCEDURE GetFreelancerProfile (IN freelancerID uuid, OUT freelancer Cursor, OUT freelancerSkills Cursor)
+CREATE OR REPLACE PROCEDURE toggle_profile_visibility (IN freelancer_id uuid)
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    OPEN freelancer FOR
-    SELECT * FROM Freelancers WHERE FreelancerID = freelancerID;
-
-    OPEN freelancerSkills FOR
-    SELECT s.ServiceSkills FROM service s WHERE s.FreelancerID = freelancerID 
-    UNION 
-    SELECT r.resourceSkills FROM dedicatedResource r WHERE r.FreelancerID = freelancerID;
-END;
-
-CREATE PROCEDURE ToggleProfileVisibility (IN freelancerID uuid)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
+        UPDATE freelancers SET visibility = NOT visibility WHERE freelancer_id = freelancer_id;
+    EXCEPTION
+        WHEN OTHERS THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
     END;
-    START TRANSACTION;
-    UPDATE Freelancers SET Visibility = NOT Visibility WHERE FreelancerID = freelancerID;
-    COMMIT;
 END;
+$$;
 
-CREATE PROCEDURE UpdateFreelancerProfileAboutSection (
-    IN freelancerID uuid,
-    IN newFreelancerName varchar(50),
-    IN newImageURL varchar(255),
-    IN newTagline varchar(190),
-    IN newBio varchar(3000),
-    IN newWorkTerms varchar(2000),
-    IN newAttachments text[],
-    IN newUserType UserTypeEnum,
-    IN newWebsiteLink varchar(255),
-    IN newFacebookLink varchar(255),
-    IN newLinkedInLink varchar(255),
-    IN newProfessionalVideoLink varchar(255),
-    IN newCompanyHistroy varchar(3000),
-    IN newOperatingSince timestamp
+CREATE OR REPLACE PROCEDURE update_freelancer_profile_about_section (
+    IN freelancer_id uuid,
+    IN new_freelancer_name varchar(50),
+    IN new_image_url varchar(255),
+    IN new_tagline varchar(190),
+    IN new_bio varchar(3000),
+    IN new_work_terms varchar(2000),
+    IN new_attachments TEXT[],
+    IN new_user_type user_type_enum,
+    IN new_website_link varchar(255),
+    IN new_facebook_link varchar(255),
+    IN new_linkedin_link varchar(255),
+    IN new_professional_video_link varchar(255),
+    IN new_company_history varchar(3000),
+    IN new_operating_since TIMESTAMP
 )
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
+        START TRANSACTION;
+
+        IF new_freelancer_name IS NOT NULL THEN
+            UPDATE freelancers SET freelancer_name = new_freelancer_name WHERE freelancer_id = freelancer_id;
+        END IF;
+
+        IF new_image_url IS NOT NULL THEN
+            UPDATE freelancers SET image_url = new_image_url WHERE freelancer_id = freelancer_id;
+        END IF;
+
+        IF new_tagline IS NOT NULL THEN
+            UPDATE freelancers SET tagline = new_tagline WHERE freelancer_id = freelancer_id;
+        END IF;
+
+        IF new_bio IS NOT NULL THEN
+            UPDATE freelancers SET bio = new_bio WHERE freelancer_id = freelancer_id;
+        END IF;
+
+        IF new_work_terms IS NOT NULL THEN
+            UPDATE freelancers SET work_terms = new_work_terms WHERE freelancer_id = freelancer_id;
+        END IF;
+
+        IF new_attachments IS NOT NULL THEN
+            UPDATE freelancers SET attachments = new_attachments WHERE freelancer_id = freelancer_id;
+        END IF;
+
+        IF new_user_type IS NOT NULL THEN
+            UPDATE freelancers SET user_type = new_user_type WHERE freelancer_id = freelancer_id;
+        END IF;
+
+        IF new_website_link IS NOT NULL THEN
+            UPDATE freelancers SET website_link = new_website_link WHERE freelancer_id = freelancer_id;
+        END IF;
+
+        IF new_facebook_link IS NOT NULL THEN
+            UPDATE freelancers SET facebook_link = new_facebook_link WHERE freelancer_id = freelancer_id;
+        END IF;
+
+        IF new_linkedin_link IS NOT NULL THEN
+            UPDATE freelancers SET linkedin_link = new_linkedin_link WHERE freelancer_id = freelancer_id;
+        END IF;
+
+        IF new_professional_video_link IS NOT NULL THEN
+            UPDATE freelancers SET professional_video_link = new_professional_video_link WHERE freelancer_id = freelancer_id;
+        END IF;
+
+        IF new_company_history IS NOT NULL THEN
+            UPDATE freelancers SET company_history = new_company_history WHERE freelancer_id = freelancer_id;
+        END IF;
+
+        IF new_operating_since IS NOT NULL THEN
+            UPDATE freelancers SET operating_since = new_operating_since WHERE freelancer_id = freelancer_id;
+        END IF;
+
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
     END;
-
-    START TRANSACTION;
-
-    IF newFreelancerName IS NOT NULL THEN
-        UPDATE Freelancers SET FreelancerName = newFreelancerName WHERE FreelancerID = freelancerID;
-    END IF;
-
-    IF newImageURL IS NOT NULL THEN
-        UPDATE Freelancers SET imageURL = newImageURL WHERE FreelancerID = freelancerID;
-    END IF;
-
-    IF newTagline IS NOT NULL THEN
-        UPDATE Freelancers SET Tagline = newTagline WHERE FreelancerID = freelancerID;
-    END IF;
-
-    IF newBio IS NOT NULL THEN
-        UPDATE Freelancers SET Bio = newBio WHERE FreelancerID = freelancerID;
-    END IF;
-
-    IF newWorkTerms IS NOT NULL THEN
-        UPDATE Freelancers SET WorkTerms = newWorkTerms WHERE FreelancerID = freelancerID;
-    END IF;
-
-    IF newAttachments IS NOT NULL THEN
-        UPDATE Freelancers SET Attachments = newAttachments WHERE FreelancerID = freelancerID;
-    END IF;
-
-    IF newUserType IS NOT NULL THEN
-        UPDATE Freelancers SET UserType = newUserType WHERE FreelancerID = freelancerID;
-    END IF;
-
-    IF newWebsiteLink IS NOT NULL THEN
-        UPDATE Freelancers SET WebsiteLink = newWebsiteLink WHERE FreelancerID = freelancerID;
-    END IF;
-
-    IF newFacebookLink IS NOT NULL THEN
-        UPDATE Freelancers SET FacebookLink = newFacebookLink WHERE FreelancerID = freelancerID;
-    END IF;
-
-    IF newLinkedInLink IS NOT NULL THEN
-        UPDATE Freelancers SET LinkedInLink = newLinkedInLink WHERE FreelancerID = freelancerID;
-    END IF;
-
-    IF newProfessionalVideoLink IS NOT NULL THEN
-        UPDATE Freelancers SET ProfessionalVideoLink = newProfessionalVideoLink WHERE FreelancerID = freelancerID;
-    END IF;
-
-    IF newCompanyHistroy IS NOT NULL THEN
-        UPDATE Freelancers SET CompanyHistroy = newCompanyHistroy WHERE FreelancerID = freelancerID;
-    END IF;
-
-    IF newOperatingSince IS NOT NULL THEN
-        UPDATE Freelancers SET OperatingSince = newOperatingSince WHERE FreelancerID = freelancerID;
-    END IF;
-
-    COMMIT;
 END;
+$$;
 
-CREATE PROCEDURE AddPortfolio (
-    IN freelancerID uuid, 
+CREATE OR REPLACE PROCEDURE add_portfolio (
+    IN freelancer_id uuid, 
     IN title varchar(255), 
-    IN coverImageUrl varchar(255), 
-    Attachments text[], 
-    )
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
-    END;
-    START TRANSACTION;
-    IF coverImageUrl IS NULL THEN
-        INSERT INTO portfolios (portfolioID, FreelancerID, title, coverImageUrl,Attachments,isDraft) VALUES (UUID(), freelancerID, title, coverImageUrl,true);
-    ELSE
-        INSERT INTO portfolios (portfolioID, FreelancerID, title, coverImageUrl,Attachments,isDraft) VALUES (UUID(), freelancerID, title, coverImageUrl,Attachments,false);
-    END IF;
-    COMMIT;
-END;
-
-CREATE PROCEDURE UnpublishPortfolio (IN portfolioID uuid)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
-    END;
-    START TRANSACTION;
-    UPDATE portfolios SET isDraft = true WHERE portfolioID = portfolioID;
-    DELETE FROM PortfolioService WHERE portfolioID = portfolioID;
-    DELETE FROM PortfolioResource WHERE portfolioID = portfolioID;
-    COMMIT;
-END;
-
-CREATE PROCEDURE DeletePortfolio (IN portfolioID uuid)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
-    END;
-    START TRANSACTION;
-    DELETE FROM portfolios WHERE portfolioID = portfolioID;
-    DELETE FROM PortfolioService WHERE portfolioID = portfolioID;
-    DELETE FROM PortfolioResource WHERE portfolioID = portfolioID;
-    COMMIT;
-END;
-
-CREATE PROCEDURE UpdatePortfolio (
-    IN portfolioID uuid,
-    IN newTitle varchar(255),
-    IN newCoverImageUrl varchar(255),
-    IN newAttachments text[],
-    IN newIsDraft boolean
+    IN cover_image_url varchar(255), 
+    IN attachments TEXT[]
 )
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
+        START TRANSACTION;
+
+        IF cover_image_url IS NULL THEN
+            INSERT INTO portfolios (portfolio_id, freelancer_id, title, cover_image_url, attachments, is_draft) 
+            VALUES (UUID(), freelancer_id, title, cover_image_url, attachments, true);
+        ELSE
+            INSERT INTO portfolios (portfolio_id, freelancer_id, title, cover_image_url, attachments, is_draft) 
+            VALUES (UUID(), freelancer_id, title, cover_image_url, attachments, false);
+        END IF;
+
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
     END;
-
-    START TRANSACTION;
-
-    IF newTitle IS NOT NULL THEN
-        UPDATE portfolios SET title = newTitle WHERE portfolioID = portfolioID;
-    END IF;
-
-    IF newCoverImageUrl IS NOT NULL THEN
-        UPDATE portfolios SET coverImageUrl = newCoverImageUrl WHERE portfolioID = portfolioID;
-    END IF;
-
-    IF newAttachments IS NOT NULL THEN
-        UPDATE portfolios SET Attachments = newAttachments WHERE portfolioID = portfolioID;
-    END IF;
-
-    IF newIsDraft IS NOT NULL THEN
-        UPDATE portfolios SET isDraft = newIsDraft WHERE portfolioID = portfolioID;
-    END IF;
-
-    COMMIT;
 END;
+$$;
 
-CREATE PROCEDURE GetServiceDetails (
-    IN serviceID uuid,
-    OUT serviceDetailsResult CURSOR,
-    OUT portfolioResult CURSOR
+CREATE OR REPLACE PROCEDURE unpublish_portfolio (IN portfolio_id uuid)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    BEGIN
+        START TRANSACTION;
+        
+        UPDATE portfolios SET is_draft = true WHERE portfolio_id = portfolio_id;
+        DELETE FROM portfolio_service WHERE portfolio_id = portfolio_id;
+        DELETE FROM portfolio_resource WHERE portfolio_id = portfolio_id;
+
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+    END;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE delete_portfolio (IN portfolio_id uuid)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    BEGIN
+        START TRANSACTION;
+        
+        DELETE FROM portfolios WHERE portfolio_id = portfolio_id;
+        DELETE FROM portfolio_service WHERE portfolio_id = portfolio_id;
+        DELETE FROM portfolio_resource WHERE portfolio_id = portfolio_id;
+
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+    END;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE update_portfolio (
+    IN portfolio_id uuid,
+    IN new_title varchar(255),
+    IN new_cover_image_url varchar(255),
+    IN new_attachments TEXT[],
+    IN new_is_draft BOOLEAN
 )
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    -- get the service details
-    OPEN serviceDetailsResult FOR
-    SELECT * FROM service WHERE serviceID = serviceID;
-    -- check if the service has associated portfolios
-    IF EXISTS (SELECT * FROM PortfolioService WHERE serviceID = serviceID) THEN
-        -- get portfolios associated with the service
-        OPEN portfolioResult FOR
-        SELECT p.portfolioID, p.title, p.coverImageUrl 
-        FROM portfolios p 
-        JOIN PortfolioService ps ON p.portfolioID = ps.portfolioID
-        WHERE ps.serviceID = serviceID;
-    END IF;
-END;
+    BEGIN
+        START TRANSACTION;
+        
+        IF new_title IS NOT NULL THEN
+            UPDATE portfolios SET title = new_title WHERE portfolio_id = portfolio_id;
+        END IF;
 
-CREATE PROCEDURE AddService (
-    IN freelancerID uuid, 
-    IN ServiceTitle varchar(255), 
-    IN ServiceDescription varchar(5000), 
-    IN ServiceSkills [], 
-    IN ServiceRate decimal, 
-    IN MinimumBudget decimal, 
-    IN serviceThumbnail varchar(255),
-    IN portfolioID uuid[],
+        IF new_cover_image_url IS NOT NULL THEN
+            UPDATE portfolios SET cover_image_url = new_cover_image_url WHERE portfolio_id = portfolio_id;
+        END IF;
+
+        IF new_attachments IS NOT NULL THEN
+            UPDATE portfolios SET attachments = new_attachments WHERE portfolio_id = portfolio_id;
+        END IF;
+
+        IF new_is_draft IS NOT NULL THEN
+            UPDATE portfolios SET is_draft = new_is_draft WHERE portfolio_id = portfolio_id;
+        END IF;
+
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+    END;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE add_service (
+    IN freelancer_id uuid, 
+    IN service_title varchar(255), 
+    IN service_description varchar(5000), 
+    IN service_skills text[], 
+    IN service_rate decimal, 
+    IN minimum_budget decimal, 
+    IN service_thumbnail varchar(255),
+    IN portfolio_id uuid[]
 )
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    service_id uuid;
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
+        START TRANSACTION;
+        
+        INSERT INTO services (service_id, freelancer_id, service_title, service_description, service_skills, service_rate, minimum_budget, service_thumbnail, is_draft) 
+        VALUES (UUID(), freelancer_id, service_title, service_description, service_skills, service_rate, minimum_budget, service_thumbnail, false)
+        RETURNING service_id INTO service_id;
+
+        IF portfolio_id IS NOT NULL THEN
+            FOR i IN 1..array_length(portfolio_id, 1) LOOP
+                INSERT INTO portfolio_service (service_id, portfolio_id) 
+                VALUES (service_id, portfolio_id[i]);
+            END LOOP;
+        END IF;
+
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
     END;
-    START TRANSACTION;
-    INSERT INTO service (serviceID, FreelancerID, ServiceTitle, ServiceDescription, ServiceSkills, ServiceRate, MinimumBudget, serviceThumbnail, isDraft) VALUES (UUID(), freelancerID, ServiceTitle, ServiceDescription, ServiceSkills, ServiceRate, MinimumBudget, serviceThumbnail, false);
-    IF portfolioID IS NOT NULL THEN
-        FOR i IN 1..LENGTH(portfolioID) DO
-            INSERT INTO PortfolioService (serviceID, portfolioID) VALUES (UUID(), serviceID, portfolioID[i]);
-        END FOR;
-    END IF;
-    COMMIT;
 END;
+$$;
 
-CREATE PROCEDURE UnpublishService (IN serviceID uuid)
+CREATE OR REPLACE PROCEDURE unpublish_service (IN service_id uuid)
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    UPDATE service SET isDraft = true WHERE serviceID = serviceID;
+    UPDATE services SET is_draft = true WHERE service_id = service_id;
 END;
+$$;
 
-CREATE PROCEDURE DeleteService (IN serviceID uuid)
+CREATE OR REPLACE PROCEDURE delete_service (IN service_id uuid)
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
-    END;
-    START TRANSACTION;
-    DELETE FROM service WHERE serviceID = serviceID;
-    DELETE FROM PortfolioService WHERE serviceID = serviceID;
-    COMMIT;
-END;
+        START TRANSACTION;
+        
+        DELETE FROM services WHERE service_id = service_id;
+        DELETE FROM portfolio_service WHERE service_id = service_id;
 
-CREATE PROCEDURE UpdateService (
-    IN serviceID uuid,
-    IN newServiceTitle varchar(255),
-    IN newServiceDescription varchar(5000),
-    IN newServiceSkills [],
-    IN newServiceRate decimal,
-    IN newMinimumBudget decimal,
-    IN newServiceThumbnail varchar(255),
-    IN newPortfolioID uuid[]
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+    END;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE update_service (
+    IN service_id uuid,
+    IN new_service_title varchar(255),
+    IN new_service_description varchar(5000),
+    IN new_service_skills text[],
+    IN new_service_rate decimal,
+    IN new_minimum_budget decimal,
+    IN new_service_thumbnail varchar(255),
+    IN new_portfolio_id uuid[]
 )
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
+        START TRANSACTION;
+        
+        IF new_service_title IS NOT NULL THEN
+            UPDATE services SET service_title = new_service_title WHERE service_id = service_id;
+        END IF;
+
+        IF new_service_description IS NOT NULL THEN
+            UPDATE services SET service_description = new_service_description WHERE service_id = service_id;
+        END IF;
+
+        IF new_service_skills IS NOT NULL THEN
+            UPDATE services SET service_skills = new_service_skills WHERE service_id = service_id;
+        END IF;
+
+        IF new_service_rate IS NOT NULL THEN
+            UPDATE services SET service_rate = new_service_rate WHERE service_id = service_id;
+        END IF;
+
+        IF new_minimum_budget IS NOT NULL THEN
+            UPDATE services SET minimum_budget = new_minimum_budget WHERE service_id = service_id;
+        END IF;
+
+        IF new_service_thumbnail IS NOT NULL THEN
+            UPDATE services SET service_thumbnail = new_service_thumbnail WHERE service_id = service_id;
+        END IF;
+
+        IF new_portfolio_id IS NOT NULL THEN
+            DELETE FROM portfolio_service WHERE service_id = service_id;
+            FOR i IN 1..array_length(new_portfolio_id, 1) LOOP
+                INSERT INTO portfolio_service (service_id, portfolio_id) 
+                VALUES (UUID(), service_id, new_portfolio_id[i]);
+            END LOOP;
+        END IF;
+
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
     END;
-
-    START TRANSACTION;
-
-    IF newServiceTitle IS NOT NULL THEN
-        UPDATE service SET ServiceTitle = newServiceTitle WHERE serviceID = serviceID;
-    END IF;
-
-    IF newServiceDescription IS NOT NULL THEN
-        UPDATE service SET ServiceDescription = newServiceDescription WHERE serviceID = serviceID;
-    END IF;
-
-    IF newServiceSkills IS NOT NULL THEN
-        UPDATE service SET ServiceSkills = newServiceSkills WHERE serviceID = serviceID;
-    END IF;
-
-    IF newServiceRate IS NOT NULL THEN
-        UPDATE service SET ServiceRate = newServiceRate WHERE serviceID = serviceID;
-    END IF;
-
-    IF newMinimumBudget IS NOT NULL THEN
-        UPDATE service SET MinimumBudget = newMinimumBudget WHERE serviceID = serviceID;
-    END IF;
-
-    IF newServiceThumbnail IS NOT NULL THEN
-        UPDATE service SET serviceThumbnail = newServiceThumbnail WHERE serviceID = serviceID;
-    END IF;
-
-    IF newPortfolioID IS NOT NULL THEN
-        DELETE FROM PortfolioService WHERE serviceID = serviceID;
-        FOR i IN 1..LENGTH(newPortfolioID) DO
-            INSERT INTO PortfolioService (serviceID, portfolioID) VALUES (UUID(), serviceID, newPortfolioID[i]);
-        END FOR;
-    END IF;
-
-    COMMIT;
 END;
+$$;
 
-CREATE PROCEDURE GetResourceDetails (
-    IN resourceID uuid,
-    OUT resourceDetailsResult CURSOR,
-    OUT portfolioResult CURSOR
+CREATE OR REPLACE PROCEDURE add_dedicated_resource (
+    IN freelancer_id uuid, 
+    IN resource_name varchar(255), 
+    IN resource_title varchar(255), 
+    IN resource_summary varchar(3000), 
+    IN resource_skills text[], 
+    IN resource_rate decimal, 
+    IN minimum_duration resource_duration_enum, 
+    IN resource_image varchar(255),
+    IN portfolio_id uuid[]
 )
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    -- get the resource details
-    OPEN resourceDetailsResult FOR
-    SELECT * FROM dedicatedResource WHERE resourceID = resourceID;
-    -- check if the resource has associated portfolios
-    IF EXISTS (SELECT * FROM PortfolioResource WHERE resourceID = resourceID) THEN
-        -- get portfolios associated with the resource
-        OPEN portfolioResult FOR
-        SELECT p.portfolioID, p.title, p.coverImageUrl 
-        FROM portfolios p 
-        JOIN PortfolioResource pr ON p.portfolioID = pr.portfolioID
-        WHERE pr.resourceID = resourceID;
-    END IF;
-END;
+    BEGIN
+        START TRANSACTION;
+        
+        INSERT INTO dedicated_resource (resource_id, freelancer_id, resource_name, resource_title, resource_summary, resource_skills, resource_rate, minimum_duration, resource_image, is_draft) 
+        VALUES (UUID(), freelancer_id, resource_name, resource_title, resource_summary, resource_skills, resource_rate, minimum_duration, resource_image, false);
 
-CREATE PROCEDURE AddDedicatedResource (
-    IN freelancerID uuid, 
-    IN resourcename varchar(255), 
-    IN resourcetitle varchar(255), 
-    IN resourcesummary varchar(3000), 
-    IN resourceSkills text[], 
-    IN resourceRate decimal, 
-    IN MinimumDuration ResourceDurationEnum, 
-    IN resourceImage varchar(255),
-    IN portfolioID uuid[]
+        IF portfolio_id IS NOT NULL THEN
+            FOR i IN 1..LENGTH(portfolio_id) LOOP
+                INSERT INTO portfolio_resource (resource_id, portfolio_id) 
+                VALUES (UUID(), resource_id, portfolio_id[i]);
+            END LOOP;
+        END IF;
+
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+    END;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE unpublish_dedicated_resource (IN resource_id uuid)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE dedicated_resource SET is_draft = true WHERE resource_id = resource_id;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE delete_dedicated_resource (IN resource_id uuid)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    BEGIN
+        START TRANSACTION;
+        
+        DELETE FROM dedicated_resource WHERE resource_id = resource_id;
+        DELETE FROM portfolio_resource WHERE resource_id = resource_id;
+
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+    END;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE update_dedicated_resource (
+    IN resource_id uuid,
+    IN new_resource_name varchar(255),
+    IN new_resource_title varchar(255),
+    IN new_resource_summary varchar(3000),
+    IN new_resource_skills text[],
+    IN new_resource_rate decimal,
+    IN new_minimum_duration resource_duration_enum,
+    IN new_resource_image varchar(255),
+    IN new_portfolio_id uuid[]
 )
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
+        START TRANSACTION;
+        
+        IF new_resource_name IS NOT NULL THEN
+            UPDATE dedicated_resource SET resource_name = new_resource_name WHERE resource_id = resource_id;
+        END IF;
+
+        IF new_resource_title IS NOT NULL THEN
+            UPDATE dedicated_resource SET resource_title = new_resource_title WHERE resource_id = resource_id;
+        END IF;
+
+        IF new_resource_summary IS NOT NULL THEN
+            UPDATE dedicated_resource SET resource_summary = new_resource_summary WHERE resource_id = resource_id;
+        END IF;
+
+        IF new_resource_skills IS NOT NULL THEN
+            UPDATE dedicated_resource SET resource_skills = new_resource_skills WHERE resource_id = resource_id;
+        END IF;
+
+        IF new_resource_rate IS NOT NULL THEN
+            UPDATE dedicated_resource SET resource_rate = new_resource_rate WHERE resource_id = resource_id;
+        END IF;
+
+        IF new_minimum_duration IS NOT NULL THEN
+            UPDATE dedicated_resource SET minimum_duration = new_minimum_duration WHERE resource_id = resource_id;
+        END IF;
+
+        IF new_resource_image IS NOT NULL THEN
+            UPDATE dedicated_resource SET resource_image = new_resource_image WHERE resource_id = resource_id;
+        END IF;
+
+        IF new_portfolio_id IS NOT NULL THEN
+            DELETE FROM portfolio_resource WHERE resource_id = resource_id;
+            FOR i IN 1..LENGTH(new_portfolio_id) LOOP
+                INSERT INTO portfolio_resource (resource_id, portfolio_id) 
+                VALUES (UUID(), resource_id, new_portfolio_id[i]);
+            END LOOP;
+        END IF;
+
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
     END;
-    START TRANSACTION;
-    INSERT INTO dedicatedResource (resourceID, FreelancerID, resourcename, resourcetitle, resourcesummary, resourceSkills, resourceRate, MinimumDuration, resourceImage, isDraft) VALUES (UUID(), freelancerID, resourcename, resourcetitle, resourcesummary, resourceSkills, resourceRate, MinimumDuration, resourceImage, false);
-    IF portfolioID IS NOT NULL THEN
-        FOR i IN 1..LENGTH(portfolioID) DO
-            INSERT INTO PortfolioResource (resourceID, portfolioID) VALUES (UUID(), resourceID, portfolioID[i]);
-        END FOR;
-    END IF;
-    COMMIT;
 END;
+$$;
 
-CREATE PROCEDURE UnpublishDedicatedResource (IN resourceID uuid)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
-    END;
-    START TRANSACTION;
-    UPDATE dedicatedResource SET isDraft = true WHERE resourceID = resourceID;
-    COMMIT;
-END;
-
-CREATE PROCEDURE DeleteDedicatedResource (IN resourceID uuid)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
-    END;
-    START TRANSACTION;
-    DELETE FROM dedicatedResource WHERE resourceID = resourceID;
-    DELETE FROM PortfolioResource WHERE resourceID = resourceID;
-    COMMIT;
-END;
-
-CREATE PROCEDURE UpdateDedicatedResource (
-    IN resourceID uuid,
-    IN newResourcename varchar(255),
-    IN newResourcetitle varchar(255),
-    IN newResourcesummary varchar(3000),
-    IN newResourceSkills text[],
-    IN newResourceRate decimal,
-    IN newMinimumDuration ResourceDurationEnum,
-    IN newResourceImage varchar(255),
-    IN newPortfolioID uuid[]
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
-    END;
-
-    START TRANSACTION;
-
-    IF newResourcename IS NOT NULL THEN
-        UPDATE dedicatedResource SET resourcename = newResourcename WHERE resourceID = resourceID;
-    END IF;
-
-    IF newResourcetitle IS NOT NULL THEN
-        UPDATE dedicatedResource SET resourcetitle = newResourcetitle WHERE resourceID = resourceID;
-    END IF;
-
-    IF newResourcesummary IS NOT NULL THEN
-        UPDATE dedicatedResource SET resourcesummary = newResourcesummary WHERE resourceID = resourceID;
-    END IF;
-
-    IF newResourceSkills IS NOT NULL THEN
-        UPDATE dedicatedResource SET resourceSkills = newResourceSkills WHERE resourceID = resourceID;
-    END IF;
-
-    IF newResourceRate IS NOT NULL THEN
-        UPDATE dedicatedResource SET resourceRate = newResourceRate WHERE resourceID = resourceID;
-    END IF;
-
-    IF newMinimumDuration IS NOT NULL THEN
-        UPDATE dedicatedResource SET MinimumDuration = newMinimumDuration WHERE resourceID = resourceID;
-    END IF;
-
-    IF newResourceImage IS NOT NULL THEN
-        UPDATE dedicatedResource SET resourceImage = newResourceImage WHERE resourceID = resourceID;
-    END IF;
-
-    IF newPortfolioID IS NOT NULL THEN
-        DELETE FROM PortfolioResource WHERE resourceID = resourceID;
-        FOR i IN 1..LENGTH(newPortfolioID) DO
-            INSERT INTO PortfolioResource (resourceID, portfolioID) VALUES (UUID(), resourceID, newPortfolioID[i]);
-        END FOR;
-    END IF;
-
-    COMMIT;
-END;
-
-CREATE PROCEDURE AddQuote (
-    IN freelancerID uuid, 
-    IN jobid uuid, 
+CREATE OR REPLACE PROCEDURE add_quote (
+    IN freelancer_id uuid, 
+    IN job_id uuid, 
     IN proposal varchar(3000), 
-    IN bidsUsed decimal, 
-    IN bidDate timestamp
+    IN bids_used decimal, 
+    IN bid_date timestamp
 )
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
-    END;
-    START TRANSACTION;
-    INSERT INTO quotes (quoteid, FreelancerID, jobid, proposal, quoteStatus, bidsUsed, bidDate) VALUES (UUID(), freelancerID, jobid, proposal,'AwatingAcceptance', bidsUsed, bidDate);
-    UPDATE Freelancers SET AvailableBids = AvailableBids - bidsUsed WHERE FreelancerID = freelancerID;
-    COMMIT;
-END;
+        START TRANSACTION;
+        
+        INSERT INTO quotes (quote_id, freelancer_id, job_id, proposal, quote_status, bids_used, bid_date) 
+        VALUES (UUID(), freelancer_id, job_id, proposal, 'AWAITING_ACCEPTANCE', bids_used, bid_date);
 
-CREATE PROCEDURE UpdateQuote (
-    IN quoteID uuid,
-    IN newProposal varchar(3000),
-    IN newBidsUsed decimal,
-    IN newQuoteStatus QuoteStatusEnum
+        UPDATE freelancers SET available_bids = available_bids - bids_used WHERE freelancer_id = add_quote.freelancer_id;
+
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+    END;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE update_quote (
+    IN quote_id uuid,
+    IN new_proposal varchar(3000),
+    IN new_bids_used decimal,
+    IN new_quote_status quote_status_enum
 )
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
+        START TRANSACTION;
+        
+        IF new_proposal IS NOT NULL THEN
+            UPDATE quotes SET proposal = new_proposal WHERE quote_id = quote_id;
+        END IF;
+
+        IF new_bids_used IS NOT NULL THEN
+            UPDATE quotes SET bids_used = new_bids_used WHERE quote_id = quote_id;
+        END IF;
+
+        IF new_quote_status IS NOT NULL THEN
+            UPDATE quotes SET quote_status = new_quote_status WHERE quote_id = quote_id;
+        END IF;
+
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
     END;
-
-    START TRANSACTION;
-
-    IF newProposal IS NOT NULL THEN
-        UPDATE quotes SET proposal = newProposal WHERE quoteid = quoteID;
-    END IF;
-
-    IF newBidsUsed IS NOT NULL THEN
-        UPDATE quotes SET bidsUsed = newBidsUsed WHERE quoteid = quoteID;
-    END IF;
-
-    IF newQuoteStatus IS NOT NULL THEN
-        UPDATE quotes SET quoteStatus = newQuoteStatus WHERE quoteid = quoteID;
-    END IF;
-
-    COMMIT;
 END;
+$$;
 
-CREATE PROCEDURE ViewLastBidsUntilThreshold (IN freelancerID UUID)
-BEGIN
-    DECLARE total_bids DECIMAL DEFAULT 0;
-    
-    CREATE TEMPORARY TABLE temp_quotes AS
-    SELECT *, (@cumulative_sum := @cumulative_sum + bidsUsed) AS cumulative_sum
-    FROM quotes
-    CROSS JOIN (SELECT @cumulative_sum := 0) AS dummy
-    WHERE FreelancerID = freelancerID
-    ORDER BY bidDate DESC;
-    
-    SELECT *
-    FROM temp_quotes
-    WHERE cumulative_sum <= 100
-    ORDER BY bidDate DESC;
-    
-    DROP TEMPORARY TABLE IF EXISTS temp_quotes;
-END;
-
-CREATE PROCEDURE AddQuoteTemplate (
-    IN freelancerID uuid, 
-    IN templateName varchar(255), 
-    IN templateDescription varchar(10000), 
-    IN Attachments text[]
+CREATE OR REPLACE PROCEDURE add_quote_template (
+    IN freelancer_id uuid, 
+    IN template_name varchar(255), 
+    IN template_description varchar(10000), 
+    IN attachments text[]
 )
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
-    END;
-    START TRANSACTION;
-    INSERT INTO quoteTemplates (quoteTemplateID, FreelancerID, templateName, templateDescription, Attachments) VALUES (UUID(), freelancerID, templateName, templateDescription, Attachments);
-    COMMIT;
-END;
+        START TRANSACTION;
+        
+        INSERT INTO quote_templates (quote_template_id, freelancer_id, template_name, template_description, attachments) 
+        VALUES (UUID(), freelancer_id, template_name, template_description, attachments);
 
-CREATE PROCEDURE UpdateQuoteTemplate (
-    IN quoteTemplateID uuid,
-    IN newTemplateName varchar(255),
-    IN newTemplateDescription varchar(10000),
-    IN newAttachments text[]
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+    END;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE update_quote_template (
+    IN quote_template_id uuid,
+    IN new_template_name varchar(255),
+    IN new_template_description varchar(10000),
+    IN new_attachments text[]
 )
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
+        START TRANSACTION;
+
+        IF new_template_name IS NOT NULL THEN
+            UPDATE quote_templates SET template_name = new_template_name WHERE quote_template_id = quote_template_id;
+        END IF;
+
+        IF new_template_description IS NOT NULL THEN
+            UPDATE quote_templates SET template_description = new_template_description WHERE quote_template_id = quote_template_id;
+        END IF;
+
+        IF new_attachments IS NOT NULL THEN
+            UPDATE quote_templates SET attachments = new_attachments WHERE quote_template_id = quote_template_id;
+        END IF;
+
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
     END;
-
-    START TRANSACTION;
-
-    IF newTemplateName IS NOT NULL THEN
-        UPDATE quoteTemplates SET templateName = newTemplateName WHERE quoteTemplateID = quoteTemplateID;
-    END IF;
-
-    IF newTemplateDescription IS NOT NULL THEN
-        UPDATE quoteTemplates SET templateDescription = newTemplateDescription WHERE quoteTemplateID = quoteTemplateID;
-    END IF;
-
-    IF newAttachments IS NOT NULL THEN
-        UPDATE quoteTemplates SET Attachments = newAttachments WHERE quoteTemplateID = quoteTemplateID;
-    END IF;
-
-    COMMIT;
 END;
+$$;
 
-CREATE PROCEDURE AddJobWatchlist (
-    IN freelancerID uuid, 
-    IN jobid uuid
+CREATE OR REPLACE PROCEDURE add_job_watchlist (
+    IN freelancer_id uuid, 
+    IN job_id uuid
 )
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    INSERT INTO jobWatchlist (watchlistID, FreelancerID, jobid) VALUES (UUID(), freelancerID, jobid);
+    INSERT INTO job_watchlist (watchlist_id, freelancer_id, job_id) VALUES (UUID(), freelancer_id, job_id);
 END;
+$$;
 
-CREATE PROCEDURE RemoveJobWatchlist (
-    IN watchlistID uuid
+CREATE OR REPLACE PROCEDURE remove_job_watchlist (
+    IN watchlist_id uuid
 )
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    DELETE FROM jobWatchlist WHERE watchlistID = watchlistID;
+    DELETE FROM job_watchlist WHERE watchlist_id = watchlist_id;
 END;
+$$;
 
-CREATE PROCEDURE InviteToJob (
-    IN freelancerID uuid, 
-    IN clientID uuid, 
-    IN jobid uuid, 
-    IN invitationDate timestamp
+CREATE OR REPLACE PROCEDURE invite_to_job (
+    IN freelancer_id uuid, 
+    IN client_id uuid, 
+    IN job_id uuid, 
+    IN invitation_date timestamp
 )
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    INSERT INTO jobInvitations (invitationID, FreelancerID, clientID, jobid, invitationDate) VALUES (UUID(), freelancerID, clientID, jobid, invitationDate);
+    INSERT INTO job_invitations (invitation_id, freelancer_id, client_id, job_id, invitation_date) 
+    VALUES (UUID(), freelancer_id, client_id, job_id, invitation_date);
 END;
+$$;
 
-CREATE PROCEDURE AddFeaturedTeamMembers (
-    IN freelancerID uuid, 
-    IN membername [], 
-    IN title TeamMemberRole[], 
-    IN memberType [],
-    IN memberEmail []
+CREATE OR REPLACE PROCEDURE add_featured_team_members (
+    IN freelancer_id uuid, 
+    IN member_names varchar[], 
+    IN titles varchar[], 
+    IN member_types varchar[], 
+    IN member_emails varchar[]
 )
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
-    END;
-    START TRANSACTION;
-    IF membername IS NOT NULL THEN
-        FOR i IN 1..LENGTH(membername) DO
-            INSERT INTO featuredTeamMember (TeamMemberID, FreelancerID, membername, title, memberType, memberEmail) VALUES (UUID(), freelancerID, membername[i], title[i], memberType[i], memberEmail[i]);
-        END FOR;
-    END IF;
-    COMMIT;
-END;
+        START TRANSACTION;
 
-CREATE PROCEDURE AddNoAccessMembers (
-    IN freelancerID uuid, 
-    IN membernames [], 
+        IF array_length(member_names, 1) IS NOT NULL THEN
+            FOR i IN 1..array_length(member_names, 1) LOOP
+                INSERT INTO featured_team_member (team_member_id, freelancer_id, member_name, title, member_type, member_email) 
+                VALUES (UUID(), freelancer_id, member_names[i], titles[i], member_types[i], member_emails[i]);
+            END LOOP;
+        END IF;
+
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+    END;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE add_no_access_members (
+    IN freelancer_id uuid, 
+    IN member_names varchar[]
 )
+LANGUAGE plpgsql
+AS $$
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        ROLLBACK;
-        SET error_message = CONCAT('Error occurred: ', SQLSTATE(), ' - ', MYSQL_ERRNO());
-    END;
-    START TRANSACTION;
-    IF membernames IS NOT NULL THEN
-        FOR i IN 1..LENGTH(membernames) DO
-            INSERT INTO featuredTeamMember (TeamMemberID, FreelancerID, membername, title, memberType, memberEmail) VALUES (UUID(), freelancerID, membernames[i], NULL, NULL,NULL);
-        END FOR;
-    END IF;
-    COMMIT;
-END;
+        START TRANSACTION;
 
-CREATE PROCEDURE DeleteTeamMember (IN teamMemberID uuid)
-BEGIN
-    DELETE FROM featuredTeamMember WHERE TeamMemberID = teamMemberID;
+        IF array_length(member_names, 1) IS NOT NULL THEN
+            FOR i IN 1..array_length(member_names, 1) LOOP
+                INSERT INTO featured_team_member (team_member_id, freelancer_id, member_name) 
+                VALUES (UUID(), freelancer_id, member_names[i]);
+            END LOOP;
+        END IF;
+
+        COMMIT;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+    END;
 END;
+$$;
+
+CREATE OR REPLACE PROCEDURE delete_team_member (IN team_member_id uuid)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM featured_team_member WHERE team_member_id = team_member_id;
+END;
+$$;
