@@ -69,6 +69,18 @@ END $$;
 	);
 	END IF;
 	END$$;
+	
+	DO $$BEGIN
+	DROP TYPE IF EXISTS job_status CASCADE;
+	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'job_status') THEN
+		CREATE TYPE job_status AS ENUM (
+			'Under Review',
+			'Open',
+			'Closed',
+			'Not Approved'
+	);
+	END IF;
+	END$$;
 
 	CREATE TABLE categories (
 		id UUID PRIMARY KEY,
@@ -114,7 +126,8 @@ END $$;
 		min_hourly_rate DECIMAL(10, 2),
     	max_hourly_rate DECIMAL(10, 2),
 		get_quotes_until DATE,
-		visibility job_visibility
+		visibility job_visibility,
+		status job_status
 	);
 	
 	CREATE TABLE jobs_skills (
@@ -210,7 +223,8 @@ INSERT INTO jobs (
     min_hourly_rate,
     max_hourly_rate,
     get_quotes_until,
-    visibility
+    visibility,
+	status
 ) VALUES (
     '11111111-1111-1111-1111-111111111111',
     'Web Developer Needed',
@@ -226,8 +240,9 @@ INSERT INTO jobs (
     '10-30',
     NULL,
     NULL,
-    '2024-05-01',
-    'Everyone'
+    NULL,
+    'Everyone',
+	'Under Review'
 ), (
     '22222222-2222-2222-2222-222222222222',
     'Logo Design Project',
@@ -244,7 +259,8 @@ INSERT INTO jobs (
     10.00,
     50.00,
     '2024-05-10',
-    'Guru Freelancers'
+    'Guru Freelancers',
+	'Open'
 );
 
 -- Jobs Skills

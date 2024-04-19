@@ -25,8 +25,8 @@ DECLARE
 	location_id UUID;
 	timezone_id UUID;
 BEGIN
-    INSERT INTO jobs (id, title, description, category_id, subcategory_id, featured, client_id, payment_type, fixed_price_range, duration, hours_per_week, min_hourly_rate, max_hourly_rate, get_quotes_until, visibility)
-    VALUES (gen_random_uuid(), _title,  _description, _category_id, _subcategory_id, _featured, _client_id, _payment_type, _fixed_price_range, _duration, _hours_per_week, _min_hourly_rate, _max_hourly_rate, _get_quotes_until, _visibility)
+    INSERT INTO jobs (id, title, description, category_id, subcategory_id, featured, client_id, payment_type, fixed_price_range, duration, hours_per_week, min_hourly_rate, max_hourly_rate, get_quotes_until, visibility, status)
+    VALUES (gen_random_uuid(), _title,  _description, _category_id, _subcategory_id, _featured, _client_id, _payment_type, _fixed_price_range, _duration, _hours_per_week, _min_hourly_rate, _max_hourly_rate, _get_quotes_until, _visibility, 'Under Review')
     RETURNING id INTO new_job_id;
 
     -- Insert skills related to job
@@ -79,6 +79,7 @@ BEGIN
 END;
 $$;
 
+Call create_dummy_job();
 
 CALL create_job(
     'Frontend Freelancer Needed',
@@ -120,7 +121,8 @@ RETURNS TABLE (
     min_hourly_rate DECIMAL(10, 2),
     max_hourly_rate DECIMAL(10, 2),
     get_quotes_until DATE,
-    visibility job_visibility
+    visibility job_visibility,
+	status job_status
 )
 AS $$
 BEGIN
@@ -142,7 +144,8 @@ CREATE OR REPLACE FUNCTION get_all_jobs(
     _featured_only BOOLEAN DEFAULT NULL,
     _payment_terms VARCHAR(20) DEFAULT NULL,
     _location_id UUID DEFAULT NULL,
-	_sort_order VARCHAR(20) DEFAULT 'newest'
+	_sort_order VARCHAR(20) DEFAULT 'newest',
+	_status_list text[] DEFAULT ARRAY['Open']
 )
 RETURNS TABLE (
     id UUID,
@@ -160,7 +163,8 @@ RETURNS TABLE (
     min_hourly_rate DECIMAL(10, 2),
     max_hourly_rate DECIMAL(10, 2),
     get_quotes_until DATE,
-    visibility job_visibility
+    visibility job_visibility,
+	status job_status
 )
 AS $$
 BEGIN
@@ -174,6 +178,7 @@ BEGIN
 		AND (_featured_only IS NULL OR jobs.featured = _featured_only)
 		AND (_payment_terms IS NULL OR jobs.payment_type::TEXT = _payment_terms)
 		AND (_location_id IS NULL OR jobs.id IN (SELECT job_id FROM jobs_locations WHERE location_id = _location_id))
+		AND (_status_list IS NULL OR jobs.status::TEXT = ANY(_status_list))
 		AND (
                 CASE _sort_order
                     WHEN 'closing_soon' THEN jobs.get_quotes_until >= CURRENT_DATE
@@ -199,6 +204,7 @@ SELECT *
 FROM get_all_jobs(
     _page := 1,
     _page_size := 10,
+	_status_list := ARRAY['Under Review', 'Open']
     _search_query := 'web development', -- Search query (case-insensitive)
     _category_id := '77777777-7777-7777-7777-777777777777', -- Category ID (optional)
     _subcategory_id := NULL, -- Subcategory ID (optional)
@@ -206,7 +212,8 @@ FROM get_all_jobs(
     _featured_only := TRUE, -- Featured only (optional)
     _payment_terms := NULL, -- Payment terms (optional)
     _location_id := NULL, -- Location ID (optional)
-	_sort_order := 'oldest'
+	_sort_order := 'oldest',
+
 );
 
 DROP FUNCTION IF EXISTS delete_job_by_id;
