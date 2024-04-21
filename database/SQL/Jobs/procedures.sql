@@ -101,6 +101,7 @@ CALL create_job(
 	ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc']
 );
 
+
 DROP FUNCTION IF EXISTS get_job_by_id;
 CREATE OR REPLACE FUNCTION get_job_by_id(
     _job_id UUID
@@ -110,7 +111,9 @@ RETURNS TABLE (
     title VARCHAR(255),
     description TEXT,
     category_id UUID,
+    category_name VARCHAR(100),
     subcategory_id UUID,
+    subcategory_name VARCHAR(100),
     featured BOOLEAN,
     client_id UUID,
     created_at TIMESTAMP,
@@ -122,14 +125,38 @@ RETURNS TABLE (
     max_hourly_rate DECIMAL(10, 2),
     get_quotes_until DATE,
     visibility job_visibility,
-	status job_status
+    status job_status,
+    skills JSON,
+    locations JSON,
+    timezones JSON 
 )
 AS $$
 BEGIN
-    RETURN QUERY SELECT * FROM jobs WHERE jobs.id = _job_id;
+    RETURN QUERY 
+        SELECT j.id, j.title, j.description, j.category_id, c.name AS category_name, 
+               j.subcategory_id, s.name AS subcategory_name, j.featured, 
+               j.client_id, j.created_at, j.payment_type, j.fixed_price_range, 
+               j.duration, j.hours_per_week, j.min_hourly_rate, j.max_hourly_rate, 
+               j.get_quotes_until, j.visibility, j.status,
+               (SELECT JSON_AGG(json_build_object('id', sk.id, 'name', sk.name)) 
+                   FROM jobs_skills js 
+                   INNER JOIN skills sk ON js.skill_id = sk.id 
+                   WHERE js.job_id = j.id) AS skills,
+               (SELECT JSON_AGG(json_build_object('id', loc.id, 'name', loc.name)) 
+                   FROM jobs_locations jl 
+                   INNER JOIN locations loc ON jl.location_id = loc.id 
+                   WHERE jl.job_id = j.id) AS locations,
+               (SELECT JSON_AGG(json_build_object('id', tz.id, 'name', tz.name)) 
+                   FROM jobs_timezones jt 
+                   INNER JOIN timezones tz ON jt.timezone_id = tz.id 
+                   WHERE jt.job_id = j.id) AS timezones
+        FROM jobs j
+        INNER JOIN categories c ON j.category_id = c.id
+        INNER JOIN subcategories s ON j.subcategory_id = s.id
+        WHERE j.id = _job_id;
 END;
 $$ LANGUAGE plpgsql;
-select * from get_job_by_id('11111111-1111-1111-1111-111111111111');
+select * from get_job_by_id('11111111-1111-1111-1111-111111111112');
 
 -- call create_dummy_job();
 
@@ -339,6 +366,12 @@ CREATE OR REPLACE PROCEDURE delete_job_by_id(
 LANGUAGE plpgsql
 AS $$
 BEGIN
+
+    -- Check if the job exists for the given ID
+    IF NOT EXISTS (SELECT 1 FROM jobs WHERE jobs.id = _job_id) THEN
+        RAISE EXCEPTION 'Job with ID % does not exist', _job_id;
+    END IF;
+
 	DELETE FROM jobs_timezones WHERE job_id = _job_id;
 	
     DELETE FROM jobs_skills WHERE job_id = _job_id;
