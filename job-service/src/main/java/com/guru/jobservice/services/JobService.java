@@ -1,8 +1,8 @@
 package com.guru.jobservice.services;
 
-import com.guru.jobservice.dtos.JobDTO;
+//import com.guru.jobservice.dtos.JobDTO;
 //import com.guru.jobservice.repositories.JobRepository;
-import com.guru.jobservice.dtos.JobResponse;
+//import com.guru.jobservice.dtos.JobResponse;
 import com.guru.jobservice.exceptions.ResourceNotFoundException;
 import com.guru.jobservice.model.Job;
 import com.guru.jobservice.repositories.JobRepository;

@@ -1,6 +1,6 @@
 package com.guru.jobservice.controllers;
 
-import com.guru.jobservice.dtos.JobDTO;
+//import com.guru.jobservice.dtos.JobDTO;
 //import com.guru.jobservice.repositories.JobRepository;
 import com.guru.jobservice.model.Job;
 import com.guru.jobservice.services.JobService;
@@ -36,12 +36,12 @@ public class JobController {
 //        return new ResponseEntity<>(createdJob, HttpStatus.CREATED);
     }
 
-    @PostMapping("/")
-    public ResponseEntity<?> createJob(@RequestBody JobDTO jobDTO) {
-        return new ResponseEntity<>("Hello", HttpStatus.CREATED);
-//        JobDTO createdJob = jobService.createJob(jobDTO);
-//        return new ResponseEntity<>(createdJob, HttpStatus.CREATED);
-    }
+//    @PostMapping("/")
+//    public ResponseEntity<?> createJob(@RequestBody JobDTO jobDTO) {
+//        return new ResponseEntity<>("Hello", HttpStatus.CREATED);
+////        JobDTO createdJob = jobService.createJob(jobDTO);
+////        return new ResponseEntity<>(createdJob, HttpStatus.CREATED);
+//    }
 
 //    @PutMapping("/{jobId}")
 //    public void updateJob(@PathVariable UUID jobId, @RequestBody JobDTO jobDTO) {
