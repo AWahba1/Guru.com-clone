@@ -1,6 +1,6 @@
 package com.guru.jobservice.repositories;
 
-import com.guru.jobservice.dtos.JobResponse;
+//import com.guru.jobservice.dtos.JobResponse;
 import com.guru.jobservice.model.Job;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
