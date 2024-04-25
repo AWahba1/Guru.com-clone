@@ -1,0 +1,57 @@
+INSERT INTO conversations (conversation_id, user1_id, user1_name, user2_id, user2_name, created_at)
+VALUES (
+    uuid(), 
+    uuid(),  
+    'User1', 
+     uuid(),  
+    'User2',
+    toTimeStamp(now()));
+
+INSERT INTO conversations (conversation_id, user1_id, user1_name, user2_id, user2_name, created_at)
+VALUES (
+    uuid(), 
+    uuid(),  
+    'User3', 
+     uuid(),  
+    'User4',
+    toTimeStamp(now()));
+
+
+
+INSERT INTO messages (conversation_id, message_id, sender_id, sender_name, receiver_id, receiver_name, sent_at, message_text)
+VALUES (
+    134ababb-add7-4596-9939-3c7817a65aac,
+    now(), 
+    e8f0e960-8a92-4c53-bc1e-013b39626026,
+    'User1',
+    417e7a53-f4a6-4b79-8e4b-aa96199e9b2d,
+    'User2',
+    toTimestamp(now()),
+    'Hello User2, this is a message from User1.'
+);
+
+INSERT INTO messages (conversation_id, message_id, sender_id, sender_name, receiver_id, receiver_name, sent_at, message_text)
+VALUES (
+    134ababb-add7-4596-9939-3c7817a65aac,
+    now(), 
+    e8f0e960-8a92-4c53-bc1e-013b39626026,
+    'User1',
+    417e7a53-f4a6-4b79-8e4b-aa96199e9b2d,
+    'User2',
+    toTimestamp(now()),
+    'Hello User2, how are you.'
+);
+
+
+
+INSERT INTO messages (conversation_id, message_id, sender_id, sender_name, receiver_id, receiver_name, sent_at, message_text)
+VALUES (
+    134ababb-add7-4596-9939-3c7817a65aac,
+    now(), 
+    417e7a53-f4a6-4b79-8e4b-aa96199e9b2d,
+    'User2',
+    e8f0e960-8a92-4c53-bc1e-013b39626026,
+    'User1',
+    toTimestamp(now()),
+    'Hello User1, his is a message from User2.'
+);
