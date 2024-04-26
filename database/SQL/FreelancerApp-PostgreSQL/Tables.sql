@@ -9,8 +9,6 @@ DROP TABLE IF EXISTS quotes CASCADE;
 DROP TABLE IF EXISTS quote_templates CASCADE;
 DROP TABLE IF EXISTS job_watchlist CASCADE;
 DROP TABLE IF EXISTS job_invitations CASCADE;
-DROP TABLE IF EXISTS jobs CASCADE;
-DROP TABLE IF EXISTS clients CASCADE;
 DROP TYPE IF EXISTS user_type_enum CASCADE;
 DROP TYPE IF EXISTS resource_duration_enum CASCADE;
 DROP TYPE IF EXISTS quote_status_enum CASCADE;
@@ -23,12 +21,9 @@ CREATE TYPE quote_status_enum AS ENUM ('AWAITING_ACCEPTANCE', 'PRIORITY', 'ACCEP
 CREATE TYPE team_member_type AS ENUM ('INDEPENDENT_ACCOUNTS', 'SUB_ACCOUNTS', 'NO_ACCESS_MEMBERS');
 CREATE TYPE team_member_role AS ENUM ('CONSULTANT', 'MANAGER');
 
-CREATE TABLE jobs (
-		job_id uuid PRIMARY KEY
-);
-CREATE TABLE clients (
-		client_id uuid PRIMARY KEY
-);
+--CREATE TABLE jobs (
+--		job_id uuid PRIMARY KEY
+--);
 
 CREATE TABLE freelancers (
     freelancer_id UUID PRIMARY KEY,
@@ -126,7 +121,7 @@ CREATE TABLE quotes (
     bids_used DECIMAL,
     bid_date TIMESTAMP,
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE,
-    FOREIGN KEY (job_id) REFERENCES jobs(job_id) ON DELETE CASCADE    
+    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
 );
 
 CREATE TABLE quote_templates (
@@ -143,7 +138,7 @@ CREATE TABLE job_watchlist (
     freelancer_id UUID,
     job_id UUID,
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE,
-    FOREIGN KEY (job_id) REFERENCES jobs(job_id) ON DELETE CASCADE
+    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
 );
 
 CREATE TABLE job_invitations (
@@ -153,7 +148,7 @@ CREATE TABLE job_invitations (
     job_id UUID,
     invitation_date TIMESTAMP,
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE,
-    FOREIGN KEY (client_id) REFERENCES clients(client_id) ON DELETE CASCADE,
-    FOREIGN KEY (job_id) REFERENCES jobs(job_id) ON DELETE CASCADE   
+    FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
+    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
 );
 
