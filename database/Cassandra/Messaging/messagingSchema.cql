@@ -29,8 +29,9 @@ CREATE TABLE see_conversations (
     user_id_with_conversation UUID,
     user_name TEXT,
     user_id_with_conversation_name TEXT,
-    PRIMARY KEY (user_id, conversation_id, user_id_with_conversation)
-);
+    lastEdited TIMESTAMP,
+    PRIMARY KEY (user_id, lastEdited, conversation_id)
+) WITH CLUSTERING ORDER BY (lastEdited DESC);
 
 
 
