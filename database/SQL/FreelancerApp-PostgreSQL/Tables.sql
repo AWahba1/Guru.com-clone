@@ -2,8 +2,10 @@ DROP TABLE IF EXISTS freelancers CASCADE;
 DROP TABLE IF EXISTS featured_team_member CASCADE;
 DROP TABLE IF EXISTS portfolios CASCADE;
 DROP TABLE IF EXISTS services CASCADE;
+DROP TABLE IF EXISTS service_skills CASCADE;
 DROP TABLE IF EXISTS portfolio_service CASCADE;
 DROP TABLE IF EXISTS dedicated_resource CASCADE;
+DROP TABLE IF EXISTS resource_skills CASCADE;
 DROP TABLE IF EXISTS portfolio_resource CASCADE;
 DROP TABLE IF EXISTS quotes CASCADE;
 DROP TABLE IF EXISTS quote_templates CASCADE;
@@ -84,10 +86,19 @@ CREATE TABLE services (
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE  
 );
 
+CREATE TABLE service_skills (
+    service_id UUID,
+    skill_id UUID,
+    PRIMARY KEY (service_id, skill_id),
+    FOREIGN KEY (service_id) REFERENCES services(service_id) ON DELETE CASCADE,
+    FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE
+);
+
 CREATE TABLE portfolio_service (
     service_id UUID,
     portfolio_id UUID,
-    FOREIGN KEY (service_id) REFERENCES services(service_id),
+    PRIMARY KEY (service_id, portfolio_id),
+    FOREIGN KEY (service_id) REFERENCES services(service_id) ON DELETE CASCADE,
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(portfolio_id) ON DELETE CASCADE      
 );
 
@@ -102,12 +113,20 @@ CREATE TABLE dedicated_resource (
     minimum_duration resource_duration_enum,
     resource_image VARCHAR(255),
     resource_views INT,       
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE  
+    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
+);
+CREATE TABLE resource_skills (
+    resource_id UUID,
+    skill_id UUID,
+    PRIMARY KEY (resource_id, skill_id),
+    FOREIGN KEY (resource_id) REFERENCES dedicated_resource(resource_id) ON DELETE CASCADE,
+    FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE
 );
 
 CREATE TABLE portfolio_resource (
     resource_id UUID,
     portfolio_id UUID,
+    PRIMARY KEY (resource_id, portfolio_id),
     FOREIGN KEY (resource_id) REFERENCES dedicated_resource(resource_id) ON DELETE CASCADE,
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(portfolio_id) ON DELETE CASCADE    
 );
