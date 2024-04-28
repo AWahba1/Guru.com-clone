@@ -7,8 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +18,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-
 public class Freelancer {
     @Id
     @GeneratedValue(
@@ -31,9 +30,9 @@ public class Freelancer {
     private int profile_views;
     private int job_invitations_num;
     private int available_bids;
-    private double all_time_earnings;
+    private BigDecimal all_time_earnings;
     private int employers_num;
-    private double highest_paid;
+    private BigDecimal highest_paid;
     private Timestamp membership_date;
     private String tagline;
     private String bio;
@@ -48,7 +47,8 @@ public class Freelancer {
     private String company_history;
     private Timestamp operating_since;
 
-    public Freelancer(String freelancer_name, String image_url, boolean visibility, int profile_views, int job_invitations_num, int available_bids, double all_time_earnings, int employers_num, double highest_paid, Timestamp membership_date, String tagline, String bio, String work_terms, List<String> attachments, user_type_enum user_type, String website_link, String facebook_link, String linkedin_link, String professional_video_link, String company_history, Timestamp operating_since) {
+
+    public Freelancer(String freelancer_name, String image_url, boolean visibility, int profile_views, int job_invitations_num, int available_bids, BigDecimal all_time_earnings, int employers_num, BigDecimal highest_paid, Timestamp membership_date, String tagline, String bio, String work_terms, List<String> attachments, user_type_enum user_type, String website_link, String facebook_link, String linkedin_link, String professional_video_link, String company_history, Timestamp operating_since) {
         this.freelancer_name = freelancer_name;
         this.image_url = image_url;
         this.visibility = visibility;

@@ -6,13 +6,14 @@ import lombok.*;
 import java.util.List;
 
 
-@Setter
-@Getter
+
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Getter
+@Data
 public class FreelancerProfileDto {
     private Freelancer freelancer;
-    private List<ResourceSkillDto> resourceSkills;
-    private List<ResourceSkillDto> serviceSkills;
-
+    private List<String> resourceSkills;
+    private List<String> serviceSkills;
 }

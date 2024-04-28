@@ -15,15 +15,15 @@ freelancer_id UUID,
     bio VARCHAR(3000),
     work_terms VARCHAR(2000),
     attachments TEXT[],
-    user_type user_type_enum,
+    user_type varchar(255),
     website_link VARCHAR(255),
     facebook_link VARCHAR(255),
     linkedin_link VARCHAR(255),
     professional_video_link VARCHAR(255),
     company_history VARCHAR(3000),
     operating_since TIMESTAMP,
-    service_skills TEXT[],
-    resource_skills TEXT[]
+    service_skills varchar(255) ARRAY,
+    resource_skills varchar(255) ARRAY
 ) AS $$
 DECLARE
 BEGIN
@@ -31,7 +31,7 @@ RETURN QUERY
     SELECT
         f.*,
         ARRAY(SELECT sk.name FROM service_skills ss JOIN services s ON ss.service_id = s.service_id JOIN skills sk ON sk.id = ss.skill_id WHERE s.freelancer_id = _freelancer_id),
-        ARRAY(SELECT sk.name FROM resource_skills rs JOIN resources r ON rs.resource_id = r.resource_id JOIN skills sk ON sk.id =rs.skill_id WHERE r.freelancer_id = _freelancer_id)
+        ARRAY(SELECT sk.name FROM resource_skills rs JOIN dedicated_resource r ON rs.resource_id = r.resource_id JOIN skills sk ON sk.id =rs.skill_id WHERE r.freelancer_id = _freelancer_id)
     FROM freelancers f
     WHERE f.freelancer_id = _freelancer_id;
 END;
@@ -78,41 +78,41 @@ END;
 $$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION get_service_details(_service_id UUID)
-RETURNS TABLE(
-    service_id UUID,
-    freelancer_id UUID,
-    service_title VARCHAR(255),
-    service_description VARCHAR(5000),
-    service_rate DECIMAL,
-    minimum_budget DECIMAL,
-    service_thumbnail VARCHAR(255),
-    service_views INT,
-    service_skills TEXT[],
-    portfolio_id UUID,
-    portfolio_title VARCHAR(255),
-    portfolio_cover_image_url VARCHAR(255)
-) AS $$
-BEGIN
-RETURN QUERY
-    IF EXISTS (SELECT 1 FROM portfolio_service WHERE service_id = _service_id) THEN
-        SELECT
-            s.*,
-            ARRAY(SELECT sk.name FROM service_skills ss JOIN skills sk ON ss.skill_id = sk.id WHERE ss.service_id = _service_id),
-            p.portfolio_id, p.title, p.cover_image_url FROM portfolios p JOIN portfolio_service ps ON p.portfolio_id = ps.portfolio_id WHERE ps.service_id = _service_id
-        FROM services s
-        WHERE s.service_id = _service_id;
-    ELSE
-        SELECT
-            s.*,
-            ARRAY(SELECT sk.name FROM service_skills ss JOIN skills sk ON ss.skill_id = sk.id WHERE ss.service_id = _service_id),
-            NULL::UUID AS portfolio_id, NULL::TEXT AS title, NULL::TEXT AS cover_image_url
-        FROM services s
-        WHERE s.service_id = _service_id;
-    END IF;
-END;
-$$ 
-LANGUAGE plpgsql;
+-- CREATE OR REPLACE FUNCTION get_service_details(_service_id UUID)
+-- RETURNS TABLE(
+--     service_id UUID,
+--     freelancer_id UUID,
+--     service_title VARCHAR(255),
+--     service_description VARCHAR(5000),
+--     service_rate DECIMAL,
+--     minimum_budget DECIMAL,
+--     service_thumbnail VARCHAR(255),
+--     service_views INT,
+--     service_skills TEXT[],
+--     portfolio_id UUID,
+--     portfolio_title VARCHAR(255),
+--     portfolio_cover_image_url VARCHAR(255)
+-- ) AS $$
+-- BEGIN
+-- RETURN QUERY
+--     IF EXISTS (SELECT 1 FROM portfolio_service WHERE service_id = _service_id) THEN
+--         SELECT
+--             s.*,
+--             ARRAY(SELECT sk.name FROM service_skills ss JOIN skills sk ON ss.skill_id = sk.id WHERE ss.service_id = _service_id),
+--             p.portfolio_id, p.title, p.cover_image_url FROM portfolios p JOIN portfolio_service ps ON p.portfolio_id = ps.portfolio_id WHERE ps.service_id = _service_id
+--         FROM services s
+--         WHERE s.service_id = _service_id;
+--     ELSE
+--         SELECT
+--             s.*,
+--             ARRAY(SELECT sk.name FROM service_skills ss JOIN skills sk ON ss.skill_id = sk.id WHERE ss.service_id = _service_id),
+--             NULL::UUID AS portfolio_id, NULL::TEXT AS title, NULL::TEXT AS cover_image_url
+--         FROM services s
+--         WHERE s.service_id = _service_id;
+--     END IF;
+-- END;
+-- $$ 
+-- LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_freelancer_services (_freelancer_id uuid)
 RETURNS TABLE (service_id uuid, service_title varchar(255), service_description varchar(5000), service_skills text[], service_rate decimal, minimum_budget decimal, service_thumbnail varchar(255))

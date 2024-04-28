@@ -43,7 +43,7 @@ CREATE TABLE freelancers (
     bio VARCHAR(3000),
     work_terms VARCHAR(2000),
     attachments TEXT[],
-    user_type user_type_enum,
+    user_type varchar(255) check (user_type in ('INDIVIDUAL','COMPANY')),
     website_link VARCHAR(255),
     facebook_link VARCHAR(255),
     linkedin_link VARCHAR(255),

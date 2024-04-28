@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Date;
@@ -89,9 +90,9 @@ public class FreelancerStub {
                     200,
                     20,
                     30,
-                    2000,
+                    new BigDecimal(2000),
                     10,
-                    30000,
+                    new BigDecimal(30000),
                     new Timestamp((new Date()).getTime()),
                     "tagline2",
                     "bio2",
