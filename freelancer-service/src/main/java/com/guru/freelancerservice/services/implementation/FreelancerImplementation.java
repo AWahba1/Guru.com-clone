@@ -5,8 +5,6 @@ import com.guru.freelancerservice.models.Freelancer;
 import com.guru.freelancerservice.models.user_type_enum;
 import com.guru.freelancerservice.repositories.FreelancerRepository;
 import com.guru.freelancerservice.services.FreelancerService;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,14 +31,15 @@ public class FreelancerImplementation implements FreelancerService {
         if (freelancer == null) {
             return null;
         }
-        List<Object[]> profile = freelancerRepository.getFreelancerProfile(freelancer_id);
-        FreelancerProfileDto freelancerProfileDto = new FreelancerProfileDto();
-        for (Object[] object : profile) {
-            freelancerProfileDto.setFreelancer(getFreelancerFromObject(object));
-            freelancerProfileDto.setResourceSkills(populateSkills((Object[]) object[22]));
-            freelancerProfileDto.setServiceSkills(populateSkills((Object[]) object[23]));
-        }
-        return freelancerProfileDto;
+//        List<Object[]> profile = freelancerRepository.getFreelancerProfile(freelancer_id);
+//        FreelancerProfileDto freelancerProfileDto = new FreelancerProfileDto();
+//        for (Object[] object : profile) {
+//            freelancerProfileDto.setFreelancer(getFreelancerFromObject(object));
+//            freelancerProfileDto.setResourceSkills(populateSkills((Object[]) object[22]));
+//            freelancerProfileDto.setServiceSkills(populateSkills((Object[]) object[23]));
+//        }
+
+        return freelancerRepository.getFreelancerProfile(freelancer_id).getFirst();
     }
     private Freelancer getFreelancerFromObject(Object[] object) {
         Freelancer freelancer = Freelancer.builder()
