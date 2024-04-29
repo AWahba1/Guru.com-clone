@@ -1,5 +1,6 @@
 package com.guru.freelancerservice.services;
 
+import com.guru.freelancerservice.dtos.FreelancerAboutSectionDto;
 import com.guru.freelancerservice.dtos.FreelancerProfileDto;
 import com.guru.freelancerservice.models.Freelancer;
 
@@ -12,4 +13,8 @@ public interface FreelancerService {
     List<Freelancer> getAllFreelancers();
 
     Freelancer getFreelancer(UUID freeLancerId);
+
+    boolean updateFreelancerAbout(FreelancerAboutSectionDto freelancerAboutSectionDto);
+
+    boolean updateFreelancerAboutVisibility(UUID freelancer_id);
 }

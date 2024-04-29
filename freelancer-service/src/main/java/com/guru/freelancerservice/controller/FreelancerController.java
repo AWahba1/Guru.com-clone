@@ -1,5 +1,7 @@
 package com.guru.freelancerservice.controller;
 
+import com.guru.freelancerservice.commands.EditFreelancerAboutSectionCommand;
+import com.guru.freelancerservice.dtos.FreelancerAboutSectionDto;
 import com.guru.freelancerservice.dtos.FreelancerProfileDto;
 import com.guru.freelancerservice.models.Freelancer;
 import com.guru.freelancerservice.services.FreelancerService;
@@ -16,16 +18,18 @@ import java.util.UUID;
 @RequestMapping("/freelancer")
 public class FreelancerController {
     FreelancerService freelancerService;
+    EditFreelancerAboutSectionCommand editFreelancerAboutSectionCommand;
 
     @Autowired
-    public FreelancerController(FreelancerService freelancerService) {
+    public FreelancerController(FreelancerService freelancerService, EditFreelancerAboutSectionCommand editFreelancerAboutSectionCommand) {
         this.freelancerService = freelancerService;
+        this.editFreelancerAboutSectionCommand = editFreelancerAboutSectionCommand;
     }
 
     @GetMapping
     public ResponseEntity<Object> getAllFreelancers(){
         List<Freelancer> freelancers = freelancerService.getAllFreelancers();
-        return ResponseHandler.generateResponse("Freelancers retrieved successfully", HttpStatus.OK, freelancers, freelancers.size());
+        return ResponseHandler.generateGetResponse("Freelancers retrieved successfully", HttpStatus.OK, freelancers, freelancers.size());
     }
 
     @GetMapping(path = "/{freelancer_id}")
@@ -34,7 +38,7 @@ public class FreelancerController {
         if(freelancer==null){
             return ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
         }
-        return ResponseHandler.generateResponse("Freelancer fetched successfully", HttpStatus.OK, freelancer, 1);
+        return ResponseHandler.generateGetResponse("Freelancer fetched successfully", HttpStatus.OK, freelancer, 1);
     }
 
     @GetMapping(path = "/profile/{freelancer_id}")
@@ -43,11 +47,29 @@ public class FreelancerController {
         if(returnedProfile==null){
             return ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
         }
-        return ResponseHandler.generateResponse("Freelancer profile fetched successfully", HttpStatus.OK, returnedProfile, 1);
+        return ResponseHandler.generateGetResponse("Freelancer profile fetched successfully", HttpStatus.OK, returnedProfile, 1);
     }
 
+    @PatchMapping(path = "/profile/about/{freelancer_id}")
+    public ResponseEntity<Object> updateFreelancerAbout(@PathVariable("freelancer_id") UUID freelancer_id, @RequestBody FreelancerAboutSectionDto freelancerAboutSectionDto) {
+        freelancerAboutSectionDto.setFreelancer_id(freelancer_id);
+        boolean updated =freelancerService.updateFreelancerAbout(freelancerAboutSectionDto);
 
+        if(updated){
+            return ResponseHandler.generateGeneralResponse("Freelancer about section updated successfully", HttpStatus.OK);
+        }
+        return ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+    }
 
+    @PatchMapping(path = "/profile/about/toggle_visibility/{freelancer_id}")
+    public ResponseEntity<Object> updateFreelancerAboutVisibility(@PathVariable("freelancer_id") UUID freelancer_id) {
+        boolean updated =freelancerService.updateFreelancerAboutVisibility(freelancer_id);
+
+        if(updated){
+            return ResponseHandler.generateGeneralResponse("Freelancer about section visibility updated successfully", HttpStatus.OK);
+        }
+        return ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+    }
 
 
 
