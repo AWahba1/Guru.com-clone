@@ -2,6 +2,7 @@ package com.guru.freelancerservice.services;
 
 import com.guru.freelancerservice.dtos.FreelancerAboutSectionDto;
 import com.guru.freelancerservice.dtos.FreelancerProfileDto;
+import com.guru.freelancerservice.dtos.PortfolioDto;
 import com.guru.freelancerservice.models.Freelancer;
 
 import java.util.List;
@@ -17,4 +18,10 @@ public interface FreelancerService {
     boolean updateFreelancerAbout(FreelancerAboutSectionDto freelancerAboutSectionDto);
 
     boolean updateFreelancerAboutVisibility(UUID freelancer_id);
+
+    boolean addPortfolio(PortfolioDto portfolioDto);
+
+    boolean unpublishPortfolio(UUID portfolio_id);
+
+    boolean deletePortfolio(UUID portfolio_id);
 }

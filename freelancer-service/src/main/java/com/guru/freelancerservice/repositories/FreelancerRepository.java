@@ -21,6 +21,9 @@ public interface FreelancerRepository extends JpaRepository<Freelancer, UUID> {
 
     @Procedure(name = "toggle_profile_visibility")
     void toggle_profile_visibility(UUID freelancer_id);
+
+
+
 }
 
 

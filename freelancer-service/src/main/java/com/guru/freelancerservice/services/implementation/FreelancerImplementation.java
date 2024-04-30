@@ -2,9 +2,12 @@ package com.guru.freelancerservice.services.implementation;
 
 import com.guru.freelancerservice.dtos.FreelancerAboutSectionDto;
 import com.guru.freelancerservice.dtos.FreelancerProfileDto;
+import com.guru.freelancerservice.dtos.PortfolioDto;
 import com.guru.freelancerservice.models.Freelancer;
+import com.guru.freelancerservice.models.Portfolio;
 import com.guru.freelancerservice.models.user_type_enum;
 import com.guru.freelancerservice.repositories.FreelancerRepository;
+import com.guru.freelancerservice.repositories.PortfolioRepository;
 import com.guru.freelancerservice.services.FreelancerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +22,12 @@ import java.util.UUID;
 @Service
 public class FreelancerImplementation implements FreelancerService {
     private final FreelancerRepository freelancerRepository;
+    private final PortfolioRepository portfolioRepository;
 
     @Autowired
-    public FreelancerImplementation(FreelancerRepository freelancerRepository) {
+    public FreelancerImplementation(FreelancerRepository freelancerRepository, PortfolioRepository portfolioRepository) {
         this.freelancerRepository = freelancerRepository;
+        this.portfolioRepository = portfolioRepository;
     }
 
     @Override
@@ -87,6 +92,41 @@ public class FreelancerImplementation implements FreelancerService {
             return false;
         }
         freelancerRepository.toggle_profile_visibility(freelancer_id);
+        return true;
+    }
+
+    @Override
+    public boolean addPortfolio(PortfolioDto portfolioDto) {
+        Freelancer freelancer = freelancerRepository.findById(portfolioDto.getFreelancer_id()).orElse(null);
+        if (freelancer == null) {
+            return false;
+        }
+        portfolioRepository.add_portfolio(
+                portfolioDto.getFreelancer_id(),
+                portfolioDto.getTitle(),
+                portfolioDto.getCover_image_url(),
+                portfolioDto.getAttachments()
+        );
+        return true;
+    }
+
+    @Override
+    public boolean unpublishPortfolio(UUID portfolio_id) {
+        Portfolio portfolio = portfolioRepository.findById(portfolio_id).orElse(null);
+        if (portfolio == null) {
+            return false;
+        }
+        portfolioRepository.unpublish_portfolio(portfolio_id);
+        return true;
+    }
+
+    @Override
+    public boolean deletePortfolio(UUID portfolio_id) {
+        Portfolio portfolio = portfolioRepository.findById(portfolio_id).orElse(null);
+        if (portfolio == null) {
+            return false;
+        }
+        portfolioRepository.delete_portfolio(portfolio_id);
         return true;
     }
 

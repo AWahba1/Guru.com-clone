@@ -92,10 +92,10 @@ $$;
 
 
 CREATE OR REPLACE PROCEDURE add_portfolio (
-    IN freelancer_id uuid, 
+    IN _freelancer_id uuid,
     IN title varchar(255), 
     IN cover_image_url varchar(255), 
-    IN attachments TEXT[]
+    IN attachments varchar(255) ARRAY
 )
 LANGUAGE plpgsql
 AS $$
@@ -104,10 +104,10 @@ BEGIN
 
         IF cover_image_url IS NULL THEN
             INSERT INTO portfolios (portfolio_id, freelancer_id, title, cover_image_url, attachments, is_draft) 
-            VALUES (UUID(), freelancer_id, title, cover_image_url, attachments, true);
+            VALUES (gen_random_uuid(), _freelancer_id, title, cover_image_url, attachments, true);
         ELSE
-            INSERT INTO portfolios (portfolio_id, freelancer_id, title, cover_image_url, attachments, is_draft) 
-            VALUES (UUID(), freelancer_id, title, cover_image_url, attachments, false);
+            INSERT INTO portfolios (portfolio_id, freelancer_id, title, cover_image_url, attachments, is_draft)
+            VALUES (gen_random_uuid(), _freelancer_id, title, cover_image_url, attachments, false);
         END IF;
 
     EXCEPTION
@@ -118,15 +118,15 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE PROCEDURE unpublish_portfolio (IN portfolio_id uuid)
+CREATE OR REPLACE PROCEDURE unpublish_portfolio (_portfolio_id uuid)
 LANGUAGE plpgsql
 AS $$
 BEGIN
     BEGIN
         
-        UPDATE portfolios SET is_draft = true WHERE portfolio_id = portfolio_id;
-        DELETE FROM portfolio_service WHERE portfolio_id = portfolio_id;
-        DELETE FROM portfolio_resource WHERE portfolio_id = portfolio_id;
+        UPDATE portfolios SET is_draft = true WHERE portfolio_id = _portfolio_id;
+        DELETE FROM portfolio_service WHERE portfolio_id = _portfolio_id;
+        DELETE FROM portfolio_resource WHERE portfolio_id = _portfolio_id;
 
     EXCEPTION
         WHEN others THEN
@@ -136,15 +136,15 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE PROCEDURE delete_portfolio (IN portfolio_id uuid)
+CREATE OR REPLACE PROCEDURE delete_portfolio (_portfolio_id uuid)
 LANGUAGE plpgsql
 AS $$
 BEGIN
     BEGIN
 
-        DELETE FROM portfolios WHERE portfolio_id = portfolio_id;
-        DELETE FROM portfolio_service WHERE portfolio_id = portfolio_id;
-        DELETE FROM portfolio_resource WHERE portfolio_id = portfolio_id;
+        DELETE FROM portfolios WHERE portfolio_id = _portfolio_id;
+        DELETE FROM portfolio_service WHERE portfolio_id = _portfolio_id;
+        DELETE FROM portfolio_resource WHERE portfolio_id = _portfolio_id;
 
     EXCEPTION
         WHEN others THEN
@@ -155,7 +155,7 @@ END;
 $$;
 
 CREATE OR REPLACE PROCEDURE update_portfolio (
-    IN portfolio_id uuid,
+    IN _portfolio_id uuid,
     IN new_title varchar(255),
     IN new_cover_image_url varchar(255),
     IN new_attachments TEXT[],
@@ -167,19 +167,19 @@ BEGIN
     BEGIN
 
         IF new_title IS NOT NULL THEN
-            UPDATE portfolios SET title = new_title WHERE portfolio_id = portfolio_id;
+            UPDATE portfolios SET title = new_title WHERE portfolio_id = _portfolio_id;
         END IF;
 
         IF new_cover_image_url IS NOT NULL THEN
-            UPDATE portfolios SET cover_image_url = new_cover_image_url WHERE portfolio_id = portfolio_id;
+            UPDATE portfolios SET cover_image_url = new_cover_image_url WHERE portfolio_id = _portfolio_id;
         END IF;
 
         IF new_attachments IS NOT NULL THEN
-            UPDATE portfolios SET attachments = new_attachments WHERE portfolio_id = portfolio_id;
+            UPDATE portfolios SET attachments = new_attachments WHERE portfolio_id = _portfolio_id;
         END IF;
 
         IF new_is_draft IS NOT NULL THEN
-            UPDATE portfolios SET is_draft = new_is_draft WHERE portfolio_id = portfolio_id;
+            UPDATE portfolios SET is_draft = new_is_draft WHERE portfolio_id = _portfolio_id;
         END IF;
 
     EXCEPTION
@@ -191,7 +191,7 @@ END;
 $$;
 
 CREATE OR REPLACE PROCEDURE add_service (
-    IN freelancer_id uuid, 
+    IN _freelancer_id uuid,
     IN service_title varchar(255), 
     IN service_description varchar(5000), 
     IN service_skills text[], 
@@ -208,7 +208,7 @@ BEGIN
     BEGIN
 
         INSERT INTO services (service_id, freelancer_id, service_title, service_description, service_skills, service_rate, minimum_budget, service_thumbnail, is_draft) 
-        VALUES (UUID(), freelancer_id, service_title, service_description, service_skills, service_rate, minimum_budget, service_thumbnail, false)
+        VALUES (gen_random_uuid(), _freelancer_id, service_title, service_description, service_skills, service_rate, minimum_budget, service_thumbnail, false)
         RETURNING service_id INTO service_id;
 
         IF portfolio_id IS NOT NULL THEN

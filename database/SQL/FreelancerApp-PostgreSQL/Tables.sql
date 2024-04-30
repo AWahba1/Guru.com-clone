@@ -32,7 +32,7 @@ CREATE TABLE freelancers (
     freelancer_name VARCHAR(50),
     image_url VARCHAR(255),
     visibility BOOLEAN,
-    profile_views INT,
+    profile_views INT DEFAULT 0,
     job_invitations_num INT,
     available_bids INT,
     all_time_earnings DECIMAL,
@@ -69,7 +69,7 @@ CREATE TABLE portfolios (
     cover_image_url VARCHAR(255),    
     attachments TEXT[],
     is_draft BOOLEAN,    
-    portfolio_views INT,
+    portfolio_views INT DEFAULT 0,
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE  
 );
 
@@ -82,7 +82,7 @@ CREATE TABLE services (
     service_rate DECIMAL,
     minimum_budget DECIMAL,
     service_thumbnail VARCHAR(255),  
-    service_views INT,     
+    service_views INT DEFAULT 0,
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE  
 );
 
@@ -112,7 +112,7 @@ CREATE TABLE dedicated_resource (
     resource_rate DECIMAL,
     minimum_duration resource_duration_enum,
     resource_image VARCHAR(255),
-    resource_views INT,       
+    resource_views INT DEFAULT 0,
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
 );
 CREATE TABLE resource_skills (

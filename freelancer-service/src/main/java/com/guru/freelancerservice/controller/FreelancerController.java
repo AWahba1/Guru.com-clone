@@ -3,6 +3,7 @@ package com.guru.freelancerservice.controller;
 import com.guru.freelancerservice.commands.EditFreelancerAboutSectionCommand;
 import com.guru.freelancerservice.dtos.FreelancerAboutSectionDto;
 import com.guru.freelancerservice.dtos.FreelancerProfileDto;
+import com.guru.freelancerservice.dtos.PortfolioDto;
 import com.guru.freelancerservice.models.Freelancer;
 import com.guru.freelancerservice.services.FreelancerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,36 @@ public class FreelancerController {
         }
         return ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
     }
+
+
+    @PostMapping(path = "/portfolio/{freelancer_id}")
+    public ResponseEntity<Object> addPortfolio(@PathVariable("freelancer_id") UUID freelancer_id,@RequestBody PortfolioDto portfolioDto) {
+        portfolioDto.setFreelancer_id(freelancer_id);
+        boolean updated =freelancerService.addPortfolio(portfolioDto);
+        if(updated){
+            return ResponseHandler.generateGeneralResponse("Freelancer portfolio added successfully", HttpStatus.OK);
+        }
+        return ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+    }
+
+    @PatchMapping(path = "/portfolio/unpublish/{portfolio_id}")
+    public ResponseEntity<Object> unpublishPortfolio(@PathVariable("portfolio_id") UUID portfolio_id) {
+        boolean updated =freelancerService.unpublishPortfolio(portfolio_id);
+        if(updated){
+            return ResponseHandler.generateGeneralResponse("Freelancer portfolio unpublished successfully", HttpStatus.OK);
+        }
+        return ResponseHandler.generateErrorResponse("Portfolio not found", HttpStatus.NOT_FOUND);
+    }
+
+    @DeleteMapping(path = "/portfolio/{portfolio_id}")
+    public ResponseEntity<Object> deletePortfolio(@PathVariable("portfolio_id") UUID portfolio_id) {
+        boolean updated =freelancerService.deletePortfolio(portfolio_id);
+        if(updated){
+            return ResponseHandler.generateGeneralResponse("Freelancer portfolio deleted successfully", HttpStatus.OK);
+        }
+        return ResponseHandler.generateErrorResponse("Portfolio not found", HttpStatus.NOT_FOUND);
+    }
+
 
 
 
