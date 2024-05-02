@@ -321,8 +321,8 @@ BEGIN
         INSERT INTO dedicated_resource (resource_id, freelancer_id, resource_name, resource_title, resource_summary, resource_skills, resource_rate, minimum_duration, resource_image, is_draft) 
         VALUES (gen_resource_id, _freelancer_id, resource_name, resource_title, resource_summary, resource_skills, resource_rate, minimum_duration, resource_image, false);
 
-        IF portfolio_id IS NOT NULL THEN
-            FOR i IN 1..LENGTH(portfolio_id) LOOP
+        IF portfolio_ids IS NOT NULL THEN
+            FOR i IN 1.. array_length(portfolio_ids,1) LOOP
                 INSERT INTO portfolio_resource (resource_id, portfolio_id) 
                 VALUES (gen_resource_id, portfolio_ids[i]);
             END LOOP;
