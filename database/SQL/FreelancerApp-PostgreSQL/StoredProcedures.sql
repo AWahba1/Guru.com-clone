@@ -106,7 +106,7 @@ BEGIN
             INSERT INTO portfolios (portfolio_id, freelancer_id, title, cover_image_url, attachments, is_draft) 
             VALUES (gen_random_uuid(), _freelancer_id, title, cover_image_url, attachments, true);
         ELSE
-            INSERT INTO portfolios (portfolio_id, freelancer_id, title, cover_image_url, attachments, is_draft)
+            INSERT INTO portfolios (portfolio_id, freelancer_id, title, cover_image_url, attachments, is_draft) 
             VALUES (gen_random_uuid(), _freelancer_id, title, cover_image_url, attachments, false);
         END IF;
 
@@ -158,8 +158,7 @@ CREATE OR REPLACE PROCEDURE update_portfolio (
     IN _portfolio_id uuid,
     IN new_title varchar(255),
     IN new_cover_image_url varchar(255),
-    IN new_attachments TEXT[],
-    IN new_is_draft BOOLEAN
+    IN new_attachments TEXT[]
 )
 LANGUAGE plpgsql
 AS $$
@@ -178,10 +177,6 @@ BEGIN
             UPDATE portfolios SET attachments = new_attachments WHERE portfolio_id = _portfolio_id;
         END IF;
 
-        IF new_is_draft IS NOT NULL THEN
-            UPDATE portfolios SET is_draft = new_is_draft WHERE portfolio_id = _portfolio_id;
-        END IF;
-
     EXCEPTION
         WHEN others THEN
             ROLLBACK;
@@ -191,30 +186,29 @@ END;
 $$;
 
 CREATE OR REPLACE PROCEDURE add_service (
-    IN _freelancer_id uuid,
+    IN _freelancer_id uuid, 
     IN service_title varchar(255), 
     IN service_description varchar(5000), 
-    IN service_skills text[], 
+    IN service_skills varchar(255) ARRAY, 
     IN service_rate decimal, 
     IN minimum_budget decimal, 
     IN service_thumbnail varchar(255),
-    IN portfolio_id uuid[]
+    IN portfolio_ids uuid ARRAY
 )
 LANGUAGE plpgsql
 AS $$
 DECLARE
-    service_id uuid;
+    gen_service_id uuid;
 BEGIN
     BEGIN
-
+        gen_service_id = gen_random_uuid();
         INSERT INTO services (service_id, freelancer_id, service_title, service_description, service_skills, service_rate, minimum_budget, service_thumbnail, is_draft) 
-        VALUES (gen_random_uuid(), _freelancer_id, service_title, service_description, service_skills, service_rate, minimum_budget, service_thumbnail, false)
-        RETURNING service_id INTO service_id;
+        VALUES (gen_service_id, _freelancer_id, service_title, service_description, service_skills, service_rate, minimum_budget, service_thumbnail, false);
 
-        IF portfolio_id IS NOT NULL THEN
-            FOR i IN 1..array_length(portfolio_id, 1) LOOP
+        IF portfolio_ids IS NOT NULL THEN
+            FOR i IN 1..array_length(portfolio_ids, 1) LOOP
                 INSERT INTO portfolio_service (service_id, portfolio_id) 
-                VALUES (service_id, portfolio_id[i]);
+                VALUES (gen_service_id, portfolio_ids[i]);
             END LOOP;
         END IF;
 
@@ -226,22 +220,22 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE PROCEDURE unpublish_service (IN service_id uuid)
+CREATE OR REPLACE PROCEDURE unpublish_service (IN _service_id uuid)
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    UPDATE services SET is_draft = true WHERE service_id = service_id;
+    UPDATE services s SET is_draft = true WHERE s.service_id = _service_id;
 END;
 $$;
 
-CREATE OR REPLACE PROCEDURE delete_service (IN service_id uuid)
+CREATE OR REPLACE PROCEDURE delete_service (IN _service_id uuid)
 LANGUAGE plpgsql
 AS $$
 BEGIN
     BEGIN
 
-        DELETE FROM services WHERE service_id = service_id;
-        DELETE FROM portfolio_service WHERE service_id = service_id;
+        DELETE FROM services WHERE service_id = _service_id;
+        DELETE FROM portfolio_service WHERE service_id = _service_id;
 
     EXCEPTION
         WHEN others THEN
@@ -252,14 +246,14 @@ END;
 $$;
 
 CREATE OR REPLACE PROCEDURE update_service (
-    IN service_id uuid,
+    IN _service_id uuid,
     IN new_service_title varchar(255),
     IN new_service_description varchar(5000),
-    IN new_service_skills text[],
+    IN new_service_skills varchar(255) ARRAY,
     IN new_service_rate decimal,
     IN new_minimum_budget decimal,
     IN new_service_thumbnail varchar(255),
-    IN new_portfolio_id uuid[]
+    IN new_portfolio_id uuid ARRAY
 )
 LANGUAGE plpgsql
 AS $$
@@ -267,34 +261,34 @@ BEGIN
     BEGIN
 
         IF new_service_title IS NOT NULL THEN
-            UPDATE services SET service_title = new_service_title WHERE service_id = service_id;
+            UPDATE services SET service_title = new_service_title WHERE service_id = _service_id;
         END IF;
 
         IF new_service_description IS NOT NULL THEN
-            UPDATE services SET service_description = new_service_description WHERE service_id = service_id;
+            UPDATE services SET service_description = new_service_description WHERE service_id = _service_id;
         END IF;
 
         IF new_service_skills IS NOT NULL THEN
-            UPDATE services SET service_skills = new_service_skills WHERE service_id = service_id;
+            UPDATE services SET service_skills = new_service_skills WHERE service_id = _service_id;
         END IF;
 
         IF new_service_rate IS NOT NULL THEN
-            UPDATE services SET service_rate = new_service_rate WHERE service_id = service_id;
+            UPDATE services SET service_rate = new_service_rate WHERE service_id = _service_id;
         END IF;
 
         IF new_minimum_budget IS NOT NULL THEN
-            UPDATE services SET minimum_budget = new_minimum_budget WHERE service_id = service_id;
+            UPDATE services SET minimum_budget = new_minimum_budget WHERE service_id = _service_id;
         END IF;
 
         IF new_service_thumbnail IS NOT NULL THEN
-            UPDATE services SET service_thumbnail = new_service_thumbnail WHERE service_id = service_id;
+            UPDATE services SET service_thumbnail = new_service_thumbnail WHERE service_id = _service_id;
         END IF;
 
         IF new_portfolio_id IS NOT NULL THEN
-            DELETE FROM portfolio_service WHERE service_id = service_id;
+            DELETE FROM portfolio_service WHERE service_id = _service_id;
             FOR i IN 1..array_length(new_portfolio_id, 1) LOOP
                 INSERT INTO portfolio_service (service_id, portfolio_id) 
-                VALUES (UUID(), service_id, new_portfolio_id[i]);
+                VALUES (_service_id, new_portfolio_id[i]);
             END LOOP;
         END IF;
 
@@ -307,28 +301,30 @@ END;
 $$;
 
 CREATE OR REPLACE PROCEDURE add_dedicated_resource (
-    IN freelancer_id uuid, 
+    IN _freelancer_id uuid, 
     IN resource_name varchar(255), 
     IN resource_title varchar(255), 
     IN resource_summary varchar(3000), 
-    IN resource_skills text[], 
+    IN resource_skills varchar(255) ARRAY, 
     IN resource_rate decimal, 
-    IN minimum_duration resource_duration_enum, 
+    IN minimum_duration varchar(255), 
     IN resource_image varchar(255),
-    IN portfolio_id uuid[]
+    IN portfolio_ids uuid ARRAY
 )
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    gen_resource_id uuid;
 BEGIN
     BEGIN
-
+        gen_resource_id = gen_random_uuid();
         INSERT INTO dedicated_resource (resource_id, freelancer_id, resource_name, resource_title, resource_summary, resource_skills, resource_rate, minimum_duration, resource_image, is_draft) 
-        VALUES (UUID(), freelancer_id, resource_name, resource_title, resource_summary, resource_skills, resource_rate, minimum_duration, resource_image, false);
+        VALUES (gen_resource_id, _freelancer_id, resource_name, resource_title, resource_summary, resource_skills, resource_rate, minimum_duration, resource_image, false);
 
         IF portfolio_id IS NOT NULL THEN
             FOR i IN 1..LENGTH(portfolio_id) LOOP
                 INSERT INTO portfolio_resource (resource_id, portfolio_id) 
-                VALUES (UUID(), resource_id, portfolio_id[i]);
+                VALUES (gen_resource_id, portfolio_ids[i]);
             END LOOP;
         END IF;
 

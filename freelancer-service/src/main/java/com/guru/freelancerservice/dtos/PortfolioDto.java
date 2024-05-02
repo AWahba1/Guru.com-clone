@@ -11,6 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class PortfolioDto {
     private UUID freelancer_id;
+    private UUID portfolio_id;
     private String title;
     private String cover_image_url;
     private String[] attachments;

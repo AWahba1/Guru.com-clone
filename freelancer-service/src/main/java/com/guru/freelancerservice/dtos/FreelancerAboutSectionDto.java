@@ -13,22 +13,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FreelancerAboutSectionDto {
-    /*
-    IN freelancer_id uuid,
-    IN new_freelancer_name varchar(50),
-    IN new_image_url varchar(255),
-    IN new_tagline varchar(190),
-    IN new_bio varchar(3000),
-    IN new_work_terms varchar(2000),
-    IN new_attachments TEXT[],
-    IN new_user_type user_type_enum,
-    IN new_website_link varchar(255),
-    IN new_facebook_link varchar(255),
-    IN new_linkedin_link varchar(255),
-    IN new_professional_video_link varchar(255),
-    IN new_company_history varchar(3000),
-    IN new_operating_since TIMESTAMP
-     */
 
     private UUID freelancer_id;
     private String freelancer_name;

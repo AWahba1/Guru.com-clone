@@ -6,24 +6,30 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
-@Table(name = "portfolios")
+@Table(name = "dedicated_resource")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Portfolio {
+public class DedicatedResource {
     @Id
     @GeneratedValue(
             strategy = GenerationType.UUID
     )
-    private UUID portfolio_id;
+    private UUID resource_id;
     private UUID freelancer_id;
-    private String title;
-    private String cover_image_url;
-    private String[] attachments;
+    private String resource_name;
+    private String resource_title;
+    private String resource_summary;
+    private String resource_skills;
+    private BigDecimal resource_rate;
+    private String minimum_duration;
+    private String resource_image;
+    private int resource_views;
     private boolean is_draft;
-    private int portfolio_views;
+
 }

@@ -83,6 +83,7 @@ CREATE TABLE services (
     minimum_budget DECIMAL,
     service_thumbnail VARCHAR(255),  
     service_views INT DEFAULT 0,
+    is_draft BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE  
 );
 
@@ -110,11 +111,13 @@ CREATE TABLE dedicated_resource (
     resource_summary VARCHAR(3000),
     resource_skills VARCHAR(255),
     resource_rate DECIMAL,
-    minimum_duration resource_duration_enum,
+    minimum_duration varchar(255) check (minimum_duration in ('3Months', '6Months','1Year','Ongoing')),
     resource_image VARCHAR(255),
     resource_views INT DEFAULT 0,
+    is_draft BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
 );
+
 CREATE TABLE resource_skills (
     resource_id UUID,
     skill_id UUID,

@@ -1,9 +1,7 @@
 package com.guru.freelancerservice.controller;
 
 import com.guru.freelancerservice.commands.EditFreelancerAboutSectionCommand;
-import com.guru.freelancerservice.dtos.FreelancerAboutSectionDto;
-import com.guru.freelancerservice.dtos.FreelancerProfileDto;
-import com.guru.freelancerservice.dtos.PortfolioDto;
+import com.guru.freelancerservice.dtos.*;
 import com.guru.freelancerservice.models.Freelancer;
 import com.guru.freelancerservice.services.FreelancerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +99,43 @@ public class FreelancerController {
         return ResponseHandler.generateErrorResponse("Portfolio not found", HttpStatus.NOT_FOUND);
     }
 
+    @PatchMapping(path = "/portfolio/{portfolio_id}")
+    public ResponseEntity<Object> updatePortfolio(@PathVariable("portfolio_id") UUID portfolio_id,@RequestBody PortfolioDto portfolioDto) {
+        portfolioDto.setPortfolio_id(portfolio_id);
+        boolean updated =freelancerService.updatePortfolio(portfolioDto);
+        if(updated){
+            return ResponseHandler.generateGeneralResponse("Freelancer portfolio updated successfully", HttpStatus.OK);
+        }
+        return ResponseHandler.generateErrorResponse("Portfolio not found", HttpStatus.NOT_FOUND);
+    }
 
+    @PostMapping(path = "/service/{freelancer_id}")
+    public ResponseEntity<Object> addService(@PathVariable("freelancer_id") UUID freelancer_id,@RequestBody ServiceDto serviceDto) {
+        serviceDto.setFreelancer_id(freelancer_id);
+        return freelancerService.addService(serviceDto);
+    }
 
+    @PatchMapping(path = "/service/unpublish/{service_id}")
+    public ResponseEntity<Object> unpublishService(@PathVariable("service_id") UUID service_id) {
+        return freelancerService.unpublishService(service_id);
+    }
+
+    @DeleteMapping(path = "/service/{service_id}")
+    public ResponseEntity<Object> deleteService(@PathVariable("service_id") UUID service_id) {
+        return freelancerService.deleteService(service_id);
+    }
+
+    @PatchMapping(path = "/{freelancer_id}/service/{service_id}")
+    public ResponseEntity<Object> updateService(@PathVariable("service_id") UUID service_id,@PathVariable("freelancer_id") UUID freelancer_id,@RequestBody ServiceDto serviceDto) {
+        serviceDto.setService_id(service_id);
+        serviceDto.setFreelancer_id(freelancer_id);
+        return freelancerService.updateService(serviceDto);
+    }
+
+    @PostMapping(path = "/dedicated_resource/{freelancer_id}")
+    public ResponseEntity<Object> addDedicatedResource(@PathVariable("freelancer_id") UUID freelancer_id, @RequestBody ResourceDto resourceDto) {
+        resourceDto.setFreelancer_id(freelancer_id);
+        return freelancerService.addDedicatedResource(resourceDto);
+    }
 
 }

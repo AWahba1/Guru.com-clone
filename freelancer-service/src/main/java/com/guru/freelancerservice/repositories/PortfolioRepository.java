@@ -13,6 +13,8 @@ import java.util.UUID;
 
 public interface PortfolioRepository extends JpaRepository<Portfolio, UUID> {
 
+    @Query(value = "select portfolio_id from portfolios where freelancer_id=(?1)", nativeQuery = true)
+    List<UUID> getPortfolioIds(UUID freelancer_id);
 
     @Procedure(name="add_portfolio")
     void add_portfolio(UUID freelancer_id, String title, String cover_image_url, String[] attachments);
@@ -23,6 +25,8 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, UUID> {
     @Procedure(name="delete_portfolio")
     void delete_portfolio(UUID portfolio_id);
 
+    @Procedure(name="update_portfolio")
+    void update_portfolio(UUID portfolio_id, String title, String cover_image_url, String[] attachments);
 
 }
 
