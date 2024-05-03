@@ -8,11 +8,23 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="job-service" />
+        <module name="UserMS" />
+        <module name="MessagesMS" />
+        <module name="PaymentMS" />
+        <module name="FreelancerMS" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="FreelancerMS (1)" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="FreelancerMS" options="-parameters" />
+      <module name="FreelancerMS (1)" options="-parameters" />
+      <module name="MessagesMS" options="-parameters" />
+      <module name="PaymentMS" options="-parameters" />
+      <module name="UserMS" options="-parameters" />
       <module name="job-service" options="-parameters" />
     </option>
   </component>
