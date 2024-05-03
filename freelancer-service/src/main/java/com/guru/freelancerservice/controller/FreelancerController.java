@@ -3,6 +3,7 @@ package com.guru.freelancerservice.controller;
 import com.guru.freelancerservice.commands.EditFreelancerAboutSectionCommand;
 import com.guru.freelancerservice.dtos.*;
 import com.guru.freelancerservice.models.Freelancer;
+import com.guru.freelancerservice.models.Quote;
 import com.guru.freelancerservice.services.FreelancerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -138,4 +139,37 @@ public class FreelancerController {
         return freelancerService.addDedicatedResource(resourceDto);
     }
 
+    @PatchMapping(path = "/dedicated_resource/unpublish/{resource_id}")
+    public ResponseEntity<Object> unpublishDedicatedResource(@PathVariable("resource_id") UUID resource_id) {
+        return freelancerService.unpublishDedicatedResource(resource_id);
+    }
+
+    @DeleteMapping(path = "/dedicated_resource/{resource_id}")
+    public ResponseEntity<Object> deleteDedicatedResource(@PathVariable("resource_id") UUID resource_id) {
+        return freelancerService.deleteDedicatedResource(resource_id);
+    }
+
+    @PatchMapping(path = "/{freelancer_id}/dedicated_resource/{resource_id}")
+    public ResponseEntity<Object> updateDedicatedResource(@PathVariable("resource_id") UUID resource_id,@PathVariable("freelancer_id") UUID freelancer_id,@RequestBody ResourceDto resourceDto) {
+        resourceDto.setResource_id(resource_id);
+        resourceDto.setFreelancer_id(freelancer_id);
+        return freelancerService.updateDedicatedResource(resourceDto);
+    }
+
+    @PostMapping(path = "/{freelancer_id}/quote/{job_id}")
+    public ResponseEntity<Object> addQuote(@PathVariable("freelancer_id") UUID freelancer_id,@PathVariable("job_id") UUID job_id,@RequestBody Quote quote) {
+        quote.setFreelancer_id(freelancer_id);
+        quote.setJob_id(job_id);
+        return freelancerService.addQuote(quote);
+    }
+
+    @GetMapping(path = "/portfolio/{portfolio_id}")
+    public ResponseEntity<Object> getPortfolio(@PathVariable("portfolio_id") UUID portfolio_id) {
+        return freelancerService.getPortfolio(portfolio_id);
+    }
+
+    @GetMapping(path = "/portfolio/all/{freelancer_id}")
+    public ResponseEntity<Object> getAllFreelancerPortfolios(@PathVariable("freelancer_id") UUID freelancer_id) {
+        return freelancerService.getAllFreelancerPortfolios(freelancer_id);
+    }
 }

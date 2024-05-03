@@ -1,6 +1,7 @@
 package com.guru.freelancerservice.repositories;
 
 import com.guru.freelancerservice.dtos.FreelancerProfileDto;
+import com.guru.freelancerservice.dtos.PortfolioListViewDto;
 import com.guru.freelancerservice.models.Freelancer;
 import com.guru.freelancerservice.models.Portfolio;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,6 +29,11 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, UUID> {
     @Procedure(name="update_portfolio")
     void update_portfolio(UUID portfolio_id, String title, String cover_image_url, String[] attachments);
 
+//    @Query(value = "select * from get_portfolio(?1)", nativeQuery = true)
+//    List<Portfolio> getPortfolioByFreelancerId(UUID portfolio_id);
+
+    @Query(value = "select * from get_all_freelancer_portfolios(?1)", nativeQuery = true)
+    List<PortfolioListViewDto> getAllFreelancerPortfolios(UUID freelancer_id);
 }
 
 

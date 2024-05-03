@@ -1,10 +1,13 @@
 DROP TABLE IF EXISTS freelancers CASCADE;
+DROP TABLE IF EXISTS profile_views CASCADE;
 DROP TABLE IF EXISTS featured_team_member CASCADE;
 DROP TABLE IF EXISTS portfolios CASCADE;
 DROP TABLE IF EXISTS services CASCADE;
+DROP TABLE IF EXISTS service_views CASCADE;
 DROP TABLE IF EXISTS service_skills CASCADE;
 DROP TABLE IF EXISTS portfolio_service CASCADE;
 DROP TABLE IF EXISTS dedicated_resource CASCADE;
+DROP TABLE IF EXISTS resource_views CASCADE;
 DROP TABLE IF EXISTS resource_skills CASCADE;
 DROP TABLE IF EXISTS portfolio_resource CASCADE;
 DROP TABLE IF EXISTS quotes CASCADE;
@@ -43,13 +46,19 @@ CREATE TABLE freelancers (
     bio VARCHAR(3000),
     work_terms VARCHAR(2000),
     attachments TEXT[],
-    user_type varchar(255) check (user_type in ('INDIVIDUAL','COMPANY')),
+    user_type varchar(255) CHECK (user_type IN ('INDIVIDUAL','COMPANY')),
     website_link VARCHAR(255),
     facebook_link VARCHAR(255),
     linkedin_link VARCHAR(255),
     professional_video_link VARCHAR(255),
     company_history VARCHAR(3000),
     operating_since TIMESTAMP
+);
+
+CREATE TABLE profile_views(
+    freelancer_id UUID PRIMARY KEY,
+    viewer_id UUID,
+    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
 );
 
 CREATE TABLE featured_team_member (
@@ -73,6 +82,12 @@ CREATE TABLE portfolios (
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE  
 );
 
+CREATE TABLE portfolio_views(
+    portfolio_id UUID PRIMARY KEY,
+    viewer_id UUID,
+    FOREIGN KEY (portfolio_id) REFERENCES portfolios(portfolio_id) ON DELETE CASCADE
+);
+
 CREATE TABLE services (
     service_id UUID PRIMARY KEY,
     freelancer_id UUID,
@@ -85,6 +100,12 @@ CREATE TABLE services (
     service_views INT DEFAULT 0,
     is_draft BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE  
+);
+
+CREATE TABLE service_views(
+    service_id UUID PRIMARY KEY,
+    viewer_id UUID,
+    FOREIGN KEY (service_id) REFERENCES services(service_id) ON DELETE CASCADE
 );
 
 CREATE TABLE service_skills (
@@ -118,6 +139,12 @@ CREATE TABLE dedicated_resource (
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
 );
 
+CREATE TABLE resource_views(
+    resource_id UUID PRIMARY KEY,
+    viewer_id UUID,
+    FOREIGN KEY (resource_id) REFERENCES dedicated_resource(resource_id) ON DELETE CASCADE
+);
+
 CREATE TABLE resource_skills (
     resource_id UUID,
     skill_id UUID,
@@ -139,8 +166,8 @@ CREATE TABLE quotes (
     freelancer_id UUID,
     job_id UUID,
     proposal VARCHAR(3000),
-    quote_status quote_status_enum,
-    bids_used DECIMAL,
+    quote_status VARCHAR(255) DEFAULT 'AWAITING_ACCEPTANCE' CHECK (quote_status IN ('AWAITING_ACCEPTANCE', 'PRIORITY', 'ACCEPTED', 'ARCHIVED')),
+    bids_used int,
     bid_date TIMESTAMP,
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE,
     FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE

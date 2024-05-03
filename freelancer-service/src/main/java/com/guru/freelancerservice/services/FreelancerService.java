@@ -2,6 +2,7 @@ package com.guru.freelancerservice.services;
 
 import com.guru.freelancerservice.dtos.*;
 import com.guru.freelancerservice.models.Freelancer;
+import com.guru.freelancerservice.models.Quote;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -41,4 +42,11 @@ public interface FreelancerService {
     ResponseEntity<Object> deleteDedicatedResource(UUID resource_id);
 
     ResponseEntity<Object> updateDedicatedResource(ResourceDto resourceDto);
+
+    ResponseEntity<Object> addQuote(Quote quote);
+
+    ResponseEntity<Object> getPortfolio(UUID portfolio_id);
+
+    ResponseEntity<Object> getAllFreelancerPortfolios(UUID freelancer_id);
+
 }

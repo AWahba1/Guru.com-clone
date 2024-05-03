@@ -2,10 +2,7 @@ package com.guru.freelancerservice.services.implementation;
 
 import com.guru.freelancerservice.dtos.*;
 import com.guru.freelancerservice.models.*;
-import com.guru.freelancerservice.repositories.DedicatedResoruceRepository;
-import com.guru.freelancerservice.repositories.FreelancerRepository;
-import com.guru.freelancerservice.repositories.PortfolioRepository;
-import com.guru.freelancerservice.repositories.ServiceRepository;
+import com.guru.freelancerservice.repositories.*;
 import com.guru.freelancerservice.response.ResponseHandler;
 import com.guru.freelancerservice.services.FreelancerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +24,14 @@ public class FreelancerImplementation implements FreelancerService {
     private final PortfolioRepository portfolioRepository;
     private final ServiceRepository serviceRepository;
     private final DedicatedResoruceRepository dedicatedResourceRepository;
+    private final QuoteRepository quoteRepository;
     @Autowired
-    public FreelancerImplementation(FreelancerRepository freelancerRepository, PortfolioRepository portfolioRepository, ServiceRepository serviceRepository, DedicatedResoruceRepository dedicatedResourceRepository) {
+    public FreelancerImplementation(FreelancerRepository freelancerRepository, PortfolioRepository portfolioRepository, ServiceRepository serviceRepository, DedicatedResoruceRepository dedicatedResourceRepository, QuoteRepository quoteRepository) {
         this.freelancerRepository = freelancerRepository;
         this.portfolioRepository = portfolioRepository;
         this.serviceRepository = serviceRepository;
         this.dedicatedResourceRepository = dedicatedResourceRepository;
+        this.quoteRepository = quoteRepository;
     }
 
     @Override
@@ -190,7 +189,7 @@ public class FreelancerImplementation implements FreelancerService {
             return  ResponseHandler.generateErrorResponse("Service not found", HttpStatus.NOT_FOUND);
         }
         serviceRepository.delete_service(service_id);
-        return ResponseHandler.generateGeneralResponse("Freelancer service deleted successfully", HttpStatus.OK);
+        return ResponseHandler.generateGeneralResponse("Freelancer service deleted successfully", HttpStatus.NO_CONTENT);
     }
 
     @Override
@@ -200,8 +199,13 @@ public class FreelancerImplementation implements FreelancerService {
             return  ResponseHandler.generateErrorResponse("Service not found", HttpStatus.NOT_FOUND);
         }
         List<UUID> freelancerPortfolioIds = portfolioRepository.getPortfolioIds(serviceDto.getFreelancer_id());
-        if (!new HashSet<>(freelancerPortfolioIds).containsAll(List.of(serviceDto.getPortfolio_id()))) {
-            return  ResponseHandler.generateErrorResponse("Some or all of these portfolios don't belong to this freelancer", HttpStatus.BAD_REQUEST);
+        for(UUID portfolioId: serviceDto.getPortfolio_id()){
+            if (portfolioId.toString().matches("^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$")){
+                return  ResponseHandler.generateErrorResponse("Some or all of these portfolio ids are not valid uuids", HttpStatus.BAD_REQUEST);
+            }
+            if(!freelancerPortfolioIds.contains(portfolioId)){
+                return  ResponseHandler.generateErrorResponse("Some or all of these portfolios don't belong to this freelancer", HttpStatus.BAD_REQUEST);
+            }
         }
         serviceRepository.update_service(
                 serviceDto.getService_id(),
@@ -258,6 +262,67 @@ public class FreelancerImplementation implements FreelancerService {
 
     @Override
     public ResponseEntity<Object> updateDedicatedResource(ResourceDto resourceDto) {
-        return null;
+        DedicatedResource resource = dedicatedResourceRepository.findById(resourceDto.getResource_id()).orElse(null);
+        if (resource == null) {
+            return  ResponseHandler.generateErrorResponse("Resource not found", HttpStatus.NOT_FOUND);
+        }
+        List<UUID> freelancerPortfolioIds = portfolioRepository.getPortfolioIds(resourceDto.getFreelancer_id());
+        for (UUID portfolioId : resourceDto.getPortfolio_ids()) {
+            if (portfolioId.toString().matches("^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$")){
+                return  ResponseHandler.generateErrorResponse("Some or all of these portfolio ids are not valid uuids", HttpStatus.BAD_REQUEST);
+            }
+            if(!freelancerPortfolioIds.contains(portfolioId)){
+                return  ResponseHandler.generateErrorResponse("Some or all of these portfolios don't belong to this freelancer", HttpStatus.BAD_REQUEST);
+            }
+        }
+        dedicatedResourceRepository.update_dedicated_resource(
+                resourceDto.getResource_id(),
+                resourceDto.getResource_name(),
+                resourceDto.getResource_title(),
+                resourceDto.getResource_summary(),
+                resourceDto.getResource_skills(),
+                resourceDto.getResource_rate(),
+                resourceDto.getMinimum_duration(),
+                resourceDto.getResource_image(),
+                resourceDto.getPortfolio_ids()
+        );
+        return ResponseHandler.generateGeneralResponse("Freelancer dedicated resource updated successfully", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Object> addQuote(Quote quote) {
+        Freelancer freelancer = freelancerRepository.findById(quote.getFreelancer_id()).orElse(null);
+        if (freelancer == null) {
+            return  ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+        }
+        // message queue to check if the job exists
+        quoteRepository.add_quote(
+                quote.getFreelancer_id(),
+                quote.getJob_id(),
+                quote.getProposal(),
+                quote.getBids_used(),
+                quote.getBid_date()
+        );
+        return ResponseHandler.generateGeneralResponse("Freelancer quote added successfully", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Object> getPortfolio(UUID portfolio_id) {
+        //handle the portfolio view when integration with authentication
+        Portfolio portfolio = portfolioRepository.findById(portfolio_id).orElse(null);
+        if (portfolio == null) {
+            return  ResponseHandler.generateErrorResponse("Portfolio not found", HttpStatus.NOT_FOUND);
+        }
+        return ResponseHandler.generateGetResponse("Portfolio retrieved successfully", HttpStatus.OK, portfolio,1);
+    }
+
+    @Override
+    public ResponseEntity<Object> getAllFreelancerPortfolios(UUID freelancer_id) {
+        Freelancer freelancer = freelancerRepository.findById(freelancer_id).orElse(null);
+        List<PortfolioListViewDto> portfolios = portfolioRepository.getAllFreelancerPortfolios(freelancer_id);
+        if (freelancer == null) {
+            return  ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+        }
+        return ResponseHandler.generateGetResponse("Portfolios retrieved successfully", HttpStatus.OK, portfolios,portfolios.size());
     }
 }
