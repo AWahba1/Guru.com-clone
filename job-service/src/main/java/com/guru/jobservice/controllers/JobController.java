@@ -6,8 +6,6 @@ import com.guru.jobservice.services.JobService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-//import jakarta.validation.Valid;
 import java.util.UUID;
 
 @RestController
@@ -22,25 +20,27 @@ public class JobController {
     }
 
 
-    @PostMapping("/")
-    public void createJob(@Valid @RequestBody JobRequest jobRequestDTO) {
-        jobService.createJob(jobRequestDTO);
+    @GetMapping("/{id}")
+    public Job getJobById(@PathVariable UUID id) throws Exception {
+        return jobService.getJobById(id);
     }
 
-//    @PutMapping("/{jobId}")
-//    public void updateJob(@PathVariable UUID jobId, @RequestBody JobDTO jobDTO) {
-//        jobService.updateJob(jobId, jobDTO);
-//    }
-//
+    @PostMapping("/")
+    public void createJob(@Valid @RequestBody JobRequest jobRequest) {
+        jobService.createJob(jobRequest);
+    }
+
+    @PutMapping("/{id}")
+    public void updateJob(@PathVariable UUID id, @Valid @RequestBody JobRequest jobRequest) {
+        jobService.updateJob(id, jobRequest);
+    }
+
     @DeleteMapping("/{id}")
     public void deleteJob(@PathVariable UUID id) {
         jobService.deleteJobById(id);
     }
 
-//    @GetMapping("/{id}")
-//    public Job getJobById(@PathVariable UUID id) throws Exception {
-//        return jobService.getJobById(id);
-//    }
+
 
 //    @GetMapping("/")
 //    public List<JobDTO> getAllJobs(@RequestParam int page,

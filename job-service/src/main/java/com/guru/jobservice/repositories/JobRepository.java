@@ -32,21 +32,18 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
                    String[] _skills ,String[] _timezones, String[] _locations
     );
 
+    @Procedure("update_job")
+    void updateJob(UUID _jobId, String _title, String _description,
+                   UUID _category_id, UUID _subcategory_id, Boolean _featured,
+                   String _payment_type, String _fixed_price_range,
+                   String _duration, String _hours_per_week,
+                   BigDecimal _min_hourly_rate, BigDecimal _max_hourly_rate,
+                   Date _get_quotes_until, String _visibility, String status,
+                   String[] _skills ,String[] _timezones, String[] _locations
+    );
+
     @Procedure("delete_job_by_id")
     void deleteJobById(UUID jobId);
 }
-//    // No Params functions
-//    @Query(value = "select Gettotaljobs()", nativeQuery = true)
-//    int getTotalJobs(); // returns only a number
-//
-//    @Procedure(procedureName = "Gettotaljobs")
-//    int getTotalJobs2(); // returns only a number
-//
-//    // Parametric functions
-//    @Query(value = "select Gettotaljobs(?1)", nativeQuery = true)
-//    int getTotalJobsParam(int employeeId);
-//
-//    @Procedure(procedureName = "Gettotaljobs")
-//    int getTotalJobsParam2(int employeeId);
-//}
+
 

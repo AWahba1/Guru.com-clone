@@ -173,7 +173,7 @@ BEGIN
         WHERE j.id = _job_id;
 END;
 $$ LANGUAGE plpgsql;
--- select * from get_job_by_id('11111111-1111-1111-1111-111111111112');
+-- select * from get_job_by_id('11111111-1111-1111-1111-111111111111');
 
 -- call create_dummy_job();
 
@@ -260,10 +260,28 @@ $$ LANGUAGE plpgsql;
 -- );
 
 
+select oid::regprocedure, *
+FROM pg_proc
+WHERE proname = 'update_job';
+
+DO $$
+DECLARE
+    rec record;
+BEGIN
+    FOR rec IN
+        SELECT proname, oidvectortypes(proargtypes) AS arg_types
+        FROM pg_proc
+        WHERE proname = 'update_job'  -- procedure name
+    LOOP
+        EXECUTE format('DROP PROCEDURE IF EXISTS %I(%s);', rec.proname, rec.arg_types);
+    END LOOP;
+END$$;
 
 
 
-DROP PROCEDURE IF EXISTS update_job;
+
+
+-- DROP PROCEDURE IF EXISTS update_job;
 CREATE OR REPLACE PROCEDURE update_job(
     _job_id UUID,
     _title VARCHAR(255) DEFAULT NULL,
