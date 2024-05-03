@@ -1,3 +1,20 @@
+DO $$
+DECLARE
+    rec record;
+BEGIN
+    FOR rec IN
+        SELECT proname, oidvectortypes(proargtypes) AS arg_types
+        FROM pg_proc
+        WHERE proname = 'create_job'  -- procedure name
+    LOOP
+        EXECUTE format('DROP PROCEDURE IF EXISTS %I(%s);', rec.proname, rec.arg_types);
+    END LOOP;
+END$$;
+
+select oid::regprocedure, *
+FROM pg_proc
+WHERE proname = 'create_job';
+
 CREATE OR REPLACE PROCEDURE create_job(
     _title VARCHAR(255),
 	_description TEXT,
@@ -5,14 +22,14 @@ CREATE OR REPLACE PROCEDURE create_job(
     _subcategory_id UUID,
 	_featured BOOLEAN,
     _client_id UUID,
-    _payment_type payment_type,
-	_fixed_price_range price_range,
-    _duration job_duration,
-    _hours_per_week hours_per_week,
+    _payment_type VARCHAR(255),
+	_fixed_price_range VARCHAR(255),
+    _duration VARCHAR(255),
+    _hours_per_week VARCHAR(255),
 	_min_hourly_rate DECIMAL(10, 2),
     _max_hourly_rate DECIMAL(10, 2),
 	_get_quotes_until DATE,
-    _visibility job_visibility,
+    _visibility VARCHAR(255),
 	_skills text[],
 	_timezones text[],
 	_locations text[]
@@ -26,7 +43,7 @@ DECLARE
 	timezone_id UUID;
 BEGIN
     INSERT INTO jobs (id, title, description, category_id, subcategory_id, featured, client_id, payment_type, fixed_price_range, duration, hours_per_week, min_hourly_rate, max_hourly_rate, get_quotes_until, visibility, status)
-    VALUES (gen_random_uuid(), _title,  _description, _category_id, _subcategory_id, _featured, _client_id, _payment_type, _fixed_price_range, _duration, _hours_per_week, _min_hourly_rate, _max_hourly_rate, _get_quotes_until, _visibility, 'Under Review')
+    VALUES (gen_random_uuid(), _title,  _description, _category_id, _subcategory_id, _featured, _client_id, _payment_type::payment_type, _fixed_price_range::price_range, _duration::job_duration, _hours_per_week::hours_per_week, _min_hourly_rate, _max_hourly_rate, _get_quotes_until, _visibility::job_visibility, 'Under Review')
     RETURNING id INTO new_job_id;
 
     -- Insert skills related to job
@@ -156,7 +173,7 @@ BEGIN
         WHERE j.id = _job_id;
 END;
 $$ LANGUAGE plpgsql;
-select * from get_job_by_id('11111111-1111-1111-1111-111111111112');
+-- select * from get_job_by_id('11111111-1111-1111-1111-111111111112');
 
 -- call create_dummy_job();
 
@@ -227,26 +244,24 @@ $$ LANGUAGE plpgsql;
 
 
 
-SELECT *
-FROM get_all_jobs(
-    _page := 1,
-    _page_size := 10,
-	_status_list := ARRAY['Under Review', 'Open'],
-    _search_query := 'web development', -- Search query (case-insensitive)
-    _category_id := '77777777-7777-7777-7777-777777777777', -- Category ID (optional)
-    _subcategory_id := NULL, -- Subcategory ID (optional)
-    _skill_id := NULL, -- Skill ID (optional)
-    _featured_only := TRUE, -- Featured only (optional)
-    _payment_terms := NULL, -- Payment terms (optional)
-    _location_id := NULL, -- Location ID (optional)
-	_sort_order := 'oldest'
-);
+-- SELECT *
+-- FROM get_all_jobs(
+--     _page := 1,
+--     _page_size := 10,
+-- 	_status_list := ARRAY['Under Review', 'Open'],
+--     _search_query := 'web development', -- Search query (case-insensitive)
+--     _category_id := '77777777-7777-7777-7777-777777777777', -- Category ID (optional)
+--     _subcategory_id := NULL, -- Subcategory ID (optional)
+--     _skill_id := NULL, -- Skill ID (optional)
+--     _featured_only := TRUE, -- Featured only (optional)
+--     _payment_terms := NULL, -- Payment terms (optional)
+--     _location_id := NULL, -- Location ID (optional)
+-- 	_sort_order := 'oldest'
+-- );
 
 
 
--- SELECT oid::regprocedure
--- FROM pg_proc
--- WHERE proname = 'update_job';
+
 
 DROP PROCEDURE IF EXISTS update_job;
 CREATE OR REPLACE PROCEDURE update_job(
@@ -336,26 +351,26 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CALL update_job(
-    '11111111-1111-1111-1111-111111111111',  -- _job_id
-    'Updated Job Title',                     -- _title
-    'Updated job description goes here.',    -- _description
-    '77777777-7777-7777-7777-777777777777',  -- _category_id
-    '00000000-0000-0000-0000-000000000001',  -- _subcategory_id
-    TRUE,                                    -- _featured
-    'hourly',                                -- _payment_type
-    NULL,                                    -- _fixed_price_range
-    'Less than 1 month',                     -- _duration
-    '10-30',                                 -- _hours_per_week
-    15.00,                                   -- _min_hourly_rate
-    30.00,                                   -- _max_hourly_rate
-    '2024-05-20',                            -- _get_quotes_until
-    'Everyone',                              -- _visibility
-    'Closed',                                  -- _status
-    ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'ffffffff-ffff-ffff-ffff-ffffffffffff'],      --skills
-    ARRAY['44444444-4444-4444-4444-444444444444', '55555555-5555-5555-5555-555555555555'], --timezones
-    ARRAY['bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb']              --locations
-);
+-- CALL update_job(
+--     '11111111-1111-1111-1111-111111111111',  -- _job_id
+--     'Updated Job Title',                     -- _title
+--     'Updated job description goes here.',    -- _description
+--     '77777777-7777-7777-7777-777777777777',  -- _category_id
+--     '00000000-0000-0000-0000-000000000001',  -- _subcategory_id
+--     TRUE,                                    -- _featured
+--     'hourly',                                -- _payment_type
+--     NULL,                                    -- _fixed_price_range
+--     'Less than 1 month',                     -- _duration
+--     '10-30',                                 -- _hours_per_week
+--     15.00,                                   -- _min_hourly_rate
+--     30.00,                                   -- _max_hourly_rate
+--     '2024-05-20',                            -- _get_quotes_until
+--     'Everyone',                              -- _visibility
+--     'Closed',                                  -- _status
+--     ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'ffffffff-ffff-ffff-ffff-ffffffffffff'],      --skills
+--     ARRAY['44444444-4444-4444-4444-444444444444', '55555555-5555-5555-5555-555555555555'], --timezones
+--     ARRAY['bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb']              --locations
+-- );
 
 
 
@@ -382,4 +397,4 @@ BEGIN
 END;
 $$;
 
-Call delete_job_by_id('22222222-2222-2222-2222-222222222222');
+-- Call delete_job_by_id('22222222-2222-2222-2222-222222222222');

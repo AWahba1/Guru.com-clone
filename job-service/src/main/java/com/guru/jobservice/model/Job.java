@@ -1,5 +1,6 @@
 package com.guru.jobservice.model;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -38,8 +39,8 @@ public class Job {
     private String fixedPriceRange;
     private String duration;
     private String hoursPerWeek;
-    private double minHourlyRate;
-    private double maxHourlyRate;
+    private Double minHourlyRate;
+    private Double maxHourlyRate;
     private Date getQuotesUntil;
     private String visibility;
     private String status;
