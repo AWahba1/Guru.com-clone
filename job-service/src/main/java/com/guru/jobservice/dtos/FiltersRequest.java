@@ -3,6 +3,7 @@ package com.guru.jobservice.dtos;
 import com.guru.jobservice.enums.JobStatus;
 import com.guru.jobservice.enums.PaymentType;
 import com.guru.jobservice.enums.SortOrder;
+import com.guru.jobservice.validators.ValidUUIDList;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
@@ -40,8 +41,8 @@ public class FiltersRequest {
 
     PaymentType paymentType;
 
-    @com.guru.jobservice.validators.UUID
-    String locationId;
+    @ValidUUIDList
+    String[] locationIds;
 
     SortOrder sortOrder;
 
@@ -60,6 +61,9 @@ public class FiltersRequest {
 
     @com.guru.jobservice.validators.UUID
     String freelancerId;
+
+    @com.guru.jobservice.validators.UUID
+    String clientId;
 
     public String getPaymentType(){
         return paymentType != null ? paymentType.getValue() : null;
@@ -81,12 +85,16 @@ public class FiltersRequest {
         return skillId!=null ? UUID.fromString(skillId) : null;
     }
 
-    public UUID getLocationId(){
-        return locationId!=null ? UUID.fromString(locationId) : null;
-    }
+//    public UUID getLocationId(){
+//        return locationId!=null ? UUID.fromString(locationId) : null;
+//    }
 
     public UUID getFreelancerId(){
         return freelancerId!=null ? UUID.fromString(freelancerId) : null;
+    }
+
+    public UUID getClientId(){
+        return clientId!=null ? UUID.fromString(clientId) : null;
     }
 
     public String[] getStatusList()

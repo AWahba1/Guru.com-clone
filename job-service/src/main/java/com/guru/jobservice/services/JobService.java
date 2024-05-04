@@ -108,13 +108,24 @@ public class JobService {
         }
 
         List<Job> jobs = jobRepository.getAllJobs(
-                filtersRequest.getPage(), filtersRequest.getPageSize(),
+                filtersRequest.getPage(),
+                filtersRequest.getPageSize(),
                 filtersRequest.getSearchQuery(),
-                filtersRequest.getCategoryId(), filtersRequest.getSubcategoryId(), filtersRequest.getSkillId(),
+                filtersRequest.getCategoryId(),
+                filtersRequest.getSubcategoryId(),
+                filtersRequest.getSkillId(),
                 filtersRequest.getFeaturedOnly(),
-                filtersRequest.getPaymentType(), filtersRequest.getLocationId(), filtersRequest.getSortOrder(),
-                filtersRequest.getStatusList(), filtersRequest.getVerifiedOnlyClients(), filtersRequest.getMinEmployerSpend(),
-                filtersRequest.getMaxQuotesReceived(), filtersRequest.getNotViewed(), filtersRequest.getNotApplied(), filtersRequest.getFreelancerId()
+                filtersRequest.getPaymentType(),
+                filtersRequest.getLocationIds(),
+                filtersRequest.getSortOrder(),
+                filtersRequest.getStatusList(),
+                filtersRequest.getVerifiedOnlyClients(),
+                filtersRequest.getMinEmployerSpend(),
+                filtersRequest.getMaxQuotesReceived(),
+                filtersRequest.getNotViewed(),
+                filtersRequest.getNotApplied(),
+                filtersRequest.getFreelancerId(),
+                filtersRequest.getClientId()
         );
 
         int recordsCount = jobs.size();

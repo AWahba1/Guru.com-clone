@@ -179,7 +179,8 @@ END;
 $$ LANGUAGE plpgsql;
 -- select * from get_job_by_id('11111111-1111-1111-1111-111111111111');
 
--- call create_dummy_job();
+-- call create_dummy_job
+ 
 
 DROP FUNCTION IF EXISTS get_all_jobs;
 CREATE OR REPLACE FUNCTION get_all_jobs(
@@ -191,7 +192,7 @@ CREATE OR REPLACE FUNCTION get_all_jobs(
     _skill_id UUID DEFAULT NULL,
     _featured_only BOOLEAN DEFAULT NULL,
     _payment_terms VARCHAR(20) DEFAULT NULL,
-    _location_id UUID DEFAULT NULL,
+    _location_ids text[] DEFAULT NULL,
     _sort_order VARCHAR(20) DEFAULT 'newest',
     _status_list text[] DEFAULT ARRAY['Open', 'Under Review', 'Closed', 'Not Approved'],
 	_verified_only BOOLEAN DEFAULT NULL,
@@ -199,7 +200,8 @@ CREATE OR REPLACE FUNCTION get_all_jobs(
 	_max_quotes_received INT DEFAULT NULL,
     _not_viewed BOOLEAN DEFAULT NULL,
 	_not_applied BOOLEAN DEFAULT NULL,
-	_freelancer_id UUID DEFAULT NULL
+	_freelancer_id UUID DEFAULT NULL,
+	_client_id UUID DEFAULT NULL 
 )
 RETURNS TABLE (
     id UUID,
@@ -268,6 +270,7 @@ BEGIN
         WHERE 
             ( _verified_only IS NULL OR u.is_verified = _verified_only )
 			AND ( _min_employer_spend IS NULL OR u.amount_spent >= _min_employer_spend ) 
+			AND (_client_id IS NULL OR j.client_id = _client_id)
 			AND (_max_quotes_received IS NULL OR 
                   (SELECT COUNT(*) FROM quotes WHERE job_id = j.id) <= _max_quotes_received )
 			AND (
@@ -306,7 +309,7 @@ BEGIN
             AND (_skill_id IS NULL OR j.id IN (SELECT job_id FROM jobs_skills WHERE skill_id = _skill_id))
             AND (_featured_only IS NULL OR j.featured = _featured_only)
             AND (_payment_terms IS NULL OR j.payment_type::TEXT = _payment_terms)
-            AND (_location_id IS NULL OR j.id IN (SELECT job_id FROM jobs_locations WHERE location_id = _location_id))
+            AND (_location_ids IS NULL OR j.id IN (SELECT job_id FROM jobs_locations WHERE location_id::text = ANY(_location_ids))) -- Filter by locations
             AND (_status_list IS NULL OR j.status::TEXT = ANY(_status_list))
             AND (
                 CASE _sort_order
@@ -332,9 +335,11 @@ SELECT *
 FROM get_all_jobs(
     _page := 1,
     _page_size := 10,
+	_location_ids := ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'cccccccc-cccc-cccc-cccc-cccccccccccc']
+-- 	_client_id := '11111111-1111-1111-1111-111111111111'
 -- 	_not_viewed := false,
-	_not_applied := false,
-	_freelancer_id := '55555555-5555-5555-5555-555555555555'
+-- 	_not_applied := false,
+-- 	_freelancer_id := '55555555-5555-5555-5555-555555555555'
 --     _not_viewed BOOLEAN DEFAULT NULL
 -- 	_min_employer_spend := 100
 -- 	_verified_only := true,
