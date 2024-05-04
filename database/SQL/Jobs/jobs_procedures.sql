@@ -1,20 +1,23 @@
-DO $$
-DECLARE
-    rec record;
-BEGIN
-    FOR rec IN
-        SELECT proname, oidvectortypes(proargtypes) AS arg_types
-        FROM pg_proc
-        WHERE proname = 'create_job'  -- procedure name
-    LOOP
-        EXECUTE format('DROP PROCEDURE IF EXISTS %I(%s);', rec.proname, rec.arg_types);
-    END LOOP;
-END$$;
-
 select oid::regprocedure, *
 FROM pg_proc
 WHERE proname = 'create_job';
 
+CREATE OR REPLACE PROCEDURE drop_procedure(proc_name VARCHAR)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    rec record;
+BEGIN
+    FOR rec IN
+        SELECT proname
+        FROM pg_proc
+        WHERE proname = proc_name
+    LOOP
+        EXECUTE format('DROP PROCEDURE IF EXISTS %I;', rec.proname);
+    END LOOP;
+END$$;
+
+CALL drop_procedure('create_job');
 CREATE OR REPLACE PROCEDURE create_job(
     _title VARCHAR(255),
 	_description TEXT,
@@ -69,6 +72,7 @@ BEGIN
 END;
 $$;
 
+CALL drop_procedure('create_dummy_job');
 CREATE OR REPLACE PROCEDURE create_dummy_job(
 )
 LANGUAGE plpgsql
@@ -96,27 +100,27 @@ BEGIN
 END;
 $$;
 
-Call create_dummy_job();
+-- Call create_dummy_job();
 
-CALL create_job(
-    'Frontend Freelancer Needed',
-	'Looking for a skilled backend developer to create a responsive website.',
-    '77777777-7777-7777-7777-777777777777',
-    '00000000-0000-0000-0000-000000000001',
-	TRUE,
-    '11111111-1111-1111-1111-111111111111',
-	'fixed',
-	 'Under $250',
-    'Less than 1 month',
-    '10-30',
-	NULL,
-    NULL,
-	 '2024-05-01',
-    'Everyone',
-	ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc'],
- 	ARRAY['11111111-1111-1111-1111-111111111111'],
-	ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc']
-);
+-- CALL create_job(
+--     'Frontend Freelancer Needed',
+-- 	'Looking for a skilled backend developer to create a responsive website.',
+--     '77777777-7777-7777-7777-777777777777',
+--     '00000000-0000-0000-0000-000000000001',
+-- 	TRUE,
+--     '11111111-1111-1111-1111-111111111111',
+-- 	'fixed',
+-- 	 'Under $250',
+--     'Less than 1 month',
+--     '10-30',
+-- 	NULL,
+--     NULL,
+-- 	 '2024-05-01',
+--     'Everyone',
+-- 	ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc'],
+--  	ARRAY['11111111-1111-1111-1111-111111111111'],
+-- 	ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc']
+-- );
 
 
 DROP FUNCTION IF EXISTS get_job_by_id;
@@ -305,29 +309,7 @@ FROM get_all_jobs(
 
 );
 
-
-select oid::regprocedure, *
-FROM pg_proc
-WHERE proname = 'update_job';
-
-DO $$
-DECLARE
-    rec record;
-BEGIN
-    FOR rec IN
-        SELECT proname, oidvectortypes(proargtypes) AS arg_types
-        FROM pg_proc
-        WHERE proname = 'update_job'  -- procedure name
-    LOOP
-        EXECUTE format('DROP PROCEDURE IF EXISTS %I(%s);', rec.proname, rec.arg_types);
-    END LOOP;
-END$$;
-
-
-
-
-
--- DROP PROCEDURE IF EXISTS update_job;
+CALL drop_procedure('update_job');
 CREATE OR REPLACE PROCEDURE update_job(
     _job_id UUID,
     _title VARCHAR(255) DEFAULT NULL,
@@ -438,7 +420,7 @@ $$ LANGUAGE plpgsql;
 
 
 
-DROP FUNCTION IF EXISTS delete_job_by_id;
+CALL drop_procedure('delete_job_by_id');
 CREATE OR REPLACE PROCEDURE delete_job_by_id(
     _job_id UUID
 )

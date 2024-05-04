@@ -134,26 +134,7 @@ CREATE TABLE portfolio_resource (
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(portfolio_id) ON DELETE CASCADE    
 );
 
-CREATE TABLE quotes (
-    quote_id UUID PRIMARY KEY,
-    freelancer_id UUID,
-    job_id UUID,
-    proposal VARCHAR(3000),
-    quote_status quote_status_enum,
-    bids_used DECIMAL,
-    bid_date TIMESTAMP,
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE,
-    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
-);
 
-CREATE TABLE quote_templates (
-    quote_template_id UUID PRIMARY KEY,
-    freelancer_id UUID,
-    template_name VARCHAR(255),
-    template_description VARCHAR(10000),
-    attachments TEXT[],
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
-);
 
 CREATE TABLE job_watchlist (
     watchlist_id UUID PRIMARY KEY,
