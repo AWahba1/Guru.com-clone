@@ -188,8 +188,8 @@ CREATE OR REPLACE FUNCTION get_all_jobs(
     _featured_only BOOLEAN DEFAULT NULL,
     _payment_terms VARCHAR(20) DEFAULT NULL,
     _location_id UUID DEFAULT NULL,
-	_sort_order VARCHAR(20) DEFAULT 'newest',
-	_status_list text[] DEFAULT ARRAY['Open']
+    _sort_order VARCHAR(20) DEFAULT 'newest',
+    _status_list text[] DEFAULT ARRAY['Open', 'Under Review', 'Closed', 'Not Approved']
 )
 RETURNS TABLE (
     id UUID,
@@ -208,56 +208,95 @@ RETURNS TABLE (
     max_hourly_rate DECIMAL(10, 2),
     get_quotes_until DATE,
     visibility job_visibility,
-	status job_status
+    status job_status,
+    skills JSON,
+    locations JSON,
+    timezones JSON
 )
 AS $$
 BEGIN
-    RETURN QUERY 
-        SELECT *
-        FROM jobs
-		WHERE (_search_query IS NULL OR (jobs.title ILIKE '%' || _search_query || '%') OR (jobs.description ILIKE '%' || _search_query || '%'))
-		AND (_category_id IS NULL OR jobs.category_id = _category_id)
-		AND (_subcategory_id IS NULL OR jobs.subcategory_id = _subcategory_id)
-		AND (_skill_id IS NULL OR jobs.id IN (SELECT job_id FROM jobs_skills WHERE skill_id = _skill_id))
-		AND (_featured_only IS NULL OR jobs.featured = _featured_only)
-		AND (_payment_terms IS NULL OR jobs.payment_type::TEXT = _payment_terms)
-		AND (_location_id IS NULL OR jobs.id IN (SELECT job_id FROM jobs_locations WHERE location_id = _location_id))
-		AND (_status_list IS NULL OR jobs.status::TEXT = ANY(_status_list))
-		AND (
+   RETURN QUERY 
+        SELECT 
+            j.id, 
+            j.title, 
+            j.description, 
+            j.category_id, 
+            j.subcategory_id, 
+            j.featured, 
+            j.client_id, 
+            j.created_at, 
+            j.payment_type::payment_type, 
+            j.fixed_price_range::price_range, 
+            j.duration::job_duration, 
+            j.hours_per_week::hours_per_week, 
+            j.min_hourly_rate, 
+            j.max_hourly_rate, 
+            j.get_quotes_until, 
+            j.visibility::job_visibility, 
+            j.status::job_status,
+            (
+                SELECT JSON_AGG(json_build_object('id', sk.id, 'name', sk.name)) 
+                FROM jobs_skills js 
+                INNER JOIN skills sk ON js.skill_id = sk.id 
+                WHERE js.job_id = j.id
+            ) AS skills,
+            (
+                SELECT JSON_AGG(json_build_object('id', loc.id, 'name', loc.name)) 
+                FROM jobs_locations jl 
+                INNER JOIN locations loc ON jl.location_id = loc.id 
+                WHERE jl.job_id = j.id
+            ) AS locations,
+            (
+                SELECT JSON_AGG(json_build_object('id', tz.id, 'name', tz.name)) 
+                FROM jobs_timezones jt 
+                INNER JOIN timezones tz ON jt.timezone_id = tz.id 
+                WHERE jt.job_id = j.id
+            ) AS timezones
+        FROM 
+            jobs j
+        WHERE 
+            (_search_query IS NULL OR (j.title ILIKE '%' || _search_query || '%') OR (j.description ILIKE '%' || _search_query || '%'))
+            AND (_category_id IS NULL OR j.category_id = _category_id)
+            AND (_subcategory_id IS NULL OR j.subcategory_id = _subcategory_id)
+            AND (_skill_id IS NULL OR j.id IN (SELECT job_id FROM jobs_skills WHERE skill_id = _skill_id))
+            AND (_featured_only IS NULL OR j.featured = _featured_only)
+            AND (_payment_terms IS NULL OR j.payment_type::TEXT = _payment_terms)
+            AND (_location_id IS NULL OR j.id IN (SELECT job_id FROM jobs_locations WHERE location_id = _location_id))
+            AND (_status_list IS NULL OR j.status::TEXT = ANY(_status_list))
+            AND (
                 CASE _sort_order
-                    WHEN 'closing_soon' THEN jobs.get_quotes_until >= CURRENT_DATE
+                    WHEN 'closing_soon' THEN j.get_quotes_until >= CURRENT_DATE
                     ELSE TRUE
                 END
-              )
-		ORDER BY
+            )
+        ORDER BY
             CASE _sort_order
-                WHEN 'newest' THEN jobs.created_at  
+                WHEN 'newest' THEN j.created_at  
             END DESC,     
-			CASE _sort_order
-                WHEN 'oldest' THEN jobs.created_at  
-                WHEN 'closing_soon' THEN jobs.get_quotes_until         
-		END ASC
-		LIMIT _page_size
+            CASE _sort_order
+                WHEN 'oldest' THEN j.created_at  
+                WHEN 'closing_soon' THEN j.get_quotes_until         
+            END ASC
+        LIMIT _page_size
         OFFSET ((_page - 1) * _page_size);
 END;
 $$ LANGUAGE plpgsql;
 
 
+SELECT *
+FROM get_all_jobs(
+    _page := 1,
+    _page_size := 10,
+	_status_list := null
+    _search_query := 'web development', -- Search query (case-insensitive)
+    _category_id := '77777777-7777-7777-7777-777777777777', -- Category ID (optional)
+    _subcategory_id := NULL, -- Subcategory ID (optional)
+    _skill_id := NULL, -- Skill ID (optional)
+    _featured_only := TRUE, -- Featured only (optional)
+    _payment_terms := NULL, -- Payment terms (optional)
+    _location_id := NULL, -- Location ID (optional)
 
--- SELECT *
--- FROM get_all_jobs(
---     _page := 1,
---     _page_size := 10,
--- 	_status_list := ARRAY['Under Review', 'Open'],
---     _search_query := 'web development', -- Search query (case-insensitive)
---     _category_id := '77777777-7777-7777-7777-777777777777', -- Category ID (optional)
---     _subcategory_id := NULL, -- Subcategory ID (optional)
---     _skill_id := NULL, -- Skill ID (optional)
---     _featured_only := TRUE, -- Featured only (optional)
---     _payment_terms := NULL, -- Payment terms (optional)
---     _location_id := NULL, -- Location ID (optional)
--- 	_sort_order := 'oldest'
--- );
+);
 
 
 select oid::regprocedure, *

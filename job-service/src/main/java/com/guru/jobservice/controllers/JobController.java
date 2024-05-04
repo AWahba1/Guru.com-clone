@@ -1,11 +1,18 @@
 package com.guru.jobservice.controllers;
 
 import com.guru.jobservice.dtos.JobRequest;
+import com.guru.jobservice.dtos.PaginatedResponse;
+import com.guru.jobservice.enums.JobStatus;
+import com.guru.jobservice.enums.PaymentType;
+import com.guru.jobservice.enums.SortOrder;
 import com.guru.jobservice.model.Job;
 import com.guru.jobservice.services.JobService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -40,23 +47,39 @@ public class JobController {
         jobService.deleteJobById(id);
     }
 
+    @GetMapping("/")
+    public PaginatedResponse<Job> getAllJobs(
+            @RequestParam(defaultValue = "1")
+            @PositiveOrZero(message = "Page number must be positive or zero")
+            int page,
 
+            @RequestParam(defaultValue = "10")
+            @PositiveOrZero(message = "Page size must be positive or zero")
+            int pageSize,
 
-//    @GetMapping("/")
-//    public List<JobDTO> getAllJobs(@RequestParam int page,
-//                                   @RequestParam int pageSize,
-//                                   @RequestParam int jobId,
-//                                   @RequestParam(required = false) String searchQuery,
-//                                   @RequestParam(required = false) UUID categoryId,
-//                                   @RequestParam(required = false) UUID subcategoryId,
-//                                   @RequestParam(required = false) UUID skillId,
-//                                   @RequestParam(required = false) Boolean featuredOnly,
-//                                   @RequestParam(required = false) String paymentTerms,
-//                                   @RequestParam(required = false) UUID locationId,
-//                                   @RequestParam(defaultValue = "newest") String sortOrder,
-//                                   @RequestParam(required = false) List<String> statusList) {
-//        return jobService.getAllJobs(page, pageSize, searchQuery, categoryId, subcategoryId, skillId,
-//                featuredOnly, paymentTerms, locationId, sortOrder, statusList);
-//    }
+            @RequestParam(required = false) String searchQuery,
+
+            @RequestParam(required = false)
+            @com.guru.jobservice.validators.UUID
+            String categoryId,
+            @RequestParam(required = false)
+            @com.guru.jobservice.validators.UUID
+            String subcategoryId,
+            @RequestParam(required = false)
+            @com.guru.jobservice.validators.UUID
+            String skillId,
+            @RequestParam(required = false) Boolean featuredOnly,
+            @RequestParam(required = false) PaymentType paymentType,
+
+            @RequestParam(required = false)
+            @com.guru.jobservice.validators.UUID
+            String locationId,
+
+            @RequestParam(required = false) SortOrder sortOrder,
+            @RequestParam(required = false) JobStatus[] statusList
+    ) {
+        return jobService.getAllJobs(page, pageSize, searchQuery, categoryId, subcategoryId, skillId,
+                featuredOnly, paymentType, locationId, sortOrder, statusList);
+    }
 }
 

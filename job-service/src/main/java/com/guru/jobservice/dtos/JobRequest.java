@@ -1,7 +1,6 @@
 package com.guru.jobservice.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.guru.jobservice.enums.*;
 import com.guru.jobservice.validators.ValidUUIDList;
 import jakarta.validation.constraints.FutureOrPresent;

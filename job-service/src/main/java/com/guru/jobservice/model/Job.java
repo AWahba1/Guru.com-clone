@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.io.Serializable;
-import java.sql.Time;
 import java.util.*;
 
 
@@ -44,10 +42,14 @@ public class Job {
     private Date getQuotesUntil;
     private String visibility;
     private String status;
+
+    private Date createdAt;
     @JdbcTypeCode(SqlTypes.JSON)
     private List<Skill> skills;
+
     @JdbcTypeCode(SqlTypes.JSON)
     private List<Timezone> timezones;
+
     @JdbcTypeCode(SqlTypes.JSON)
     private List<Location> locations;
 

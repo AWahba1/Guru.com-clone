@@ -1,13 +1,24 @@
 package com.guru.jobservice.services;
 
 import com.guru.jobservice.dtos.JobRequest;
+import com.guru.jobservice.dtos.PaginatedResponse;
+import com.guru.jobservice.enums.JobStatus;
+import com.guru.jobservice.enums.PaymentType;
+import com.guru.jobservice.enums.SortOrder;
 import com.guru.jobservice.exceptions.ResourceNotFoundException;
 import com.guru.jobservice.model.Job;
 import com.guru.jobservice.repositories.JobRepository;
 import com.guru.jobservice.validators.JobRequestValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class JobService {
@@ -92,12 +103,30 @@ public class JobService {
     }
 
 
+    public PaginatedResponse<Job> getAllJobs(int page, int pageSize, String searchQuery, String categoryId,
+                                             String subcategoryId, String skillId, Boolean featuredOnly,
+                                             PaymentType paymentType, String locationId, SortOrder sortOrder,
+                                             JobStatus[] statusList) {
 
-//    public List<JobDTO> getAllJobs(int page, int pageSize, String searchQuery, UUID categoryId,
-//                                   UUID subcategoryId, UUID skillId, Boolean featuredOnly,
-//                                   String paymentTerms, UUID locationId, String sortOrder,
-//                                   List<String> statusList) {
-//        return jobRepository.getAllJobs(page, pageSize, searchQuery, categoryId, subcategoryId,
-//                skillId, featuredOnly, paymentTerms, locationId, sortOrder, statusList);
-//    }
+        String typeOfPayment  = paymentType != null ? paymentType.getValue() : null;
+        String sortingOrder  = sortOrder != null ? sortOrder.getValue() : SortOrder.NEWEST.getValue();
+
+        UUID categoryUUID = categoryId!=null ? UUID.fromString(categoryId) : null;
+        UUID subcategoryUUID = subcategoryId!=null ? UUID.fromString(subcategoryId) : null;
+        UUID skillUUID = skillId!=null ? UUID.fromString(skillId) : null;
+        UUID locationUUID = locationId!=null ? UUID.fromString(locationId) : null;
+
+        String[] statuses = (statusList==null || statusList.length==0)? null : Stream.of(statusList).map(JobStatus::getValue).toArray(String[]::new);
+        List<Job> jobs = jobRepository.getAllJobs(
+                page, pageSize,
+                searchQuery,
+                categoryUUID, subcategoryUUID, skillUUID,
+                featuredOnly,
+                typeOfPayment, locationUUID, sortingOrder,
+                statuses
+        );
+
+        int recordsCount = jobs.size();
+        return new PaginatedResponse<Job>(jobs, page, recordsCount);
+    }
 }
