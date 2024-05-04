@@ -13,7 +13,7 @@ CREATE TABLE conversations (
 
 CREATE TABLE messages (
     conversation_id UUID,
-    message_id TIMEUUID,
+    message_id UUID,
     sender_id UUID,
     sender_name TEXT,
     receiver_id UUID,
