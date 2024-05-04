@@ -29,7 +29,6 @@ public class CassandraSpringApplication {
 	}
 
 
-
 	@GetMapping("/lists")
 	public List<Message> getAll() {
 		return repository.findAll();
