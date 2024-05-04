@@ -189,7 +189,9 @@ CREATE OR REPLACE FUNCTION get_all_jobs(
     _payment_terms VARCHAR(20) DEFAULT NULL,
     _location_id UUID DEFAULT NULL,
     _sort_order VARCHAR(20) DEFAULT 'newest',
-    _status_list text[] DEFAULT ARRAY['Open', 'Under Review', 'Closed', 'Not Approved']
+    _status_list text[] DEFAULT ARRAY['Open', 'Under Review', 'Closed', 'Not Approved'],
+	_verified_only BOOLEAN DEFAULT NULL,
+	_min_employer_spend INT DEFAULT NULL
 )
 RETURNS TABLE (
     id UUID,
@@ -254,8 +256,11 @@ BEGIN
             ) AS timezones
         FROM 
             jobs j
+        INNER JOIN users u ON j.client_id = u.id
         WHERE 
-            (_search_query IS NULL OR (j.title ILIKE '%' || _search_query || '%') OR (j.description ILIKE '%' || _search_query || '%'))
+            ( _verified_only IS NULL OR u.is_verified = _verified_only )
+			AND ( _min_employer_spend IS NULL OR u.amount_spent >= _min_employer_spend ) 
+            AND (_search_query IS NULL OR (j.title ILIKE '%' || _search_query || '%') OR (j.description ILIKE '%' || _search_query || '%'))
             AND (_category_id IS NULL OR j.category_id = _category_id)
             AND (_subcategory_id IS NULL OR j.subcategory_id = _subcategory_id)
             AND (_skill_id IS NULL OR j.id IN (SELECT job_id FROM jobs_skills WHERE skill_id = _skill_id))
@@ -287,14 +292,16 @@ SELECT *
 FROM get_all_jobs(
     _page := 1,
     _page_size := 10,
-	_status_list := null
-    _search_query := 'web development', -- Search query (case-insensitive)
-    _category_id := '77777777-7777-7777-7777-777777777777', -- Category ID (optional)
-    _subcategory_id := NULL, -- Subcategory ID (optional)
-    _skill_id := NULL, -- Skill ID (optional)
-    _featured_only := TRUE, -- Featured only (optional)
-    _payment_terms := NULL, -- Payment terms (optional)
-    _location_id := NULL, -- Location ID (optional)
+	_min_employer_spend := 100
+-- 	_verified_only := true,
+-- 	_status_list := null
+--     _search_query := 'web development', -- Search query (case-insensitive)
+--     _category_id := '77777777-7777-7777-7777-777777777777', -- Category ID (optional)
+--     _subcategory_id := NULL, -- Subcategory ID (optional)
+--     _skill_id := NULL, -- Skill ID (optional)
+--     _featured_only := TRUE, -- Featured only (optional)
+--     _payment_terms := NULL, -- Payment terms (optional)
+--     _location_id := NULL, -- Location ID (optional)
 
 );
 

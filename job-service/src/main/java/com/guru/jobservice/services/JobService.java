@@ -106,7 +106,7 @@ public class JobService {
     public PaginatedResponse<Job> getAllJobs(int page, int pageSize, String searchQuery, String categoryId,
                                              String subcategoryId, String skillId, Boolean featuredOnly,
                                              PaymentType paymentType, String locationId, SortOrder sortOrder,
-                                             JobStatus[] statusList) {
+                                             JobStatus[] statusList, Boolean verifiedOnlyClients, Integer minEmployerSpend) {
 
         String typeOfPayment  = paymentType != null ? paymentType.getValue() : null;
         String sortingOrder  = sortOrder != null ? sortOrder.getValue() : SortOrder.NEWEST.getValue();
@@ -123,7 +123,7 @@ public class JobService {
                 categoryUUID, subcategoryUUID, skillUUID,
                 featuredOnly,
                 typeOfPayment, locationUUID, sortingOrder,
-                statuses
+                statuses, verifiedOnlyClients, minEmployerSpend
         );
 
         int recordsCount = jobs.size();

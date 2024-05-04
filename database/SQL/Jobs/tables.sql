@@ -7,8 +7,10 @@ BEGIN
 END $$;
 
 	-- stubs, do not use & remove after integrating all schemas
-	CREATE TABLE clients (
-		id uuid PRIMARY KEY
+	CREATE TABLE users (
+		id uuid PRIMARY KEY,
+		is_verified BOOLEAN,
+		amount_spent DECIMAL(10,2)
 	);
 
 	CREATE TABLE freelancers (
@@ -117,7 +119,7 @@ END $$;
 		category_id UUID references categories(id) ON DELETE CASCADE,
 		subcategory_id UUID references subcategories(id) ON DELETE CASCADE,
 		featured BOOLEAN DEFAULT FALSE,
-		client_id UUID references clients(id) ON DELETE CASCADE,  -- check foreign key on which table
+		client_id UUID references users(id) ON DELETE CASCADE,  -- check foreign key on which table
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		payment_type payment_type DEFAULT NULL,
 		fixed_price_range price_range,
@@ -159,10 +161,10 @@ END $$;
 	
 -- Populate tables with sample data
 -- Users
-INSERT INTO clients (id) VALUES
-    ('11111111-1111-1111-1111-111111111111'),
-    ('22222222-2222-2222-2222-222222222222'),
-    ('33333333-3333-3333-3333-333333333333');
+INSERT INTO users (id, is_verified, amount_spent) VALUES
+    ('11111111-1111-1111-1111-111111111111', true, 100),
+    ('22222222-2222-2222-2222-222222222222', false, 500.55),
+    ('33333333-3333-3333-3333-333333333333', false, 4000);
 
 -- Freelancers
 INSERT INTO freelancers (id) VALUES
@@ -296,7 +298,7 @@ INSERT INTO jobs_timezones (job_id, timezone_id) VALUES
 
 	-- CREATE TABLE employer_spend (
 	--     id UUID PRIMARY KEY,
-	--     client_id UUID REFERENCES clients(id),
+	--     client_id UUID REFERENCES users(id),
 	--     spend_amount DECIMAL(10, 2) DEFAULT 0,
 	--     transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	-- );

@@ -42,12 +42,13 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
                    String[] _skills ,String[] _timezones, String[] _locations
     );
 
-    @Query(value = "select * from get_all_jobs(?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)", nativeQuery = true)
+    @Query(value = "select * from get_all_jobs(?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)", nativeQuery = true)
     List<Job> getAllJobs(
                         int _page, int _page_size,
                          String _search_query,
                          UUID _category_id, UUID _subcategory_id, UUID _skill_id, Boolean _featured_only,
-                         String _payment_terms, UUID _location_id, String _sort_order, String[] _status_list
+                         String _payment_terms, UUID _location_id, String _sort_order, String[] _status_list,
+                         Boolean _verified_only, Integer _min_employer_spend
     );
     @Procedure("delete_job_by_id")
     void deleteJobById(UUID jobId);

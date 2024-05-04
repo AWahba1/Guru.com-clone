@@ -8,6 +8,7 @@ import com.guru.jobservice.enums.SortOrder;
 import com.guru.jobservice.model.Job;
 import com.guru.jobservice.services.JobService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -76,10 +77,14 @@ public class JobController {
             String locationId,
 
             @RequestParam(required = false) SortOrder sortOrder,
-            @RequestParam(required = false) JobStatus[] statusList
+            @RequestParam(required = false) JobStatus[] statusList,
+            @RequestParam(required = false) Boolean verifiedOnlyClients,
+            @RequestParam(required = false)
+            @Min(0)
+            Integer minEmployerSpend
     ) {
         return jobService.getAllJobs(page, pageSize, searchQuery, categoryId, subcategoryId, skillId,
-                featuredOnly, paymentType, locationId, sortOrder, statusList);
+                featuredOnly, paymentType, locationId, sortOrder, statusList, verifiedOnlyClients, minEmployerSpend);
     }
 }
 
