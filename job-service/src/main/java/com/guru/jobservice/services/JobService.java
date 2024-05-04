@@ -1,20 +1,22 @@
 package com.guru.jobservice.services;
 
-//import com.guru.jobservice.dtos.JobDTO;
-//import com.guru.jobservice.repositories.JobRepository;
-//import com.guru.jobservice.dtos.JobResponse;
-import com.guru.jobservice.dtos.JobRequest;
+import com.guru.jobservice.dtos.CreateUpdateRequest;
+import com.guru.jobservice.dtos.FiltersRequest;
+import com.guru.jobservice.dtos.PaginatedResponse;
+import com.guru.jobservice.enums.JobStatus;
 import com.guru.jobservice.enums.PaymentType;
+import com.guru.jobservice.enums.SortOrder;
 import com.guru.jobservice.exceptions.ResourceNotFoundException;
 import com.guru.jobservice.exceptions.ValidationException;
 import com.guru.jobservice.model.Job;
 import com.guru.jobservice.repositories.JobRepository;
+import com.guru.jobservice.validators.JobRequestValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Service
 public class JobService {
@@ -27,72 +29,6 @@ public class JobService {
     }
 
 
-    public void createJob(JobRequest jobRequest) {
-
-        if (jobRequest.getPaymentType().equals(PaymentType.FIXED.getValue()))
-        {
-            if (jobRequest.getFixedPriceRange() == null)
-            {
-                throw new ValidationException("A price range must be set if payment type is fixed");
-            }
-
-            if(jobRequest.getDuration()!=null || jobRequest.getHoursPerWeek()!=null || jobRequest.getMinHourlyRate()!=null || jobRequest.getMaxHourlyRate()!=null);
-            {
-                throw new ValidationException("Job Duration, Hours per week, min and max hourly rates should be null");
-            }
-        }
-
-        if (jobRequest.getPaymentType().equals(PaymentType.HOURLY.getValue()))
-        {
-            if (jobRequest.getFixedPriceRange() != null)
-            {
-                throw new ValidationException("A price range must be null if payment type is hourly");
-            }
-
-            if(jobRequest.getDuration()==null || jobRequest.getHoursPerWeek()==null || jobRequest.getMinHourlyRate()==null || jobRequest.getMaxHourlyRate()==null);
-            {
-                throw new ValidationException("Job Duration, Hours per week, min and max hourly rates should be SET if payment type is hourly");
-            }
-        }
-
-        if (jobRequest.getMinHourlyRate()!= null && jobRequest.getMaxHourlyRate()!= null )
-        {
-            if (jobRequest.getMinHourlyRate().compareTo(jobRequest.getMaxHourlyRate()) > 0)
-                throw new ValidationException("Minimum Hourly Rate cannot be greater than max Hourly Rate");
-        }
-        jobRepository.createJob(
-                jobRequest.getTitle(),
-                jobRequest.getDescription(),
-                jobRequest.getCategoryId(),
-                jobRequest.getSubcategoryId(),
-                jobRequest.getIsFeatured(),
-                jobRequest.getClientId(),
-                jobRequest.getPaymentType(),
-                jobRequest.getFixedPriceRange(),
-                jobRequest.getDuration(),
-                jobRequest.getHoursPerWeek(),
-                jobRequest.getMinHourlyRate(),
-                jobRequest.getMaxHourlyRate(),
-                jobRequest.getGetQuotesUntil(),
-                jobRequest.getVisibility(),
-                jobRequest.getSkills(),
-                jobRequest.getTimezones(),
-                jobRequest.getLocations()
-        );
-}
-
-//    public void updateJob(UUID jobId, JobDTO jobDTO) {
-//        //jobRepository.updateJob(jobId, jobDTO);
-//    }
-
-    public void deleteJobById(UUID jobId) {
-        Job job = jobRepository.getJobById(jobId);
-        if (job == null) {
-            throw new ResourceNotFoundException();
-        }
-        jobRepository.deleteJobById(jobId);
-    }
-
     public Job getJobById(UUID jobId){
         Job job = jobRepository.getJobById(jobId);
         if (job == null) {
@@ -102,11 +38,97 @@ public class JobService {
 
     }
 
-//    public List<JobDTO> getAllJobs(int page, int pageSize, String searchQuery, UUID categoryId,
-//                                   UUID subcategoryId, UUID skillId, Boolean featuredOnly,
-//                                   String paymentTerms, UUID locationId, String sortOrder,
-//                                   List<String> statusList) {
-//        return jobRepository.getAllJobs(page, pageSize, searchQuery, categoryId, subcategoryId,
-//                skillId, featuredOnly, paymentTerms, locationId, sortOrder, statusList);
-//    }
+    public void createJob(CreateUpdateRequest createUpdateRequest) {
+
+        JobRequestValidator.validatePaymentType(createUpdateRequest);
+
+        jobRepository.createJob(
+                createUpdateRequest.getTitle(),
+                createUpdateRequest.getDescription(),
+                createUpdateRequest.getCategoryId(),
+                createUpdateRequest.getSubcategoryId(),
+                createUpdateRequest.getIsFeatured(),
+                createUpdateRequest.getClientId(),
+                createUpdateRequest.getPaymentType(),
+                createUpdateRequest.getFixedPriceRange(),
+                createUpdateRequest.getDuration(),
+                createUpdateRequest.getHoursPerWeek(),
+                createUpdateRequest.getMinHourlyRate(),
+                createUpdateRequest.getMaxHourlyRate(),
+                createUpdateRequest.getGetQuotesUntil(),
+                createUpdateRequest.getVisibility(),
+                createUpdateRequest.getSkills(),
+                createUpdateRequest.getTimezones(),
+                createUpdateRequest.getLocations()
+        );
+}
+
+    public void updateJob(UUID jobId, CreateUpdateRequest createUpdateRequest) {
+
+        Job job = jobRepository.getJobById(jobId);
+        if (job == null) {
+            throw new ResourceNotFoundException();
+        }
+        JobRequestValidator.validatePaymentType(createUpdateRequest);
+        jobRepository.updateJob(
+                jobId,
+                createUpdateRequest.getTitle(),
+                createUpdateRequest.getDescription(),
+                createUpdateRequest.getCategoryId(),
+                createUpdateRequest.getSubcategoryId(),
+                createUpdateRequest.getIsFeatured(),
+                createUpdateRequest.getPaymentType(),
+                createUpdateRequest.getFixedPriceRange(),
+                createUpdateRequest.getDuration(),
+                createUpdateRequest.getHoursPerWeek(),
+                createUpdateRequest.getMinHourlyRate(),
+                createUpdateRequest.getMaxHourlyRate(),
+                createUpdateRequest.getGetQuotesUntil(),
+                createUpdateRequest.getVisibility(),
+                createUpdateRequest.getStatus(),
+                createUpdateRequest.getSkills(),
+                createUpdateRequest.getTimezones(),
+                createUpdateRequest.getLocations()
+        );
+    }
+
+    public void deleteJobById(UUID jobId) {
+        Job job = jobRepository.getJobById(jobId);
+        if (job == null) {
+            throw new ResourceNotFoundException();
+        }
+        jobRepository.deleteJobById(jobId);
+    }
+
+
+    public PaginatedResponse<Job> getAllJobs(FiltersRequest filtersRequest) {
+
+        if ((filtersRequest.getNotApplied() != null || filtersRequest.getNotViewed() != null) && filtersRequest.getFreelancerId() == null) {
+            throw new ValidationException("Freelancer ID must be set if not applied or viewed filters are applied");
+        }
+
+        List<Job> jobs = jobRepository.getAllJobs(
+                filtersRequest.getPage(),
+                filtersRequest.getPageSize(),
+                filtersRequest.getSearchQuery(),
+                filtersRequest.getCategoryId(),
+                filtersRequest.getSubcategoryId(),
+                filtersRequest.getSkillId(),
+                filtersRequest.getFeaturedOnly(),
+                filtersRequest.getPaymentType(),
+                filtersRequest.getLocationIds(),
+                filtersRequest.getSortOrder(),
+                filtersRequest.getStatusList(),
+                filtersRequest.getVerifiedOnlyClients(),
+                filtersRequest.getMinEmployerSpend(),
+                filtersRequest.getMaxQuotesReceived(),
+                filtersRequest.getNotViewed(),
+                filtersRequest.getNotApplied(),
+                filtersRequest.getFreelancerId(),
+                filtersRequest.getClientId()
+        );
+
+        int recordsCount = jobs.size();
+        return new PaginatedResponse<Job>(jobs, filtersRequest.getPage(), recordsCount);
+    }
 }

@@ -7,14 +7,15 @@ BEGIN
 END $$;
 
 	-- stubs, do not use & remove after integrating all schemas
-	CREATE TABLE clients (
-		id uuid PRIMARY KEY
+	CREATE TABLE users (
+		id uuid PRIMARY KEY,
+		is_verified BOOLEAN,
+		amount_spent DECIMAL(10,2)
 	);
 
 	CREATE TABLE freelancers (
 		id uuid PRIMARY KEY
 	);
-
 
 	-- Payment Type Enum
 	DO $$BEGIN
@@ -81,6 +82,9 @@ END $$;
 	);
 	END IF;
 	END$$;
+	
+	DROP TYPE IF EXISTS quote_status_enum CASCADE;
+	CREATE TYPE quote_status_enum AS ENUM ('AWAITING_ACCEPTANCE', 'PRIORITY', 'ACCEPTED', 'ARCHIVED');
 
 	CREATE TABLE categories (
 		id UUID PRIMARY KEY,
@@ -117,7 +121,7 @@ END $$;
 		category_id UUID references categories(id) ON DELETE CASCADE,
 		subcategory_id UUID references subcategories(id) ON DELETE CASCADE,
 		featured BOOLEAN DEFAULT FALSE,
-		client_id UUID references clients(id) ON DELETE CASCADE,  -- check foreign key on which table
+		client_id UUID references users(id) ON DELETE CASCADE,  -- check foreign key on which table
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		payment_type payment_type DEFAULT NULL,
 		fixed_price_range price_range,
@@ -147,22 +151,40 @@ END $$;
 		timezone_id UUID REFERENCES timezones(id) ON DELETE CASCADE,
 		PRIMARY KEY (job_id, timezone_id)
 	);
+	
+CREATE TABLE quotes (
+	id UUID PRIMARY KEY,
+	freelancer_id UUID REFERENCES freelancers(id) ON DELETE CASCADE,
+	job_id UUID REFERENCES jobs(id),
+	proposal text,
+	quote_status quote_status_enum,
+	bids_used DECIMAL,
+	bid_date TIMESTAMP
+);
 
+CREATE TABLE quote_templates (
+    quote_template_id UUID PRIMARY KEY,
+    freelancer_id UUID,
+    template_name VARCHAR(255),
+    template_description VARCHAR(10000),
+    attachments TEXT[],
+    FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE
+);
 
--- 	CREATE TABLE job_freelancer (
--- 		job_id UUID REFERENCES jobs(id),
--- 		freelancer_id UUID REFERENCES freelancers(id), -- check foreign key on which table
--- 		applied BOOLEAN DEFAULT FALSE,
--- 		viewed BOOLEAN DEFAULT FALSE,
--- 		PRIMARY KEY (job_id, freelancer_id)
--- 	);
+CREATE TABLE job_freelancer_view (
+    job_id UUID REFERENCES jobs(id) ON DELETE CASCADE,
+    freelancer_id UUID REFERENCES freelancers(id) ON DELETE CASCADE,
+    viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (job_id, freelancer_id)
+);
 	
 -- Populate tables with sample data
 -- Users
-INSERT INTO clients (id) VALUES
-    ('11111111-1111-1111-1111-111111111111'),
-    ('22222222-2222-2222-2222-222222222222'),
-    ('33333333-3333-3333-3333-333333333333');
+	
+INSERT INTO users (id, is_verified, amount_spent) VALUES
+    ('11111111-1111-1111-1111-111111111111', true, 100),
+    ('22222222-2222-2222-2222-222222222222', false, 500.55),
+    ('33333333-3333-3333-3333-333333333333', false, 4000);
 
 -- Freelancers
 INSERT INTO freelancers (id) VALUES
@@ -283,26 +305,18 @@ INSERT INTO jobs_timezones (job_id, timezone_id) VALUES
     ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222'),
     ('22222222-2222-2222-2222-222222222222', '22222222-2222-2222-2222-222222222222');
 
-
-	
-
--- 	CREATE TABLE quotes ( -- handle the different types of quotes
--- 		id UUID PRIMARY KEY,
--- 		job_id UUID REFERENCES jobs(id),
--- 		freelancer_id UUID REFERENCES freelancers(id),
--- 		proposal TEXT,
--- 		submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
--- 	);
-
-	-- CREATE TABLE employer_spend (
-	--     id UUID PRIMARY KEY,
-	--     client_id UUID REFERENCES clients(id),
-	--     spend_amount DECIMAL(10, 2) DEFAULT 0,
-	--     transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	-- );
+INSERT INTO quotes (id, freelancer_id, job_id, proposal, quote_status, bids_used, bid_date)
+VALUES
+    ('11111111-1111-1111-1111-111111111111', '44444444-4444-4444-4444-444444444444', '11111111-1111-1111-1111-111111111111', 'Sample proposal 1', 'ACCEPTED', 2, NOW()),
+	('22222222-2222-2222-2222-222222222222', '44444444-4444-4444-4444-444444444444', '22222222-2222-2222-2222-222222222222', 'Sample proposal 2', 'ACCEPTED', 2, NOW()),
+    ('44444444-4444-4444-4444-444444444444', '55555555-5555-5555-5555-555555555555', '22222222-2222-2222-2222-222222222222', 'Sample proposal 3', 'AWAITING_ACCEPTANCE', 1, NOW());
 
 
-
+INSERT INTO job_freelancer_view (job_id, freelancer_id, viewed_at)
+VALUES
+    ('11111111-1111-1111-1111-111111111111', '44444444-4444-4444-4444-444444444444', NOW()),
+    ('11111111-1111-1111-1111-111111111111', '55555555-5555-5555-5555-555555555555', NOW()),
+    ('22222222-2222-2222-2222-222222222222', '66666666-6666-6666-6666-666666666666', NOW());
 	
 
 

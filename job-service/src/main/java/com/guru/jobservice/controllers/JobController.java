@@ -1,13 +1,19 @@
 package com.guru.jobservice.controllers;
 
-import com.guru.jobservice.dtos.JobRequest;
+import com.guru.jobservice.dtos.CreateUpdateRequest;
+import com.guru.jobservice.dtos.FiltersRequest;
+import com.guru.jobservice.dtos.PaginatedResponse;
+import com.guru.jobservice.enums.JobStatus;
+import com.guru.jobservice.enums.PaymentType;
+import com.guru.jobservice.enums.SortOrder;
 import com.guru.jobservice.model.Job;
 import com.guru.jobservice.services.JobService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-//import jakarta.validation.Valid;
 import java.util.UUID;
 
 @RestController
@@ -22,41 +28,29 @@ public class JobController {
     }
 
 
-    @PostMapping("/")
-    public void createJob(@Valid @RequestBody JobRequest jobRequestDTO) {
-        jobService.createJob(jobRequestDTO);
+    @GetMapping("/{id}")
+    public Job getJobById(@PathVariable UUID id) throws Exception {
+        return jobService.getJobById(id);
     }
 
-//    @PutMapping("/{jobId}")
-//    public void updateJob(@PathVariable UUID jobId, @RequestBody JobDTO jobDTO) {
-//        jobService.updateJob(jobId, jobDTO);
-//    }
-//
+    @PostMapping("/")
+    public void createJob(@Valid @RequestBody CreateUpdateRequest createUpdateRequest) {
+        jobService.createJob(createUpdateRequest);
+    }
+
+    @PutMapping("/{id}")
+    public void updateJob(@PathVariable UUID id, @Valid @RequestBody CreateUpdateRequest createUpdateRequest) {
+        jobService.updateJob(id, createUpdateRequest);
+    }
+
     @DeleteMapping("/{id}")
     public void deleteJob(@PathVariable UUID id) {
         jobService.deleteJobById(id);
     }
 
-//    @GetMapping("/{id}")
-//    public Job getJobById(@PathVariable UUID id) throws Exception {
-//        return jobService.getJobById(id);
-//    }
-
-//    @GetMapping("/")
-//    public List<JobDTO> getAllJobs(@RequestParam int page,
-//                                   @RequestParam int pageSize,
-//                                   @RequestParam int jobId,
-//                                   @RequestParam(required = false) String searchQuery,
-//                                   @RequestParam(required = false) UUID categoryId,
-//                                   @RequestParam(required = false) UUID subcategoryId,
-//                                   @RequestParam(required = false) UUID skillId,
-//                                   @RequestParam(required = false) Boolean featuredOnly,
-//                                   @RequestParam(required = false) String paymentTerms,
-//                                   @RequestParam(required = false) UUID locationId,
-//                                   @RequestParam(defaultValue = "newest") String sortOrder,
-//                                   @RequestParam(required = false) List<String> statusList) {
-//        return jobService.getAllJobs(page, pageSize, searchQuery, categoryId, subcategoryId, skillId,
-//                featuredOnly, paymentTerms, locationId, sortOrder, statusList);
-//    }
+    @GetMapping("/")
+    public PaginatedResponse<Job> getAllJobs(@Valid FiltersRequest filtersRequest) {
+        return jobService.getAllJobs(filtersRequest);
+    }
 }
 
