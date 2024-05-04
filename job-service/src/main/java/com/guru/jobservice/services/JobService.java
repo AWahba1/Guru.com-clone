@@ -1,6 +1,7 @@
 package com.guru.jobservice.services;
 
-import com.guru.jobservice.dtos.JobRequest;
+import com.guru.jobservice.dtos.CreateUpdateRequest;
+import com.guru.jobservice.dtos.FiltersRequest;
 import com.guru.jobservice.dtos.PaginatedResponse;
 import com.guru.jobservice.enums.JobStatus;
 import com.guru.jobservice.enums.PaymentType;
@@ -37,57 +38,57 @@ public class JobService {
 
     }
 
-    public void createJob(JobRequest jobRequest) {
+    public void createJob(CreateUpdateRequest createUpdateRequest) {
 
-        JobRequestValidator.validatePaymentType(jobRequest);
+        JobRequestValidator.validatePaymentType(createUpdateRequest);
 
         jobRepository.createJob(
-                jobRequest.getTitle(),
-                jobRequest.getDescription(),
-                jobRequest.getCategoryId(),
-                jobRequest.getSubcategoryId(),
-                jobRequest.getIsFeatured(),
-                jobRequest.getClientId(),
-                jobRequest.getPaymentType(),
-                jobRequest.getFixedPriceRange(),
-                jobRequest.getDuration(),
-                jobRequest.getHoursPerWeek(),
-                jobRequest.getMinHourlyRate(),
-                jobRequest.getMaxHourlyRate(),
-                jobRequest.getGetQuotesUntil(),
-                jobRequest.getVisibility(),
-                jobRequest.getSkills(),
-                jobRequest.getTimezones(),
-                jobRequest.getLocations()
+                createUpdateRequest.getTitle(),
+                createUpdateRequest.getDescription(),
+                createUpdateRequest.getCategoryId(),
+                createUpdateRequest.getSubcategoryId(),
+                createUpdateRequest.getIsFeatured(),
+                createUpdateRequest.getClientId(),
+                createUpdateRequest.getPaymentType(),
+                createUpdateRequest.getFixedPriceRange(),
+                createUpdateRequest.getDuration(),
+                createUpdateRequest.getHoursPerWeek(),
+                createUpdateRequest.getMinHourlyRate(),
+                createUpdateRequest.getMaxHourlyRate(),
+                createUpdateRequest.getGetQuotesUntil(),
+                createUpdateRequest.getVisibility(),
+                createUpdateRequest.getSkills(),
+                createUpdateRequest.getTimezones(),
+                createUpdateRequest.getLocations()
         );
 }
 
-    public void updateJob(UUID jobId, JobRequest jobRequest) {
+    public void updateJob(UUID jobId, CreateUpdateRequest createUpdateRequest) {
 
         Job job = jobRepository.getJobById(jobId);
         if (job == null) {
             throw new ResourceNotFoundException();
         }
-        JobRequestValidator.validatePaymentType(jobRequest);
+        JobRequestValidator.validatePaymentType(createUpdateRequest);
         jobRepository.updateJob(
                 jobId,
-                jobRequest.getTitle(),
-                jobRequest.getDescription(),
-                jobRequest.getCategoryId(),
-                jobRequest.getSubcategoryId(),
-                jobRequest.getIsFeatured(),
-                jobRequest.getPaymentType(),
-                jobRequest.getFixedPriceRange(),
-                jobRequest.getDuration(),
-                jobRequest.getHoursPerWeek(),
-                jobRequest.getMinHourlyRate(),
-                jobRequest.getMaxHourlyRate(),
-                jobRequest.getGetQuotesUntil(),
-                jobRequest.getVisibility(),
-                jobRequest.getStatus(),
-                jobRequest.getSkills(),
-                jobRequest.getTimezones(),
-                jobRequest.getLocations()
+                createUpdateRequest.getTitle(),
+                createUpdateRequest.getDescription(),
+                createUpdateRequest.getCategoryId(),
+                createUpdateRequest.getSubcategoryId(),
+                createUpdateRequest.getIsFeatured(),
+                createUpdateRequest.getPaymentType(),
+                createUpdateRequest.getFixedPriceRange(),
+                createUpdateRequest.getDuration(),
+                createUpdateRequest.getHoursPerWeek(),
+                createUpdateRequest.getMinHourlyRate(),
+                createUpdateRequest.getMaxHourlyRate(),
+                createUpdateRequest.getGetQuotesUntil(),
+                createUpdateRequest.getVisibility(),
+                createUpdateRequest.getStatus(),
+                createUpdateRequest.getSkills(),
+                createUpdateRequest.getTimezones(),
+                createUpdateRequest.getLocations()
         );
     }
 
@@ -100,38 +101,23 @@ public class JobService {
     }
 
 
-    public PaginatedResponse<Job> getAllJobs(int page, int pageSize, String searchQuery, String categoryId,
-                                             String subcategoryId, String skillId, Boolean featuredOnly,
-                                             PaymentType paymentType, String locationId, SortOrder sortOrder,
-                                             JobStatus[] statusList, Boolean verifiedOnlyClients, Integer minEmployerSpend,
-                                             Integer maxQuotesReceived, Boolean notViewed, Boolean notApplied, String freelancerId) {
+    public PaginatedResponse<Job> getAllJobs(FiltersRequest filtersRequest) {
 
-        String typeOfPayment  = paymentType != null ? paymentType.getValue() : null;
-        String sortingOrder  = sortOrder != null ? sortOrder.getValue() : SortOrder.NEWEST.getValue();
-
-        UUID categoryUUID = categoryId!=null ? UUID.fromString(categoryId) : null;
-        UUID subcategoryUUID = subcategoryId!=null ? UUID.fromString(subcategoryId) : null;
-        UUID skillUUID = skillId!=null ? UUID.fromString(skillId) : null;
-        UUID locationUUID = locationId!=null ? UUID.fromString(locationId) : null;
-
-        if ((notApplied != null || notViewed != null) && freelancerId == null) {
+        if ((filtersRequest.getNotApplied() != null || filtersRequest.getNotViewed() != null) && filtersRequest.getFreelancerId() == null) {
             throw new ValidationException("Freelancer ID must be set if not applied or viewed filters are applied");
         }
 
-        UUID freelancerUUID = freelancerId!=null ? UUID.fromString(freelancerId) : null;
-
-        String[] statuses = (statusList==null || statusList.length==0)? null : Stream.of(statusList).map(JobStatus::getValue).toArray(String[]::new);
         List<Job> jobs = jobRepository.getAllJobs(
-                page, pageSize,
-                searchQuery,
-                categoryUUID, subcategoryUUID, skillUUID,
-                featuredOnly,
-                typeOfPayment, locationUUID, sortingOrder,
-                statuses, verifiedOnlyClients, minEmployerSpend,
-                maxQuotesReceived, notViewed, notApplied, freelancerUUID
+                filtersRequest.getPage(), filtersRequest.getPageSize(),
+                filtersRequest.getSearchQuery(),
+                filtersRequest.getCategoryId(), filtersRequest.getSubcategoryId(), filtersRequest.getSkillId(),
+                filtersRequest.getFeaturedOnly(),
+                filtersRequest.getPaymentType(), filtersRequest.getLocationId(), filtersRequest.getSortOrder(),
+                filtersRequest.getStatusList(), filtersRequest.getVerifiedOnlyClients(), filtersRequest.getMinEmployerSpend(),
+                filtersRequest.getMaxQuotesReceived(), filtersRequest.getNotViewed(), filtersRequest.getNotApplied(), filtersRequest.getFreelancerId()
         );
 
         int recordsCount = jobs.size();
-        return new PaginatedResponse<Job>(jobs, page, recordsCount);
+        return new PaginatedResponse<Job>(jobs, filtersRequest.getPage(), recordsCount);
     }
 }

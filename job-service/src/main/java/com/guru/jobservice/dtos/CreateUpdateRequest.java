@@ -20,7 +20,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class JobRequest {
+public class CreateUpdateRequest {
 
     @NotBlank(message = "Title cannot be empty")
     @NotNull(message = "Title is required")
