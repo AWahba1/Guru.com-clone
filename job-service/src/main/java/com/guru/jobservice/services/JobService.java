@@ -6,18 +6,15 @@ import com.guru.jobservice.enums.JobStatus;
 import com.guru.jobservice.enums.PaymentType;
 import com.guru.jobservice.enums.SortOrder;
 import com.guru.jobservice.exceptions.ResourceNotFoundException;
+import com.guru.jobservice.exceptions.ValidationException;
 import com.guru.jobservice.model.Job;
 import com.guru.jobservice.repositories.JobRepository;
 import com.guru.jobservice.validators.JobRequestValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -106,7 +103,8 @@ public class JobService {
     public PaginatedResponse<Job> getAllJobs(int page, int pageSize, String searchQuery, String categoryId,
                                              String subcategoryId, String skillId, Boolean featuredOnly,
                                              PaymentType paymentType, String locationId, SortOrder sortOrder,
-                                             JobStatus[] statusList, Boolean verifiedOnlyClients, Integer minEmployerSpend) {
+                                             JobStatus[] statusList, Boolean verifiedOnlyClients, Integer minEmployerSpend,
+                                             Integer maxQuotesReceived, Boolean notViewed, Boolean notApplied, String freelancerId) {
 
         String typeOfPayment  = paymentType != null ? paymentType.getValue() : null;
         String sortingOrder  = sortOrder != null ? sortOrder.getValue() : SortOrder.NEWEST.getValue();
@@ -116,6 +114,12 @@ public class JobService {
         UUID skillUUID = skillId!=null ? UUID.fromString(skillId) : null;
         UUID locationUUID = locationId!=null ? UUID.fromString(locationId) : null;
 
+        if ((notApplied != null || notViewed != null) && freelancerId == null) {
+            throw new ValidationException("Freelancer ID must be set if not applied or viewed filters are applied");
+        }
+
+        UUID freelancerUUID = freelancerId!=null ? UUID.fromString(freelancerId) : null;
+
         String[] statuses = (statusList==null || statusList.length==0)? null : Stream.of(statusList).map(JobStatus::getValue).toArray(String[]::new);
         List<Job> jobs = jobRepository.getAllJobs(
                 page, pageSize,
@@ -123,7 +127,8 @@ public class JobService {
                 categoryUUID, subcategoryUUID, skillUUID,
                 featuredOnly,
                 typeOfPayment, locationUUID, sortingOrder,
-                statuses, verifiedOnlyClients, minEmployerSpend
+                statuses, verifiedOnlyClients, minEmployerSpend,
+                maxQuotesReceived, notViewed, notApplied, freelancerUUID
         );
 
         int recordsCount = jobs.size();

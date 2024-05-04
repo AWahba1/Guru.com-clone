@@ -195,7 +195,11 @@ CREATE OR REPLACE FUNCTION get_all_jobs(
     _sort_order VARCHAR(20) DEFAULT 'newest',
     _status_list text[] DEFAULT ARRAY['Open', 'Under Review', 'Closed', 'Not Approved'],
 	_verified_only BOOLEAN DEFAULT NULL,
-	_min_employer_spend INT DEFAULT NULL
+	_min_employer_spend INT DEFAULT NULL,
+	_max_quotes_received INT DEFAULT NULL,
+    _not_viewed BOOLEAN DEFAULT NULL,
+	_not_applied BOOLEAN DEFAULT NULL,
+	_freelancer_id UUID DEFAULT NULL
 )
 RETURNS TABLE (
     id UUID,
@@ -264,6 +268,38 @@ BEGIN
         WHERE 
             ( _verified_only IS NULL OR u.is_verified = _verified_only )
 			AND ( _min_employer_spend IS NULL OR u.amount_spent >= _min_employer_spend ) 
+			AND (_max_quotes_received IS NULL OR 
+                  (SELECT COUNT(*) FROM quotes WHERE job_id = j.id) <= _max_quotes_received )
+			AND (
+                  (_not_viewed IS NULL) OR
+                  (
+                      (_not_viewed = TRUE) AND
+                      NOT EXISTS (
+                          SELECT 1 FROM job_freelancer_view WHERE job_id = j.id and freelancer_id = _freelancer_id
+                      )
+                  ) OR
+                  (
+                      (_not_viewed = FALSE) AND
+                      EXISTS (
+                          SELECT 1 FROM job_freelancer_view WHERE job_id = j.id and freelancer_id = _freelancer_id
+                      )
+                  )
+            )
+			AND (
+                  (_not_applied IS NULL) OR
+                  (
+                      (_not_applied = TRUE) AND
+                      NOT EXISTS (
+                          SELECT 1 FROM quotes WHERE job_id = j.id AND freelancer_id = _freelancer_id
+                      )
+                  ) OR
+                  (
+                      (_not_applied = FALSE) AND
+                      EXISTS (
+                          SELECT 1 FROM quotes WHERE job_id = j.id AND freelancer_id = _freelancer_id
+                      )
+                  )
+			)
             AND (_search_query IS NULL OR (j.title ILIKE '%' || _search_query || '%') OR (j.description ILIKE '%' || _search_query || '%'))
             AND (_category_id IS NULL OR j.category_id = _category_id)
             AND (_subcategory_id IS NULL OR j.subcategory_id = _subcategory_id)
@@ -296,7 +332,11 @@ SELECT *
 FROM get_all_jobs(
     _page := 1,
     _page_size := 10,
-	_min_employer_spend := 100
+-- 	_not_viewed := false,
+	_not_applied := false,
+	_freelancer_id := '55555555-5555-5555-5555-555555555555'
+--     _not_viewed BOOLEAN DEFAULT NULL
+-- 	_min_employer_spend := 100
 -- 	_verified_only := true,
 -- 	_status_list := null
 --     _search_query := 'web development', -- Search query (case-insensitive)

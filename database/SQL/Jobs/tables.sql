@@ -17,7 +17,6 @@ END $$;
 		id uuid PRIMARY KEY
 	);
 
-
 	-- Payment Type Enum
 	DO $$BEGIN
 	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_type') THEN
@@ -83,6 +82,9 @@ END $$;
 	);
 	END IF;
 	END$$;
+	
+	DROP TYPE IF EXISTS quote_status_enum CASCADE;
+	CREATE TYPE quote_status_enum AS ENUM ('AWAITING_ACCEPTANCE', 'PRIORITY', 'ACCEPTED', 'ARCHIVED');
 
 	CREATE TABLE categories (
 		id UUID PRIMARY KEY,
@@ -151,15 +153,13 @@ END $$;
 	);
 	
 CREATE TABLE quotes (
-	quote_id UUID PRIMARY KEY,
-	freelancer_id UUID,
-	job_id UUID,
-	proposal VARCHAR(3000),
+	id UUID PRIMARY KEY,
+	freelancer_id UUID REFERENCES freelancers(id) ON DELETE CASCADE,
+	job_id UUID REFERENCES jobs(id),
+	proposal text,
 	quote_status quote_status_enum,
 	bids_used DECIMAL,
-	bid_date TIMESTAMP,
-	FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE,
-	FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
+	bid_date TIMESTAMP
 );
 
 CREATE TABLE quote_templates (
@@ -168,20 +168,19 @@ CREATE TABLE quote_templates (
     template_name VARCHAR(255),
     template_description VARCHAR(10000),
     attachments TEXT[],
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
+    FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE
 );
 
-
--- 	CREATE TABLE job_freelancer (
--- 		job_id UUID REFERENCES jobs(id),
--- 		freelancer_id UUID REFERENCES freelancers(id), -- check foreign key on which table
--- 		applied BOOLEAN DEFAULT FALSE,
--- 		viewed BOOLEAN DEFAULT FALSE,
--- 		PRIMARY KEY (job_id, freelancer_id)
--- 	);
+CREATE TABLE job_freelancer_view (
+    job_id UUID REFERENCES jobs(id) ON DELETE CASCADE,
+    freelancer_id UUID REFERENCES freelancers(id) ON DELETE CASCADE,
+    viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (job_id, freelancer_id)
+);
 	
 -- Populate tables with sample data
 -- Users
+	
 INSERT INTO users (id, is_verified, amount_spent) VALUES
     ('11111111-1111-1111-1111-111111111111', true, 100),
     ('22222222-2222-2222-2222-222222222222', false, 500.55),
@@ -306,26 +305,18 @@ INSERT INTO jobs_timezones (job_id, timezone_id) VALUES
     ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222'),
     ('22222222-2222-2222-2222-222222222222', '22222222-2222-2222-2222-222222222222');
 
-
-	
-
--- 	CREATE TABLE quotes ( -- handle the different types of quotes
--- 		id UUID PRIMARY KEY,
--- 		job_id UUID REFERENCES jobs(id),
--- 		freelancer_id UUID REFERENCES freelancers(id),
--- 		proposal TEXT,
--- 		submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
--- 	);
-
-	-- CREATE TABLE employer_spend (
-	--     id UUID PRIMARY KEY,
-	--     client_id UUID REFERENCES users(id),
-	--     spend_amount DECIMAL(10, 2) DEFAULT 0,
-	--     transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	-- );
+INSERT INTO quotes (id, freelancer_id, job_id, proposal, quote_status, bids_used, bid_date)
+VALUES
+    ('11111111-1111-1111-1111-111111111111', '44444444-4444-4444-4444-444444444444', '11111111-1111-1111-1111-111111111111', 'Sample proposal 1', 'ACCEPTED', 2, NOW()),
+	('22222222-2222-2222-2222-222222222222', '44444444-4444-4444-4444-444444444444', '22222222-2222-2222-2222-222222222222', 'Sample proposal 2', 'ACCEPTED', 2, NOW()),
+    ('44444444-4444-4444-4444-444444444444', '55555555-5555-5555-5555-555555555555', '22222222-2222-2222-2222-222222222222', 'Sample proposal 3', 'AWAITING_ACCEPTANCE', 1, NOW());
 
 
-
+INSERT INTO job_freelancer_view (job_id, freelancer_id, viewed_at)
+VALUES
+    ('11111111-1111-1111-1111-111111111111', '44444444-4444-4444-4444-444444444444', NOW()),
+    ('11111111-1111-1111-1111-111111111111', '55555555-5555-5555-5555-555555555555', NOW()),
+    ('22222222-2222-2222-2222-222222222222', '66666666-6666-6666-6666-666666666666', NOW());
 	
 
 

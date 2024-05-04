@@ -79,12 +79,29 @@ public class JobController {
             @RequestParam(required = false) SortOrder sortOrder,
             @RequestParam(required = false) JobStatus[] statusList,
             @RequestParam(required = false) Boolean verifiedOnlyClients,
+
             @RequestParam(required = false)
             @Min(0)
-            Integer minEmployerSpend
+            Integer minEmployerSpend,
+
+            @RequestParam(required = false)
+            @Min(0)
+            Integer maxQuotesReceived,
+
+            @RequestParam(required = false)
+            Boolean notViewed,
+
+            @RequestParam(required = false)
+            Boolean notApplied,
+
+            @RequestParam(required = false)
+            @com.guru.jobservice.validators.UUID
+            String freelancerId
+
     ) {
         return jobService.getAllJobs(page, pageSize, searchQuery, categoryId, subcategoryId, skillId,
-                featuredOnly, paymentType, locationId, sortOrder, statusList, verifiedOnlyClients, minEmployerSpend);
+                featuredOnly, paymentType, locationId, sortOrder, statusList, verifiedOnlyClients, minEmployerSpend,
+                maxQuotesReceived, notViewed, notApplied, freelancerId);
     }
 }
 
