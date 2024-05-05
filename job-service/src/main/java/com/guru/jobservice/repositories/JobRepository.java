@@ -55,6 +55,9 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
 
     @Procedure("delete_job_by_id")
     void deleteJobById(UUID jobId);
+
+    @Procedure("view_job")
+    void markJobAsViewed(UUID _job_id, UUID _freelancer_id);
 }
 
 

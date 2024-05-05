@@ -489,3 +489,67 @@ END;
 $$;
 
 -- Call delete_job_by_id('22222222-2222-2222-2222-222222222222');
+
+
+-- Categories, subcategories & skills
+DROP FUNCTION IF EXISTS get_categories_with_subcategories_and_skills;
+CREATE OR REPLACE FUNCTION get_categories_with_subcategories_and_skills(
+    _category_id UUID DEFAULT NULL
+)
+RETURNS TABLE (
+    id UUID,
+    category_name VARCHAR(100),
+    subcategories JSONB
+)
+AS $$
+BEGIN
+    RETURN QUERY
+        SELECT
+            c.id AS id,
+            c.name AS category_name,
+            jsonb_agg(
+                jsonb_build_object(
+                    'id', sc.id,
+                    'name', sc.name,
+                    'skills', (
+                        SELECT jsonb_agg(jsonb_build_object('id', s.id, 'name', s.name))
+                        FROM skills s
+                        WHERE s.id = sc.skill_id
+                    )
+                )
+            ) AS subcategories
+        FROM
+            categories c
+        LEFT JOIN 
+            subcategories sc ON c.id = sc.category_id
+        WHERE
+            (_category_id IS NULL OR c.id = _category_id)
+        GROUP BY
+            c.id, c.name;
+END;
+$$ LANGUAGE plpgsql;
+
+
+SELECT * FROM get_categories_with_subcategories_and_skills();
+
+
+-- Mark Job as viewed by Freelancer
+CALL drop_procedure('view_job');
+CREATE OR REPLACE PROCEDURE view_job(
+    _job_id UUID,
+    _freelancer_id UUID
+)
+AS $$
+BEGIN
+    -- Check if the job view already exists for the given job and freelancer
+    IF NOT EXISTS (
+        SELECT 1 FROM job_freelancer_view WHERE job_id = _job_id AND freelancer_id = _freelancer_id
+    ) THEN
+        -- If the job view doesn't exist, insert a new row into the job_views table
+        INSERT INTO job_freelancer_view (job_id, freelancer_id) VALUES (_job_id, _freelancer_id);
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CALL view_job('11111111-1111-1111-1111-111111111111', '66666666-6666-6666-6666-666666666666');
+

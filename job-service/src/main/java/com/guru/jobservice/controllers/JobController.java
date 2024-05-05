@@ -2,6 +2,7 @@ package com.guru.jobservice.controllers;
 
 import com.guru.jobservice.dtos.CreateUpdateRequest;
 import com.guru.jobservice.dtos.FiltersRequest;
+import com.guru.jobservice.dtos.JobViewRequest;
 import com.guru.jobservice.dtos.PaginatedResponse;
 import com.guru.jobservice.enums.JobStatus;
 import com.guru.jobservice.enums.PaymentType;
@@ -51,6 +52,11 @@ public class JobController {
     @GetMapping("/")
     public PaginatedResponse<Job> getAllJobs(@Valid FiltersRequest filtersRequest) {
         return jobService.getAllJobs(filtersRequest);
+    }
+
+    @PostMapping("/view")
+    public void viewJob(@Valid @RequestBody JobViewRequest viewRequest) {
+        jobService.markJobAsViewed(viewRequest);
     }
 }
 
