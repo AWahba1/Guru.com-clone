@@ -489,3 +489,46 @@ END;
 $$;
 
 -- Call delete_job_by_id('22222222-2222-2222-2222-222222222222');
+
+
+-- Categories, subcategories & skills
+DROP FUNCTION IF EXISTS get_categories_with_subcategories_and_skills;
+CREATE OR REPLACE FUNCTION get_categories_with_subcategories_and_skills(
+    _category_id UUID DEFAULT NULL
+)
+RETURNS TABLE (
+    id UUID,
+    category_name VARCHAR(100),
+    subcategories JSONB
+)
+AS $$
+BEGIN
+    RETURN QUERY
+        SELECT
+            c.id AS id,
+            c.name AS category_name,
+            jsonb_agg(
+                jsonb_build_object(
+                    'id', sc.id,
+                    'name', sc.name,
+                    'skills', (
+                        SELECT jsonb_agg(jsonb_build_object('id', s.id, 'name', s.name))
+                        FROM skills s
+                        WHERE s.id = sc.skill_id
+                    )
+                )
+            ) AS subcategories
+        FROM
+            categories c
+        LEFT JOIN 
+            subcategories sc ON c.id = sc.category_id
+        WHERE
+            (_category_id IS NULL OR c.id = _category_id)
+        GROUP BY
+            c.id, c.name;
+END;
+$$ LANGUAGE plpgsql;
+
+
+SELECT * FROM get_categories_with_subcategories_and_skills();
+
