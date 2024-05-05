@@ -25,7 +25,6 @@ public class DedicatedResource {
     private String resource_name;
     private String resource_title;
     private String resource_summary;
-    private String resource_skills;
     private BigDecimal resource_rate;
     private String minimum_duration;
     private String resource_image;

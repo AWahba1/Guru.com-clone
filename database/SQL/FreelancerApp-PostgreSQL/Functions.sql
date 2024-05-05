@@ -14,7 +14,7 @@ freelancer_id UUID,
     tagline VARCHAR(190),
     bio VARCHAR(3000),
     work_terms VARCHAR(2000),
-    attachments TEXT[],
+    attachments VARCHAR(255) ARRAY,
     user_type varchar(255),
     website_link VARCHAR(255),
     facebook_link VARCHAR(255),
@@ -22,16 +22,20 @@ freelancer_id UUID,
     professional_video_link VARCHAR(255),
     company_history VARCHAR(3000),
     operating_since TIMESTAMP,
-    service_skills varchar(255) ARRAY,
-    resource_skills varchar(255) ARRAY
+    service_skills varchar(100) ARRAY,
+    resource_skills varchar(100) ARRAY,
+    portfolio_service_skills varchar(100) ARRAY,
+    portfolio_resource_skills varchar(100) ARRAY
 ) AS $$
 DECLARE
 BEGIN
 RETURN QUERY
     SELECT
         f.*,
-        ARRAY(SELECT sk.name FROM service_skills ss JOIN services s ON ss.service_id = s.service_id JOIN skills sk ON sk.id = ss.skill_id WHERE s.freelancer_id = _freelancer_id),
-        ARRAY(SELECT sk.name FROM resource_skills rs JOIN dedicated_resource r ON rs.resource_id = r.resource_id JOIN skills sk ON sk.id =rs.skill_id WHERE r.freelancer_id = _freelancer_id)
+        ARRAY(SELECT sk.name FROM service_skills ss JOIN services s ON ss.service_id = s.service_id JOIN skills sk ON sk.id = ss.skill_id WHERE s.freelancer_id = _freelancer_id AND s.is_draft = false),
+        ARRAY(SELECT sk.name FROM resource_skills rs JOIN dedicated_resource r ON rs.resource_id = r.resource_id JOIN skills sk ON sk.id =rs.skill_id WHERE r.freelancer_id = _freelancer_id AND r.is_draft = false),
+        ARRAY(SELECT sk.name FROM portfolio_skills ps JOIN portfolios p ON ps.portfolio_id = p.portfolio_id JOIN skills sk ON sk.id = ps.skill_id JOIN portfolio_service p_s ON p_s.portfolio_id = ps.portfolio_id WHERE p.freelancer_id = _freelancer_id),
+        ARRAY(SELECT sk.name FROM portfolio_skills ps JOIN portfolios p ON ps.portfolio_id = p.portfolio_id JOIN skills sk ON sk.id = ps.skill_id JOIN portfolio_resource p_r ON p_r.portfolio_id = ps.portfolio_id WHERE p.freelancer_id = _freelancer_id)
     FROM freelancers f
     WHERE f.freelancer_id = _freelancer_id;
 END;
@@ -39,74 +43,82 @@ $$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_portfolio (_portfolio_id uuid)
-RETURNS TABLE (portfolio_id uuid, freelancer_id uuid, title varchar(255), cover_image_url varchar(255), attachments text[], is_draft boolean)
+RETURNS TABLE (
+portfolio_id uuid,
+freelancer_id uuid,
+title varchar(255),
+cover_image_url varchar(255),
+portfolio_skills varchar(255) ARRAY,
+attachments varchar(255) ARRAY,
+is_draft boolean
+)
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT * FROM portfolios WHERE portfolio_id = _portfolio_id;
+    SELECT p.portfolio_id, p.freelancer_id, p.title, p.cover_image_url,
+    ARRAY(SELECT sk.name FROM portfolio_skills ps JOIN skills sk ON ps.skill_id = sk.id WHERE ps.portfolio_id = p.portfolio_id),
+    p.attachments, p.is_draft
+    FROM portfolios p WHERE p.portfolio_id = _portfolio_id;
 END;
 $$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION get_my_portfolios (_freelancer_id uuid)
-RETURNS TABLE (portfolio_id uuid, title varchar(255), cover_image_url varchar(255))
+CREATE OR REPLACE FUNCTION get_all_freelancer_portfolios (_freelancer_id uuid)
+RETURNS TABLE (
+portfolio_id uuid,
+title varchar(255),
+cover_image_url varchar(255)
+)
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT portfolio_id, title, cover_image_url FROM portfolios WHERE freelancer_id = _freelancer_id;
+    SELECT p.portfolio_id, p.title, p.cover_image_url FROM portfolios p WHERE freelancer_id = _freelancer_id;
 END;
 $$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION get_my_services (_freelancer_id uuid)
-RETURNS TABLE (service_id uuid, service_title varchar(255), service_description varchar(5000), service_skills text[], service_rate decimal, minimum_budget decimal, service_thumbnail varchar(255))
+CREATE OR REPLACE FUNCTION get_all_freelancer_services (_freelancer_id uuid)
+RETURNS TABLE (
+service_id uuid,
+service_title varchar(255),
+service_description varchar(5000),
+service_skills varchar(255) ARRAY,
+service_rate decimal,
+minimum_budget decimal,
+service_thumbnail varchar(255)
+)
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT * FROM services WHERE freelancer_id = _freelancer_id;
+    SELECT s.service_id, s.service_title, s.service_description,
+    ARRAY(SELECT sk.name FROM service_skills ss JOIN skills sk ON ss.skill_id = sk.id WHERE ss.service_id = s.service_id),
+    s.service_rate, s.minimum_budget, s.service_thumbnail
+    FROM services s WHERE freelancer_id = _freelancer_id;
 END;
 $$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION get_my_dedicated_resources (freelancer_id uuid)
-RETURNS TABLE (resource_id uuid, resource_name varchar(255), resource_title varchar(255), resource_summary varchar(3000), resource_skills text[], resource_rate decimal, minimum_duration resource_duration_enum, resource_image varchar(255))
+CREATE OR REPLACE FUNCTION get_all_freelancer_dedicated_resources (freelancer_id uuid)
+RETURNS TABLE (
+resource_id uuid,
+resource_name varchar(255),
+resource_title varchar(255),
+resource_summary varchar(3000),
+resource_skills varchar(255) ARRAY,
+resource_rate decimal,
+minimum_duration varchar(255),
+resource_image varchar(255)
+)
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT * FROM dedicated_resource WHERE freelancer_id = freelancer_id;
+    SELECT r.resource_id, r.name, r.title, r.summary,
+    ARRAY(SELECT sk.name FROM resource_skills rs JOIN skills sk ON rs.skill_id = sk.id WHERE rs.resource_id = r.resource_id),
+    r.rate, r.minimum_duration, r.image
+    FROM dedicated_resource r WHERE freelancer_id = freelancer_id;
 END;
 $$
 LANGUAGE plpgsql;
-
---CREATE OR REPLACE FUNCTION get_freelancer_portfolios (_freelancer_id uuid)
---RETURNS TABLE (portfolio_id uuid, title varchar(255), cover_image_url varchar(255))
---AS $$
---BEGIN
---    RETURN QUERY
---    SELECT portfolio_id, title, cover_image_url FROM portfolios WHERE freelancer_id = _freelancer_id AND is_draft = false;
---END;
---$$
---LANGUAGE plpgsql;
-
---CREATE OR REPLACE FUNCTION get_freelancer_services (_freelancer_id uuid)
---RETURNS TABLE (service_id uuid, service_title varchar(255), service_description varchar(5000), service_skills text[], service_rate decimal, minimum_budget decimal, service_thumbnail varchar(255))
---AS $$
---BEGIN
---    RETURN QUERY
---    SELECT * FROM services WHERE freelancer_id = _freelancer_id AND is_draft = false;
---END;
---$$
---LANGUAGE plpgsql;
---
---CREATE OR REPLACE FUNCTION get_freelancer_dedicated_resources (freelancer_id uuid)
---RETURNS TABLE (resource_id uuid, resource_name varchar(255), resource_title varchar(255), resource_summary varchar(3000), resource_skills text[], resource_rate decimal, minimum_duration resource_duration_enum, resource_image varchar(255))
---AS $$
---BEGIN
---    RETURN QUERY
---    SELECT * FROM dedicated_resource WHERE freelancer_id = freelancer_id AND is_draft = false;
---END;
---$$
---LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_service_details(_service_id UUID)
 RETURNS TABLE(
@@ -119,31 +131,30 @@ RETURNS TABLE(
     service_thumbnail VARCHAR(255),
     service_views INT,
     service_skills varchar(255) ARRAY,
-    portfolio_id UUID,
-    portfolio_title VARCHAR(255),
-    portfolio_cover_image_url VARCHAR(255)
+    portfolio_ids UUID ARRAY
 ) AS $$
 DECLARE
     portfolio_exists BOOLEAN;
 BEGIN
-    portfolio_exists := EXISTS (SELECT 1 FROM portfolio_service WHERE service_id = _service_id);
+    portfolio_exists := EXISTS (SELECT 1 FROM portfolio_service p_s WHERE p_s.service_id = _service_id);
 
     IF portfolio_exists THEN
         RETURN QUERY
             SELECT
-                s.*,
+                s.service_id,s.freelancer_id,s.service_title,s.service_description,s.service_rate,s.minimum_budget,s.service_thumbnail,s.service_views,
                 ARRAY(SELECT sk.name FROM service_skills ss JOIN skills sk ON ss.skill_id = sk.id WHERE ss.service_id = _service_id),
-                p.portfolio_id, p.title, p.cover_image_url
+                ARRAY(SELECT ps.portfolio_id FROM portfolio_service ps WHERE ps.service_id=_service_id)
             FROM services s
-            JOIN portfolio_service ps ON s.service_id = ps.service_id
-            JOIN portfolios p ON ps.portfolio_id = p.portfolio_id
+--             JOIN portfolio_service ps ON s.service_id = ps.service_id
+--             JOIN portfolios p ON ps.portfolio_id = p.portfolio_id
             WHERE s.service_id = _service_id;
     ELSE
         RETURN QUERY
             SELECT
-                s.*,
+                s.service_id,s.freelancer_id,s.service_title,s.service_description,s.service_rate,s.minimum_budget,s.service_thumbnail,s.service_views,
                 ARRAY(SELECT sk.name FROM service_skills ss JOIN skills sk ON ss.skill_id = sk.id WHERE ss.service_id = _service_id),
-                NULL::UUID AS portfolio_id, NULL::TEXT AS title, NULL::TEXT AS cover_image_url
+                NULL::UUID ARRAY AS portfolio_ids
+--                 NULL::UUID AS portfolio_id, NULL::TEXT AS title, NULL::TEXT AS cover_image_url
             FROM services s
             WHERE s.service_id = _service_id;
     END IF;
@@ -166,7 +177,6 @@ RETURNS TABLE(
     portfolio_id UUID,
     portfolio_title VARCHAR(255),
     portfolio_cover_image_url VARCHAR(255)
-
 ) AS $$
 DECLARE
     portfolio_exists BOOLEAN;
@@ -196,7 +206,37 @@ END;
 $$ 
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION get_freelancer_quotes (_freelancer_id uuid, _quote_status quote_status_enum)
+RETURNS TABLE (
+quote_id uuid,
+job_id uuid,
+proposal varchar(3000),
+quote_status quote_status_enum,
+bids_used decimal, bid_date timestamp
+)
+AS $$
+BEGIN
+    IF quote_status IS NULL THEN
+        RETURN QUERY
+        SELECT * FROM quotes WHERE freelancer_id = _freelancer_id;
+    ELSE
+        RETURN QUERY
+        SELECT * FROM quotes WHERE freelancer_id = freelancer_id AND quote_status = _quote_status;
+    END IF;
+END;
+$$
+LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION get_freelancer_quote_details (_quote_id uuid)
+RETURNS TABLE (
+quote_id uuid, freelancer_id uuid, job_id uuid, proposal varchar(3000), quote_status quote_status_enum, bids_used decimal, bid_date timestamp)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT * FROM quotes WHERE quote_id = _quote_id;
+END;
+$$
+LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_bids_usage_history (_freelancer_id uuid)
 RETURNS TABLE (bids_used decimal, bid_date timestamp)
@@ -223,7 +263,17 @@ END;
 $$
 LANGUAGE plpgsql;
 
-
+CREATE OR REPLACE FUNCTION get_freelancer_quote_templates (_freelancer_id uuid)
+RETURNS TABLE (quote_template_id uuid, template_name varchar(255), template_description varchar(10000), attachments varchar(255) ARRAY)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT quote_template_id, template_name, template_description, attachments
+    FROM quote_templates
+    WHERE freelancer_id = _freelancer_id;
+END;
+$$
+LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_freelancer_job_watchlist (_freelancer_id uuid)
 RETURNS TABLE (watchlist_id uuid, job_id uuid)

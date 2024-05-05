@@ -1,4 +1,4 @@
-package com.guru.freelancerservice.dtos;
+package com.guru.freelancerservice.dtos.services;
 
 import lombok.*;
 
@@ -15,7 +15,7 @@ public class ServiceDto {
     private UUID service_id;
     private String service_title;
     private String service_description;
-    private String[] service_skills;
+    private UUID[] service_skills;
     private BigDecimal service_rate;
     private BigDecimal minimum_budget;
     private String service_thumbnail;
