@@ -37,7 +37,6 @@ public class ServiceModel {
     private UUID freelancer_id;
     private String service_title;
     private String service_description;
-    private String service_skills;
     private BigDecimal service_rate;
     private BigDecimal minimum_budget;
     private String service_thumbnail;

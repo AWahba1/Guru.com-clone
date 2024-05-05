@@ -1,7 +1,6 @@
-package com.guru.freelancerservice.dtos;
+package com.guru.freelancerservice.dtos.freelancer;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.guru.freelancerservice.models.user_type_enum;
 
 import java.math.BigDecimal;
@@ -39,6 +38,8 @@ public interface FreelancerProfileDto {
     String getProfessional_video_link();
     String getCompany_history();
     Timestamp getOperating_since();
-    List<String> getResourceSkills();
-    List<String> getServiceSkills();
+    String[] getResource_skills();
+    String[] getService_skills();
+    String[] getPortfolio_service_skills();
+    String[] getPortfolio_resource_skills();
 }
