@@ -532,3 +532,24 @@ $$ LANGUAGE plpgsql;
 
 SELECT * FROM get_categories_with_subcategories_and_skills();
 
+
+-- Mark Job as viewed by Freelancer
+CALL drop_procedure('view_job');
+CREATE OR REPLACE PROCEDURE view_job(
+    _job_id UUID,
+    _freelancer_id UUID
+)
+AS $$
+BEGIN
+    -- Check if the job view already exists for the given job and freelancer
+    IF NOT EXISTS (
+        SELECT 1 FROM job_freelancer_view WHERE job_id = _job_id AND freelancer_id = _freelancer_id
+    ) THEN
+        -- If the job view doesn't exist, insert a new row into the job_views table
+        INSERT INTO job_freelancer_view (job_id, freelancer_id) VALUES (_job_id, _freelancer_id);
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CALL view_job('11111111-1111-1111-1111-111111111111', '66666666-6666-6666-6666-666666666666');
+

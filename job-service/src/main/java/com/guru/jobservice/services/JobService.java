@@ -2,6 +2,7 @@ package com.guru.jobservice.services;
 
 import com.guru.jobservice.dtos.CreateUpdateRequest;
 import com.guru.jobservice.dtos.FiltersRequest;
+import com.guru.jobservice.dtos.JobViewRequest;
 import com.guru.jobservice.dtos.PaginatedResponse;
 import com.guru.jobservice.enums.JobStatus;
 import com.guru.jobservice.enums.PaymentType;
@@ -130,5 +131,17 @@ public class JobService {
 
         int recordsCount = jobs.size();
         return new PaginatedResponse<Job>(jobs, filtersRequest.getPage(), recordsCount);
+    }
+
+    public void markJobAsViewed(JobViewRequest jobViewRequest) {
+        UUID jobId = jobViewRequest.getJobId();
+        UUID freelancerId = jobViewRequest.getFreelancerId();
+        Job job = jobRepository.getJobById(jobId);
+        if (job == null) {
+            throw new ResourceNotFoundException();
+        }
+
+        // TODO: VALIDATE FREELANCER ID USING MESSAGE QUEUE HERE
+        jobRepository.markJobAsViewed(jobId, freelancerId);
     }
 }
