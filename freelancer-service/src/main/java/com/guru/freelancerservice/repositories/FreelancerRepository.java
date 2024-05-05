@@ -1,6 +1,6 @@
 package com.guru.freelancerservice.repositories;
 
-import com.guru.freelancerservice.dtos.FreelancerProfileDto;
+import com.guru.freelancerservice.dtos.freelancer.FreelancerProfileDto;
 import com.guru.freelancerservice.models.Freelancer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

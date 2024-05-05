@@ -14,7 +14,7 @@ freelancer_id UUID,
     tagline VARCHAR(190),
     bio VARCHAR(3000),
     work_terms VARCHAR(2000),
-    attachments TEXT[],
+    attachments VARCHAR(255) ARRAY,
     user_type varchar(255),
     website_link VARCHAR(255),
     facebook_link VARCHAR(255),
@@ -22,16 +22,20 @@ freelancer_id UUID,
     professional_video_link VARCHAR(255),
     company_history VARCHAR(3000),
     operating_since TIMESTAMP,
-    service_skills varchar(255) ARRAY,
-    resource_skills varchar(255) ARRAY
+    service_skills varchar(100) ARRAY,
+    resource_skills varchar(100) ARRAY,
+    portfolio_service_skills varchar(100) ARRAY,
+    portfolio_resource_skills varchar(100) ARRAY
 ) AS $$
 DECLARE
 BEGIN
 RETURN QUERY
     SELECT
         f.*,
-        ARRAY(SELECT sk.name FROM service_skills ss JOIN services s ON ss.service_id = s.service_id JOIN skills sk ON sk.id = ss.skill_id WHERE s.freelancer_id = _freelancer_id),
-        ARRAY(SELECT sk.name FROM resource_skills rs JOIN dedicated_resource r ON rs.resource_id = r.resource_id JOIN skills sk ON sk.id =rs.skill_id WHERE r.freelancer_id = _freelancer_id)
+        ARRAY(SELECT sk.name FROM service_skills ss JOIN services s ON ss.service_id = s.service_id JOIN skills sk ON sk.id = ss.skill_id WHERE s.freelancer_id = _freelancer_id AND s.is_draft = false),
+        ARRAY(SELECT sk.name FROM resource_skills rs JOIN dedicated_resource r ON rs.resource_id = r.resource_id JOIN skills sk ON sk.id =rs.skill_id WHERE r.freelancer_id = _freelancer_id AND r.is_draft = false),
+        ARRAY(SELECT sk.name FROM portfolio_skills ps JOIN portfolios p ON ps.portfolio_id = p.portfolio_id JOIN skills sk ON sk.id = ps.skill_id JOIN portfolio_service p_s ON p_s.portfolio_id = ps.portfolio_id WHERE p.freelancer_id = _freelancer_id),
+        ARRAY(SELECT sk.name FROM portfolio_skills ps JOIN portfolios p ON ps.portfolio_id = p.portfolio_id JOIN skills sk ON sk.id = ps.skill_id JOIN portfolio_resource p_r ON p_r.portfolio_id = ps.portfolio_id WHERE p.freelancer_id = _freelancer_id)
     FROM freelancers f
     WHERE f.freelancer_id = _freelancer_id;
 END;
@@ -44,12 +48,17 @@ portfolio_id uuid,
 freelancer_id uuid,
 title varchar(255),
 cover_image_url varchar(255),
-attachments varchar(255),
-is_draft boolean)
+portfolio_skills varchar(255) ARRAY,
+attachments varchar(255) ARRAY,
+is_draft boolean
+)
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT * FROM portfolios WHERE portfolio_id = _portfolio_id;
+    SELECT p.portfolio_id, p.freelancer_id, p.title, p.cover_image_url,
+    ARRAY(SELECT sk.name FROM portfolio_skills ps JOIN skills sk ON ps.skill_id = sk.id WHERE ps.portfolio_id = p.portfolio_id),
+    p.attachments, p.is_draft
+    FROM portfolios p WHERE p.portfolio_id = _portfolio_id;
 END;
 $$
 LANGUAGE plpgsql;
@@ -81,9 +90,9 @@ service_thumbnail varchar(255)
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT s.service_id, s.title, s.description,
+    SELECT s.service_id, s.service_title, s.service_description,
     ARRAY(SELECT sk.name FROM service_skills ss JOIN skills sk ON ss.skill_id = sk.id WHERE ss.service_id = s.service_id),
-    s.rate, s.minimum_budget, s.thumbnail
+    s.service_rate, s.minimum_budget, s.service_thumbnail
     FROM services s WHERE freelancer_id = _freelancer_id;
 END;
 $$
@@ -122,31 +131,30 @@ RETURNS TABLE(
     service_thumbnail VARCHAR(255),
     service_views INT,
     service_skills varchar(255) ARRAY,
-    portfolio_id UUID,
-    portfolio_title VARCHAR(255),
-    portfolio_cover_image_url VARCHAR(255)
+    portfolio_ids UUID ARRAY
 ) AS $$
 DECLARE
     portfolio_exists BOOLEAN;
 BEGIN
-    portfolio_exists := EXISTS (SELECT 1 FROM portfolio_service WHERE service_id = _service_id);
+    portfolio_exists := EXISTS (SELECT 1 FROM portfolio_service p_s WHERE p_s.service_id = _service_id);
 
     IF portfolio_exists THEN
         RETURN QUERY
             SELECT
-                s.*,
+                s.service_id,s.freelancer_id,s.service_title,s.service_description,s.service_rate,s.minimum_budget,s.service_thumbnail,s.service_views,
                 ARRAY(SELECT sk.name FROM service_skills ss JOIN skills sk ON ss.skill_id = sk.id WHERE ss.service_id = _service_id),
-                p.portfolio_id, p.title, p.cover_image_url
+                ARRAY(SELECT ps.portfolio_id FROM portfolio_service ps WHERE ps.service_id=_service_id)
             FROM services s
-            JOIN portfolio_service ps ON s.service_id = ps.service_id
-            JOIN portfolios p ON ps.portfolio_id = p.portfolio_id
+--             JOIN portfolio_service ps ON s.service_id = ps.service_id
+--             JOIN portfolios p ON ps.portfolio_id = p.portfolio_id
             WHERE s.service_id = _service_id;
     ELSE
         RETURN QUERY
             SELECT
-                s.*,
+                s.service_id,s.freelancer_id,s.service_title,s.service_description,s.service_rate,s.minimum_budget,s.service_thumbnail,s.service_views,
                 ARRAY(SELECT sk.name FROM service_skills ss JOIN skills sk ON ss.skill_id = sk.id WHERE ss.service_id = _service_id),
-                NULL::UUID AS portfolio_id, NULL::TEXT AS title, NULL::TEXT AS cover_image_url
+                NULL::UUID ARRAY AS portfolio_ids
+--                 NULL::UUID AS portfolio_id, NULL::TEXT AS title, NULL::TEXT AS cover_image_url
             FROM services s
             WHERE s.service_id = _service_id;
     END IF;
@@ -256,7 +264,7 @@ $$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_freelancer_quote_templates (_freelancer_id uuid)
-RETURNS TABLE (quote_template_id uuid, template_name varchar(255), template_description varchar(10000), attachments text[])
+RETURNS TABLE (quote_template_id uuid, template_name varchar(255), template_description varchar(10000), attachments varchar(255) ARRAY)
 AS $$
 BEGIN
     RETURN QUERY

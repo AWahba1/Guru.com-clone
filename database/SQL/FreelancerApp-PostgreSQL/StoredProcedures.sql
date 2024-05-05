@@ -94,20 +94,32 @@ $$;
 CREATE OR REPLACE PROCEDURE add_portfolio (
     IN _freelancer_id uuid,
     IN title varchar(255), 
-    IN cover_image_url varchar(255), 
+    IN cover_image_url varchar(255),
+    IN portfolio_skills UUID ARRAY,
     IN attachments varchar(255) ARRAY
 )
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    gen_portfolio_id uuid;
 BEGIN
     BEGIN
-
+        gen_portfolio_id = gen_random_uuid();
         IF cover_image_url IS NULL THEN
             INSERT INTO portfolios (portfolio_id, freelancer_id, title, cover_image_url, attachments, is_draft) 
-            VALUES (gen_random_uuid(), _freelancer_id, title, cover_image_url, attachments, true);
+            VALUES (gen_portfolio_id, _freelancer_id, title, cover_image_url, attachments, true);
         ELSE
             INSERT INTO portfolios (portfolio_id, freelancer_id, title, cover_image_url, attachments, is_draft) 
-            VALUES (gen_random_uuid(), _freelancer_id, title, cover_image_url, attachments, false);
+            VALUES (gen_portfolio_id, _freelancer_id, title, cover_image_url, attachments, false);
+        END IF;
+
+        IF portfolio_skills IS NOT NULL THEN
+            IF array_length(portfolio_skills, 1) > 0 THEN
+                FOR i IN 1..array_length(portfolio_skills, 1) LOOP
+                    INSERT INTO portfolio_skills (portfolio_id, skill_id)
+                    VALUES (gen_portfolio_id, portfolio_skills[i]);
+                END LOOP;
+            END IF;
         END IF;
 
     EXCEPTION
@@ -127,6 +139,22 @@ BEGIN
         UPDATE portfolios SET is_draft = true WHERE portfolio_id = _portfolio_id;
         DELETE FROM portfolio_service WHERE portfolio_id = _portfolio_id;
         DELETE FROM portfolio_resource WHERE portfolio_id = _portfolio_id;
+
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+    END;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE publish_portfolio (_portfolio_id uuid)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    BEGIN
+
+        UPDATE portfolios SET is_draft = false WHERE portfolio_id = _portfolio_id;
 
     EXCEPTION
         WHEN others THEN
@@ -158,7 +186,8 @@ CREATE OR REPLACE PROCEDURE update_portfolio (
     IN _portfolio_id uuid,
     IN new_title varchar(255),
     IN new_cover_image_url varchar(255),
-    IN new_attachments TEXT[]
+    IN new_portfolio_skills UUID ARRAY,
+    IN new_attachments varchar(255) ARRAY
 )
 LANGUAGE plpgsql
 AS $$
@@ -171,6 +200,16 @@ BEGIN
 
         IF new_cover_image_url IS NOT NULL THEN
             UPDATE portfolios SET cover_image_url = new_cover_image_url WHERE portfolio_id = _portfolio_id;
+        END IF;
+
+        IF new_portfolio_skills IS NOT NULL THEN
+            IF array_length(new_portfolio_skills, 1) > 0 THEN
+                DELETE FROM portfolio_skills WHERE portfolio_id = _portfolio_id;
+                FOR i IN 1..array_length(new_portfolio_skills, 1) LOOP
+                    INSERT INTO portfolio_skills (portfolio_id, skill_id)
+                    VALUES (_portfolio_id, new_portfolio_skills[i]);
+                 END LOOP;
+            END IF;
         END IF;
 
         IF new_attachments IS NOT NULL THEN
@@ -189,7 +228,7 @@ CREATE OR REPLACE PROCEDURE add_service (
     IN _freelancer_id uuid, 
     IN service_title varchar(255), 
     IN service_description varchar(5000), 
-    IN service_skills varchar(255) ARRAY, 
+    IN _service_skills UUID ARRAY,
     IN service_rate decimal, 
     IN minimum_budget decimal, 
     IN service_thumbnail varchar(255),
@@ -202,14 +241,25 @@ DECLARE
 BEGIN
     BEGIN
         gen_service_id = gen_random_uuid();
-        INSERT INTO services (service_id, freelancer_id, service_title, service_description, service_skills, service_rate, minimum_budget, service_thumbnail, is_draft) 
-        VALUES (gen_service_id, _freelancer_id, service_title, service_description, service_skills, service_rate, minimum_budget, service_thumbnail, false);
+        INSERT INTO services (service_id, freelancer_id, service_title, service_description, service_rate, minimum_budget, service_thumbnail, is_draft)
+        VALUES (gen_service_id, _freelancer_id, service_title, service_description, service_rate, minimum_budget, service_thumbnail, false);
+
+        IF _service_skills IS NOT NULL THEN
+            IF array_length(_service_skills, 1) > 0 THEN
+                FOR i IN 1..array_length(_service_skills, 1) LOOP
+                    INSERT INTO service_skills (service_id, skill_id)
+                    VALUES (gen_service_id, _service_skills[i]);
+                END LOOP;
+            END IF;
+        END IF;
 
         IF portfolio_ids IS NOT NULL THEN
-            FOR i IN 1..array_length(portfolio_ids, 1) LOOP
-                INSERT INTO portfolio_service (service_id, portfolio_id) 
-                VALUES (gen_service_id, portfolio_ids[i]);
-            END LOOP;
+            IF array_length(portfolio_ids, 1) > 0 THEN
+                FOR i IN 1..array_length(portfolio_ids, 1) LOOP
+                    INSERT INTO portfolio_service (service_id, portfolio_id)
+                    VALUES (gen_service_id, portfolio_ids[i]);
+                END LOOP;
+            END IF;
         END IF;
 
     EXCEPTION
@@ -225,6 +275,14 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
     UPDATE services s SET is_draft = true WHERE s.service_id = _service_id;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE publish_service (IN _service_id uuid)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE services s SET is_draft = false WHERE s.service_id = _service_id;
 END;
 $$;
 
@@ -249,7 +307,7 @@ CREATE OR REPLACE PROCEDURE update_service (
     IN _service_id uuid,
     IN new_service_title varchar(255),
     IN new_service_description varchar(5000),
-    IN new_service_skills varchar(255) ARRAY,
+    IN new_service_skills UUID ARRAY,
     IN new_service_rate decimal,
     IN new_minimum_budget decimal,
     IN new_service_thumbnail varchar(255),
@@ -269,7 +327,13 @@ BEGIN
         END IF;
 
         IF new_service_skills IS NOT NULL THEN
-            UPDATE services SET service_skills = new_service_skills WHERE service_id = _service_id;
+            IF array_length(new_service_skills, 1) > 0 THEN
+                DELETE FROM service_skills WHERE service_id = _service_id;
+                FOR i IN 1..array_length(new_service_skills, 1) LOOP
+                    INSERT INTO service_skills (service_id, skill_id)
+                    VALUES (_service_id, new_service_skills[i]);
+                END LOOP;
+            END IF;
         END IF;
 
         IF new_service_rate IS NOT NULL THEN
@@ -285,11 +349,13 @@ BEGIN
         END IF;
 
         IF new_portfolio_id IS NOT NULL THEN
-            DELETE FROM portfolio_service WHERE service_id = _service_id;
-            FOR i IN 1..array_length(new_portfolio_id, 1) LOOP
-                INSERT INTO portfolio_service (service_id, portfolio_id) 
-                VALUES (_service_id, new_portfolio_id[i]);
-            END LOOP;
+            IF array_length(new_portfolio_id, 1) > 0 THEN
+                DELETE FROM portfolio_service WHERE service_id = _service_id;
+                FOR i IN 1..array_length(new_portfolio_id, 1) LOOP
+                    INSERT INTO portfolio_service (service_id, portfolio_id)
+                    VALUES (_service_id, new_portfolio_id[i]);
+                END LOOP;
+            END IF;
         END IF;
 
     EXCEPTION
@@ -305,7 +371,7 @@ CREATE OR REPLACE PROCEDURE add_dedicated_resource (
     IN resource_name varchar(255), 
     IN resource_title varchar(255), 
     IN resource_summary varchar(3000), 
-    IN resource_skills varchar(255) ARRAY, 
+    IN _resource_skills UUID ARRAY,
     IN resource_rate decimal, 
     IN minimum_duration varchar(255), 
     IN resource_image varchar(255),
@@ -318,14 +384,25 @@ DECLARE
 BEGIN
     BEGIN
         gen_resource_id = gen_random_uuid();
-        INSERT INTO dedicated_resource (resource_id, freelancer_id, resource_name, resource_title, resource_summary, resource_skills, resource_rate, minimum_duration, resource_image, is_draft) 
-        VALUES (gen_resource_id, _freelancer_id, resource_name, resource_title, resource_summary, resource_skills, resource_rate, minimum_duration, resource_image, false);
+        INSERT INTO dedicated_resource (resource_id, freelancer_id, resource_name, resource_title, resource_summary, resource_rate, minimum_duration, resource_image, is_draft)
+        VALUES (gen_resource_id, _freelancer_id, resource_name, resource_title, resource_summary, resource_rate, minimum_duration, resource_image, false);
+
+        IF _resource_skills IS NOT NULL THEN
+            IF array_length(_resource_skills, 1) > 0 THEN
+                FOR i IN 1..array_length(_resource_skills, 1) LOOP
+                    INSERT INTO resource_skills (resource_id, skill_id)
+                    VALUES (gen_resource_id, _resource_skills[i]);
+                END LOOP;
+            END IF;
+        END IF;
 
         IF portfolio_ids IS NOT NULL THEN
-            FOR i IN 1.. array_length(portfolio_ids,1) LOOP
-                INSERT INTO portfolio_resource (resource_id, portfolio_id) 
-                VALUES (gen_resource_id, portfolio_ids[i]);
-            END LOOP;
+            IF array_length(portfolio_ids,1) > 0 THEN
+                FOR i IN 1.. array_length(portfolio_ids,1) LOOP
+                    INSERT INTO portfolio_resource (resource_id, portfolio_id) 
+                    VALUES (gen_resource_id, portfolio_ids[i]);
+                END LOOP;
+            END IF;
         END IF;
 
     EXCEPTION
@@ -341,6 +418,14 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
     UPDATE dedicated_resource SET is_draft = true WHERE resource_id = _resource_id;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE publish_dedicated_resource (IN _resource_id uuid)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE dedicated_resource SET is_draft = false WHERE resource_id = _resource_id;
 END;
 $$;
 
@@ -366,7 +451,7 @@ CREATE OR REPLACE PROCEDURE update_dedicated_resource (
     IN new_resource_name varchar(255),
     IN new_resource_title varchar(255),
     IN new_resource_summary varchar(3000),
-    IN new_resource_skills varchar(255) ARRAY,
+    IN new_resource_skills UUID ARRAY,
     IN new_resource_rate decimal,
     IN new_minimum_duration varchar(255),
     IN new_resource_image varchar(255),
@@ -390,7 +475,13 @@ BEGIN
         END IF;
 
         IF new_resource_skills IS NOT NULL THEN
-            UPDATE dedicated_resource SET resource_skills = new_resource_skills WHERE resource_id = _resource_id;
+            IF array_length(new_resource_skills, 1) > 0 THEN
+                DELETE FROM resource_skills WHERE resource_id = _resource_id;
+                FOR i IN 1..array_length(new_resource_skills, 1) LOOP
+                    INSERT INTO resource_skills (resource_id, skill_id)
+                    VALUES (_resource_id, new_resource_skills[i]);
+                END LOOP;
+            END IF;
         END IF;
 
         IF new_resource_rate IS NOT NULL THEN
@@ -406,11 +497,13 @@ BEGIN
         END IF;
 
         IF new_portfolio_id IS NOT NULL THEN
-            DELETE FROM portfolio_resource WHERE resource_id = _resource_id;
-            FOR i IN 1..array_length(new_portfolio_id,1) LOOP
-                INSERT INTO portfolio_resource (resource_id, portfolio_id) 
-                VALUES (_resource_id, new_portfolio_id[i]);
-            END LOOP;
+            IF array_length(new_portfolio_id, 1) > 0 THEN
+                DELETE FROM portfolio_resource WHERE resource_id = _resource_id;
+                FOR i IN 1..array_length(new_portfolio_id, 1) LOOP
+                    INSERT INTO portfolio_resource (resource_id, portfolio_id)
+                    VALUES (_resource_id, new_portfolio_id[i]);
+                END LOOP;
+            END IF;
         END IF;
 
     EXCEPTION
@@ -481,7 +574,7 @@ CREATE OR REPLACE PROCEDURE add_quote_template (
     IN freelancer_id uuid, 
     IN template_name varchar(255), 
     IN template_description varchar(10000), 
-    IN attachments text[]
+    IN attachments varchar(255) ARRAY
 )
 LANGUAGE plpgsql
 AS $$
@@ -503,7 +596,7 @@ CREATE OR REPLACE PROCEDURE update_quote_template (
     IN quote_template_id uuid,
     IN new_template_name varchar(255),
     IN new_template_description varchar(10000),
-    IN new_attachments text[]
+    IN new_attachments varchar(255) ARRAY
 )
 LANGUAGE plpgsql
 AS $$
@@ -567,10 +660,10 @@ $$;
 
 CREATE OR REPLACE PROCEDURE add_featured_team_members (
     IN freelancer_id uuid, 
-    IN member_names varchar[], 
-    IN titles varchar[], 
-    IN member_types varchar[], 
-    IN member_emails varchar[]
+    IN member_names varchar(255) ARRAY,
+    IN titles varchar(255) ARRAY,
+    IN member_types varchar(255) ARRAY,
+    IN member_emails varchar(255) ARRAY
 )
 LANGUAGE plpgsql
 AS $$
@@ -594,7 +687,7 @@ $$;
 
 CREATE OR REPLACE PROCEDURE add_no_access_members (
     IN freelancer_id uuid, 
-    IN member_names varchar[]
+    IN member_names varchar(255) ARRAY
 )
 LANGUAGE plpgsql
 AS $$

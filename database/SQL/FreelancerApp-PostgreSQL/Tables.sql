@@ -2,6 +2,8 @@ DROP TABLE IF EXISTS freelancers CASCADE;
 DROP TABLE IF EXISTS profile_views CASCADE;
 DROP TABLE IF EXISTS featured_team_member CASCADE;
 DROP TABLE IF EXISTS portfolios CASCADE;
+DROP TABLE IF EXISTS portfolio_skills CASCADE;
+DROP TABLE IF EXISTS portfolio_views CASCADE;
 DROP TABLE IF EXISTS services CASCADE;
 DROP TABLE IF EXISTS service_views CASCADE;
 DROP TABLE IF EXISTS service_skills CASCADE;
@@ -45,7 +47,7 @@ CREATE TABLE freelancers (
     tagline VARCHAR(190),
     bio VARCHAR(3000),
     work_terms VARCHAR(2000),
-    attachments TEXT[],
+    attachments VARCHAR(255) ARRAY,
     user_type varchar(255) CHECK (user_type IN ('INDIVIDUAL','COMPANY')),
     website_link VARCHAR(255),
     facebook_link VARCHAR(255),
@@ -76,10 +78,18 @@ CREATE TABLE portfolios (
     freelancer_id UUID,
     title VARCHAR(255),
     cover_image_url VARCHAR(255),    
-    attachments TEXT[],
+    attachments varchar(255) ARRAY,
     is_draft BOOLEAN,    
     portfolio_views INT DEFAULT 0,
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE  
+);
+
+CREATE TABLE portfolio_skills (
+    portfolio_id UUID,
+    skill_id UUID,
+    PRIMARY KEY (portfolio_id, skill_id),
+    FOREIGN KEY (portfolio_id) REFERENCES portfolios(portfolio_id) ON DELETE CASCADE,
+    FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE
 );
 
 CREATE TABLE portfolio_views(
@@ -92,8 +102,7 @@ CREATE TABLE services (
     service_id UUID PRIMARY KEY,
     freelancer_id UUID,
     service_title VARCHAR(255),
-    service_description VARCHAR(5000), 
-    service_skills VARCHAR(255),
+    service_description VARCHAR(5000),
     service_rate DECIMAL,
     minimum_budget DECIMAL,
     service_thumbnail VARCHAR(255),  
@@ -130,7 +139,6 @@ CREATE TABLE dedicated_resource (
     resource_name VARCHAR(255),
     resource_title VARCHAR(255), 
     resource_summary VARCHAR(3000),
-    resource_skills VARCHAR(255),
     resource_rate DECIMAL,
     minimum_duration varchar(255) check (minimum_duration in ('3Months', '6Months','1Year','Ongoing')),
     resource_image VARCHAR(255),
@@ -178,7 +186,7 @@ CREATE TABLE quote_templates (
     freelancer_id UUID,
     template_name VARCHAR(255),
     template_description VARCHAR(10000),
-    attachments TEXT[],
+    attachments varchar(255) ARRAY,
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
 );
 

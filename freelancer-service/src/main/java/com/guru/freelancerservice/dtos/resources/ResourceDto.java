@@ -1,4 +1,4 @@
-package com.guru.freelancerservice.dtos;
+package com.guru.freelancerservice.dtos.resources;
 
 import lombok.*;
 
@@ -17,7 +17,7 @@ public class ResourceDto {
     private String resource_name;
     private String resource_title;
     private String resource_summary;
-    private String[] resource_skills;
+    private UUID[] resource_skills;
     private BigDecimal resource_rate;
     private String minimum_duration;
     private String resource_image;
