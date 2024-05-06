@@ -204,45 +204,13 @@ END;
 $$ 
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION get_freelancer_quotes (_freelancer_id uuid, _quote_status quote_status_enum)
-RETURNS TABLE (
-quote_id uuid,
-job_id uuid,
-proposal varchar(3000),
-quote_status quote_status_enum,
-bids_used decimal, bid_date timestamp
-)
-AS $$
-BEGIN
-    IF quote_status IS NULL THEN
-        RETURN QUERY
-        SELECT * FROM quotes WHERE freelancer_id = _freelancer_id;
-    ELSE
-        RETURN QUERY
-        SELECT * FROM quotes WHERE freelancer_id = freelancer_id AND quote_status = _quote_status;
-    END IF;
-END;
-$$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION get_freelancer_quote_details (_quote_id uuid)
-RETURNS TABLE (
-quote_id uuid, freelancer_id uuid, job_id uuid, proposal varchar(3000), quote_status quote_status_enum, bids_used decimal, bid_date timestamp)
+CREATE OR REPLACE FUNCTION get_freelancer_team_members (_freelancer_id uuid)
+RETURNS TABLE (team_member_id uuid, member_name varchar(255), title team_member_role, member_type team_member_type, member_email varchar(255))
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT * FROM quotes WHERE quote_id = _quote_id;
-END;
-$$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION get_bids_usage_history (_freelancer_id uuid)
-RETURNS TABLE (bids_used decimal, bid_date timestamp)
-AS $$
-BEGIN
-    RETURN QUERY
-    SELECT bids_used, bid_date
-    FROM quotes
+    SELECT team_member_id, member_name, title, member_type, member_email
+    FROM featured_team_member
     WHERE freelancer_id = _freelancer_id;
 END;
 $$
@@ -261,49 +229,13 @@ END;
 $$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION get_freelancer_quote_templates (_freelancer_id uuid)
-RETURNS TABLE (quote_template_id uuid, template_name varchar(255), template_description varchar(10000), attachments varchar(255) ARRAY)
+CREATE OR REPLACE FUNCTION get_bids_usage_history (_freelancer_id uuid)
+RETURNS TABLE (bids_used decimal, bid_date timestamp)
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT quote_template_id, template_name, template_description, attachments
-    FROM quote_templates
-    WHERE freelancer_id = _freelancer_id;
-END;
-$$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION get_freelancer_job_watchlist (_freelancer_id uuid)
-RETURNS TABLE (watchlist_id uuid, job_id uuid)
-AS $$
-BEGIN
-    RETURN QUERY
-    SELECT watchlist_id, job_id
-    FROM job_watchlist
-    WHERE freelancer_id = _freelancer_id;
-END;
-$$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION get_freelancer_job_invitations (_freelancer_id uuid)
-RETURNS TABLE (invitation_id uuid, client_id uuid, job_id uuid, invitation_date timestamp)
-AS $$
-BEGIN
-    RETURN QUERY
-    SELECT invitation_id, client_id, job_id, invitation_date
-    FROM job_invitations
-    WHERE freelancer_id = _freelancer_id;
-END;
-$$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION get_freelancer_team_members (_freelancer_id uuid)
-RETURNS TABLE (team_member_id uuid, member_name varchar(255), title team_member_role, member_type team_member_type, member_email varchar(255))
-AS $$
-BEGIN
-    RETURN QUERY
-    SELECT team_member_id, member_name, title, member_type, member_email
-    FROM featured_team_member
+    SELECT bids_used, bid_date
+    FROM quotes
     WHERE freelancer_id = _freelancer_id;
 END;
 $$
