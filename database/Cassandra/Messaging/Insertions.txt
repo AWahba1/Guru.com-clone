@@ -55,3 +55,8 @@ VALUES (
     toTimestamp(now()),
     'Hello User1, his is a message from User2.'
 );
+
+INSERT INTO search_conversation (
+  user_id, conversation_id, user_with_conversation_id,user_name,user_with_conversation_name,lastEdited, chat_open)VALUES (e9a3e6dc-f1c1-4d27-8b13-234e8d79b5c2,a8c02257-3bfc-4d03-a4ef-6a9b5c2a1c11,1f9c7d0f-3189-4f26-b1d6-87f2f7257c1a,'John Doe','Jane Smith','2024-05-06T00:22:25.918Z', false);
+
+

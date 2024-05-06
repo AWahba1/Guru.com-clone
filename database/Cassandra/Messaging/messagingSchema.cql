@@ -2,16 +2,20 @@ CREATE KEYSPACE my_keyspace WITH replication = {'class': 'SimpleStrategy', 'repl
 
 USE my_keyspace;
 
-CREATE TABLE conversations (
-    conversation_id UUID PRIMARY KEY,
-    user1_id UUID,
-    user1_name TEXT, 
-    user2_id UUID,
-    user2_name TEXT,
-    created_at TIMESTAMP
-);
+CREATE TABLE search_conversation (
+    user_id UUID,
+    conversation_id UUID,
+    user_with_conversation_id UUID,
+    user_name TEXT,
+    user_with_conversation_name TEXT,
+    lastEdited TIMESTAMP,
+    chat_open BOOLEAN,
+    PRIMARY KEY (user_id, user_with_conversation_name, lastEdited, conversation_id)
+) WITH CLUSTERING ORDER BY (user_with_conversation_name ASC, lastEdited DESC);
 
-CREATE TABLE messages (
+
+
+CREATE TABLE message (
     conversation_id UUID,
     message_id UUID,
     sender_id UUID,
@@ -26,12 +30,28 @@ CREATE TABLE messages (
 CREATE TABLE see_conversations (
     user_id UUID,
     conversation_id UUID,
-    user_id_with_conversation UUID,
+    user_with_conversation_id UUID,
     user_name TEXT,
-    user_id_with_conversation_name TEXT,
+    user_with_conversation_name TEXT,
     lastEdited TIMESTAMP,
+    chat_open BOOLEAN,
     PRIMARY KEY (user_id, lastEdited, conversation_id)
 ) WITH CLUSTERING ORDER BY (lastEdited DESC);
 
 
+cd etc/cassandra/cassandra.yaml
+
+
+CREATE CUSTOM INDEX search_conversation_user_with_conversation_name_idx
+ON search_conversation(user_with_conversation_name) 
+USING 'org.apache.cassandra.index.sasi.SASIIndex'
+WITH OPTIONS = {
+    'mode': 'CONTAINS',
+    'analyzer_class': 'org.apache.cassandra.index.sasi.analyzer.StandardAnalyzer',
+    'tokenization_enable_stemming': 'true',
+    'tokenization_locale': 'en',
+    'tokenization_skip_stop_words': 'true',
+    'analyzed': 'true',
+    'tokenization_normalize_lowercase': 'true'
+};
 

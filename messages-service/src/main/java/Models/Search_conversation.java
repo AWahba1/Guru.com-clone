@@ -11,12 +11,15 @@ import java.util.UUID;
 
 
 @Entity
-@Table(name = "see_conversations")
-@IdClass(See_conv_PrimaryKey.class)
+@Table(name = "search_conversation")
+@IdClass(Search_conv_PrimaryKey.class)
 @Data
-public class See_conversations {
+public class Search_conversation {
     @Id
     UUID user_id;
+
+    @Id
+    String user_with_conversation_name;
     @Id
     Timestamp lastEdited;
     @Id
@@ -24,16 +27,15 @@ public class See_conversations {
 
     private UUID user_with_conversation_id;
     private String user_name;
-    private String user_with_conversation_name;
     private Boolean chat_open;
 
-    public See_conversations(UUID user_id, Timestamp lastEdited, UUID conversation_id, UUID user_with_conversation_id, String user_name, String user_with_conversation_name,Boolean chat_open) {
+    public Search_conversation(UUID user_id, Timestamp lastEdited, UUID conversation_id, UUID user_with_conversation_id, String user_name, String user_with_conversation_name,Boolean chat_open) {
         this.user_id = user_id;
+        this.user_with_conversation_name = user_with_conversation_name;
         this.lastEdited = lastEdited;
         this.conversation_id = conversation_id;
         this.user_with_conversation_id = user_with_conversation_id;
         this.user_name = user_name;
-        this.user_with_conversation_name = user_with_conversation_name;
         this.chat_open = chat_open;
 
     }
