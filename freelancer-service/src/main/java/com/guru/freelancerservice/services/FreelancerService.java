@@ -53,7 +53,7 @@ public interface FreelancerService {
 
     ResponseEntity<Object> updateDedicatedResource(ResourceDto resourceDto);
 
-    ResponseEntity<Object> addQuote(Quote quote);
+//    ResponseEntity<Object> addQuote(Quote quote);
 
     ResponseEntity<Object> getPortfolio(UUID portfolio_id);
 

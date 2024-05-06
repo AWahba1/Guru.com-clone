@@ -171,12 +171,12 @@ public class FreelancerController {
         return freelancerService.updateDedicatedResource(resourceDto);
     }
 
-    @PostMapping(path = "/{freelancer_id}/quote/{job_id}")
-    public ResponseEntity<Object> addQuote(@PathVariable("freelancer_id") UUID freelancer_id,@PathVariable("job_id") UUID job_id,@RequestBody Quote quote) {
-        quote.setFreelancer_id(freelancer_id);
-        quote.setJob_id(job_id);
-        return freelancerService.addQuote(quote);
-    }
+//    @PostMapping(path = "/{freelancer_id}/quote/{job_id}")
+//    public ResponseEntity<Object> addQuote(@PathVariable("freelancer_id") UUID freelancer_id,@PathVariable("job_id") UUID job_id,@RequestBody Quote quote) {
+//        quote.setFreelancer_id(freelancer_id);
+//        quote.setJob_id(job_id);
+//        return freelancerService.addQuote(quote);
+//    }
 
     @GetMapping(path = "/portfolio/{portfolio_id}")
     public ResponseEntity<Object> getPortfolio(@PathVariable("portfolio_id") UUID portfolio_id) {

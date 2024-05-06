@@ -347,22 +347,22 @@ public class FreelancerImplementation implements FreelancerService {
         return ResponseHandler.generateGeneralResponse("Freelancer dedicated resource updated successfully", HttpStatus.OK);
     }
 
-    @Override
-    public ResponseEntity<Object> addQuote(Quote quote) {
-        Freelancer freelancer = freelancerRepository.findById(quote.getFreelancer_id()).orElse(null);
-        if (freelancer == null) {
-            return  ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
-        }
-        // message queue to check if the job exists
-        quoteRepository.add_quote(
-                quote.getFreelancer_id(),
-                quote.getJob_id(),
-                quote.getProposal(),
-                quote.getBids_used(),
-                quote.getBid_date()
-        );
-        return ResponseHandler.generateGeneralResponse("Freelancer quote added successfully", HttpStatus.OK);
-    }
+//    @Override
+//    public ResponseEntity<Object> addQuote(Quote quote) {
+//        Freelancer freelancer = freelancerRepository.findById(quote.getFreelancer_id()).orElse(null);
+//        if (freelancer == null) {
+//            return  ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+//        }
+//        // message queue to check if the job exists
+//        quoteRepository.add_quote(
+//                quote.getFreelancer_id(),
+//                quote.getJob_id(),
+//                quote.getProposal(),
+//                quote.getBids_used(),
+//                quote.getBid_date()
+//        );
+//        return ResponseHandler.generateGeneralResponse("Freelancer quote added successfully", HttpStatus.OK);
+//    }
 
     @Override
     public ResponseEntity<Object> getPortfolio(UUID portfolio_id) {
