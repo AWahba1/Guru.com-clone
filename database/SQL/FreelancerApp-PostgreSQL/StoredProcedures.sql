@@ -529,7 +529,7 @@ BEGIN
         IF array_length(_member_names, 1) IS NOT NULL THEN
             FOR i IN 1..array_length(_member_names, 1) LOOP
                 INSERT INTO featured_team_member (team_member_id, freelancer_id, member_name, title, member_type, member_email) 
-                VALUES (UUID(), _freelancer_id, _member_names[i], _titles[i], _member_types[i], _member_emails[i]);
+                VALUES (gen_random_uuid(), _freelancer_id, _member_names[i], _titles[i], _member_types[i], _member_emails[i]);
             END LOOP;
         END IF;
 

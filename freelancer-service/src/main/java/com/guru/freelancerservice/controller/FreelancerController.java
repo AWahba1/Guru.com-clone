@@ -5,6 +5,7 @@ import com.guru.freelancerservice.dtos.freelancer.FreelancerAboutSectionDto;
 import com.guru.freelancerservice.dtos.freelancer.FreelancerProfileDto;
 import com.guru.freelancerservice.dtos.portfolios.PortfolioRequestDto;
 import com.guru.freelancerservice.dtos.resources.ResourceDto;
+import com.guru.freelancerservice.dtos.featuredTeammember.AddFeaturedTeamMembersRequestDto;
 import com.guru.freelancerservice.dtos.services.ServiceDto;
 import com.guru.freelancerservice.models.Freelancer;
 import com.guru.freelancerservice.models.Quote;
@@ -206,5 +207,11 @@ public class FreelancerController {
     @GetMapping(path = "/dedicated_resource/all/{freelancer_id}")
     public ResponseEntity<Object> getAllFreelancerDedicatedResources(@PathVariable("freelancer_id") UUID freelancer_id) {
         return freelancerService.getAllFreelancerDedicatedResources(freelancer_id);
+    }
+
+    @PostMapping(path = "{freelancer_id}/featured_team_members")
+    public ResponseEntity<Object> addFeaturedTeamMembers(@PathVariable("freelancer_id") UUID freelancer_id, @RequestBody AddFeaturedTeamMembersRequestDto addFeaturedTeamMembersRequestDto) {
+        addFeaturedTeamMembersRequestDto.setFreelancer_id(freelancer_id);
+        return freelancerService.addFeaturedTeamMembers(addFeaturedTeamMembersRequestDto);
     }
 }
