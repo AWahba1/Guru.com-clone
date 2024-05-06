@@ -541,10 +541,66 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE PROCEDURE delete_team_member (IN team_member_id uuid)
+CREATE OR REPLACE PROCEDURE delete_team_member (IN _team_member_id uuid)
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    DELETE FROM featured_team_member WHERE team_member_id = team_member_id;
+    DELETE FROM featured_team_member WHERE team_member_id = _team_member_id;
 END;
 $$;
+
+CREATE OR REPLACE PROCEDURE increment_profile_views(IN _freelancer_id uuid, IN _viewer_id uuid)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO profile_views (freelancer_id, viewer_id) VALUES (_freelancer_id, _viewer_id);
+    UPDATE freelancers SET profile_views = profile_views + 1 WHERE freelancer_id = _freelancer_id;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+
+END;
+$$;
+
+-- CREATE OR REPLACE PROCEDURE increment_portfolio_views (IN _portfolio_id uuid, IN _viewer_id uuid)
+-- LANGUAGE plpgsql
+-- AS $$
+-- BEGIN
+--     INSERT INTO portfolio_views (portfolio_id, viewer_id) VALUES (_portfolio_id, _viewer_id);
+--     UPDATE portfolios SET portfolio_views = portfolio_views + 1 WHERE portfolio_id = _portfolio_id;
+--     EXCEPTION
+--         WHEN others THEN
+--             ROLLBACK;
+--             RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+
+-- END;
+-- $$;
+
+-- CREATE OR REPLACE PROCEDURE increment_service_views (IN _service_id uuid, IN _viewer_id uuid)
+-- LANGUAGE plpgsql
+-- AS $$
+-- BEGIN
+--     INSERT INTO service_views (service_id, viewer_id) VALUES (_service_id, _viewer_id);
+--     UPDATE services SET service_views = service_views + 1 WHERE service_id = _service_id;
+--     EXCEPTION
+--         WHEN others THEN
+--             ROLLBACK;
+--             RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+
+-- END;
+-- $$;
+
+-- CREATE OR REPLACE PROCEDURE increment_resource_views (IN _resource_id uuid, IN _viewer_id uuid)
+-- LANGUAGE plpgsql
+-- AS $$
+-- BEGIN
+--     INSERT INTO resource_views (resource_id, viewer_id) VALUES (_resource_id, _viewer_id);
+--     UPDATE dedicated_resource SET resource_views = resource_views + 1 WHERE resource_id = _resource_id;
+--     EXCEPTION
+--         WHEN others THEN
+--             ROLLBACK;
+--             RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+
+-- END;
+-- $$;

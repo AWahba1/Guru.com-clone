@@ -46,9 +46,9 @@ public class FreelancerController {
         return ResponseHandler.generateGetResponse("Freelancer fetched successfully", HttpStatus.OK, freelancer, 1);
     }
 
-    @GetMapping(path = "/profile/{freelancer_id}")
-    public ResponseEntity<Object> getFreelancerProfile(@PathVariable("freelancer_id") UUID freeLancer_id) {
-        return freelancerService.getFreelancerProfile(freeLancer_id);
+    @GetMapping(path = "/profile/{freelancer_id}/{viewer_id}")
+    public ResponseEntity<Object> getFreelancerProfile(@PathVariable("freelancer_id") UUID freeLancer_id, @PathVariable("viewer_id") UUID viewer_id) {
+        return freelancerService.getFreelancerProfile(freeLancer_id, viewer_id);
     }
 
     @PatchMapping(path = "/profile/about/{freelancer_id}")
@@ -218,5 +218,10 @@ public class FreelancerController {
     @DeleteMapping(path = "/featured_team_members/{team_member_id}")
     public ResponseEntity<Object> deleteTeamMember(@PathVariable("team_member_id") UUID team_member_id) {
         return freelancerService.deleteTeamMember(team_member_id);
+    }
+
+    @GetMapping(path = "/{freelancer_id}/featured_team_members")
+    public ResponseEntity<Object> getFreelancerTeamMembers(@PathVariable("freelancer_id") UUID freelancer_id) {
+        return freelancerService.getFreelancerTeamMembers(freelancer_id);
     }
 }

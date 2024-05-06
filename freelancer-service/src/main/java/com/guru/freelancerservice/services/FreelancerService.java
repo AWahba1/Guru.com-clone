@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface FreelancerService {
-    ResponseEntity<Object> getFreelancerProfile(UUID freelancer_id);
+    ResponseEntity<Object> getFreelancerProfile(UUID freelancer_id, UUID viewer_id);
 
     List<Freelancer> getAllFreelancers();
 
@@ -71,5 +71,7 @@ public interface FreelancerService {
     ResponseEntity<Object> addFeaturedTeamMembers(AddFeaturedTeamMembersRequestDto addFeaturedTeamMembersRequestDto);
 
     ResponseEntity<Object> deleteTeamMember(UUID team_member_id);
+
+    ResponseEntity<Object> getFreelancerTeamMembers(UUID freelancer_id);
 
 }

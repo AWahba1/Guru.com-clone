@@ -22,6 +22,12 @@ public interface FreelancerRepository extends JpaRepository<Freelancer, UUID> {
     @Procedure(name = "toggle_profile_visibility")
     void toggle_profile_visibility(UUID freelancer_id);
 
+    @Procedure(name = "increment_profile_views")
+    void increment_profile_views(UUID freelancer_id, UUID viewer_id);
+
+    @Query(value = "select viewer_id from profile_views where freelancer_id=(?1) and viewer_id=(?2)", nativeQuery = true)
+    List<UUID> get_profile_views(UUID freelancer_id, UUID viewer_id);
+
 
 
 }

@@ -205,13 +205,13 @@ $$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_freelancer_team_members (_freelancer_id uuid)
-RETURNS TABLE (team_member_id uuid, member_name varchar(255), title team_member_role, member_type team_member_type, member_email varchar(255))
+RETURNS TABLE (team_member_id uuid,freelancer_id uuid, member_name varchar(255), title varchar(255), member_type varchar(255), member_email varchar(255))
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT team_member_id, member_name, title, member_type, member_email
-    FROM featured_team_member
-    WHERE freelancer_id = _freelancer_id;
+    SELECT *
+    FROM featured_team_member f
+    WHERE f.freelancer_id = _freelancer_id;
 END;
 $$
 LANGUAGE plpgsql;

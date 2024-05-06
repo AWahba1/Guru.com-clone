@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "freelancers")
+@Table(name = "featured_team_member")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

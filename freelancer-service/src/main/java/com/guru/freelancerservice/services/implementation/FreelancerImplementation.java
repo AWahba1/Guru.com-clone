@@ -42,10 +42,14 @@ public class FreelancerImplementation implements FreelancerService {
     }
 
     @Override
-    public ResponseEntity<Object> getFreelancerProfile(UUID freelancer_id) {
+    public ResponseEntity<Object> getFreelancerProfile(UUID freelancer_id, UUID viewer_id) {
         Freelancer freelancer = freelancerRepository.findById(freelancer_id).orElse(null);
         if (freelancer == null) {
             return ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+        }
+        List<UUID> profileViews = freelancerRepository.get_profile_views(freelancer_id, viewer_id);
+        if (profileViews.isEmpty() && !freelancer_id.equals(viewer_id)) {
+            freelancerRepository.increment_profile_views(freelancer_id, viewer_id);
         }
         FreelancerProfileDto returnedProfile = freelancerRepository.getFreelancerProfile(freelancer_id).getFirst();
         HashSet<String> uniqueSkills = new HashSet<>();
@@ -58,6 +62,14 @@ public class FreelancerImplementation implements FreelancerService {
                 .freelancer_id(returnedProfile.getFreelancer_id())
                 .freelancer_name(returnedProfile.getFreelancer_name())
                 .image_url(returnedProfile.getImage_url())
+                .visibility(returnedProfile.getVisibility())
+                .profile_views(returnedProfile.getProfile_views())
+                .job_invitations_num(returnedProfile.getJob_invitations_num())
+                .available_bids(returnedProfile.getAvailable_bids())
+                .all_time_earnings(returnedProfile.getAll_time_earnings())
+                .employers_num(returnedProfile.getEmployers_num())
+                .highest_paid(returnedProfile.getHighest_paid())
+                .membership_date(returnedProfile.getMembership_date())
                 .tagline(returnedProfile.getTagline())
                 .bio(returnedProfile.getBio())
                 .work_terms(returnedProfile.getWork_terms())
@@ -509,5 +521,14 @@ public class FreelancerImplementation implements FreelancerService {
         return ResponseHandler.generateGeneralResponse("Team member deleted successfully", HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<Object> getFreelancerTeamMembers(UUID freelancer_id) {
+        Freelancer freelancer = freelancerRepository.findById(freelancer_id).orElse(null);
+        if (freelancer == null) {
+            return  ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+        }
+        List<FeaturedTeamMember> teamMembers = featuredTeamMemberRepository.get_freelancer_team_members(freelancer_id);
+        return ResponseHandler.generateGetResponse("Team members retrieved successfully", HttpStatus.OK, teamMembers,teamMembers.size());
+    }
 
 }

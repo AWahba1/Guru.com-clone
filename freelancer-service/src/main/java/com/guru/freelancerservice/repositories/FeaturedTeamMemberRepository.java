@@ -2,8 +2,10 @@ package com.guru.freelancerservice.repositories;
 
 import com.guru.freelancerservice.models.FeaturedTeamMember;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface FeaturedTeamMemberRepository extends JpaRepository<FeaturedTeamMember, UUID> {
@@ -19,4 +21,7 @@ public interface FeaturedTeamMemberRepository extends JpaRepository<FeaturedTeam
 
     @Procedure(name = "delete_team_member")
     void delete_team_member(UUID team_member_id);
+
+    @Query(value= "SELECT * FROM get_freelancer_team_members(?1)",  nativeQuery = true)
+    List<FeaturedTeamMember> get_freelancer_team_members(UUID freelancer_id);
 }
