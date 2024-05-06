@@ -6,8 +6,8 @@ import com.guru.freelancerservice.dtos.freelancer.FreelancerViewProfileDto;
 import com.guru.freelancerservice.dtos.portfolios.PortfolioDetailsDto;
 import com.guru.freelancerservice.dtos.portfolios.PortfolioListViewDto;
 import com.guru.freelancerservice.dtos.portfolios.PortfolioRequestDto;
+import com.guru.freelancerservice.dtos.resources.*;
 import com.guru.freelancerservice.dtos.services.*;
-import com.guru.freelancerservice.dtos.resources.ResourceDto;
 import com.guru.freelancerservice.models.*;
 import com.guru.freelancerservice.repositories.*;
 import com.guru.freelancerservice.response.ResponseHandler;
@@ -430,5 +430,52 @@ public class FreelancerImplementation implements FreelancerService {
         }
         List<ServiceListViewDto> services = serviceRepository.get_all_freelancer_services(freelancer_id);
         return ResponseHandler.generateGetResponse("Services retrieved successfully", HttpStatus.OK, services,services.size());
+    }
+
+    @Override
+    public ResponseEntity<Object> getDedicatedResource(UUID resource_id) {
+        DedicatedResource resource = dedicatedResourceRepository.findById(resource_id).orElse(null);
+        if (resource == null) {
+            return  ResponseHandler.generateErrorResponse("Resource not found", HttpStatus.NOT_FOUND);
+        }
+        ResourceDetailsDto resourceDetailsDto = dedicatedResourceRepository.get_resource_details(resource_id).getFirst();
+        List<PortfolioResourceDetailsDto> portfolioResourceDetailsDtos = new ArrayList<>();
+        if(resourceDetailsDto.getPortfolio_ids() != null){
+            for (UUID portfolioId: resourceDetailsDto.getPortfolio_ids()){
+                PortfolioListViewDto portfolio = portfolioRepository.get_portfolio_list_view_by_id(portfolioId).getFirst();
+                PortfolioResourceDetailsDto portfolioResourceDetailsDto = new PortfolioResourceDetailsDto();
+                portfolioResourceDetailsDto.setPortfolio_id(portfolio.getPortfolio_id());
+                portfolioResourceDetailsDto.setTitle(portfolio.getTitle());
+                portfolioResourceDetailsDto.setCover_image_url(portfolio.getCover_image_url());
+                portfolioResourceDetailsDtos.add(portfolioResourceDetailsDto);
+            }
+        }
+        ResourceWithEmbeddedPortfoliosDto resourceWithEmbeddedPortfoliosDto = getResourceWithEmbeddedPortfoliosDto(resourceDetailsDto, portfolioResourceDetailsDtos);
+        return ResponseHandler.generateGetResponse("Resource retrieved successfully", HttpStatus.OK, resourceWithEmbeddedPortfoliosDto,1);
+    }
+
+    private ResourceWithEmbeddedPortfoliosDto getResourceWithEmbeddedPortfoliosDto(ResourceDetailsDto resourceDetailsDto, List<PortfolioResourceDetailsDto> portfolioResourceDetailsDtos) {
+        ResourceWithEmbeddedPortfoliosDto resourceWithEmbeddedPortfoliosDto = new ResourceWithEmbeddedPortfoliosDto();
+        resourceWithEmbeddedPortfoliosDto.setResource_id(resourceDetailsDto.getResource_id());
+        resourceWithEmbeddedPortfoliosDto.setFreelancer_id(resourceDetailsDto.getFreelancer_id());
+        resourceWithEmbeddedPortfoliosDto.setResource_name(resourceDetailsDto.getResource_name());
+        resourceWithEmbeddedPortfoliosDto.setResource_title(resourceDetailsDto.getResource_title());
+        resourceWithEmbeddedPortfoliosDto.setResource_summary(resourceDetailsDto.getResource_summary());
+        resourceWithEmbeddedPortfoliosDto.setResource_skills(resourceDetailsDto.getResource_skills());
+        resourceWithEmbeddedPortfoliosDto.setResource_rate(resourceDetailsDto.getResource_rate());
+        resourceWithEmbeddedPortfoliosDto.setMinimum_duration(resourceDetailsDto.getMinimum_duration());
+        resourceWithEmbeddedPortfoliosDto.setResource_image(resourceDetailsDto.getResource_image());
+        resourceWithEmbeddedPortfoliosDto.setPortfolios(portfolioResourceDetailsDtos);
+        return resourceWithEmbeddedPortfoliosDto;
+    }
+
+    @Override
+    public ResponseEntity<Object> getAllFreelancerDedicatedResources(UUID freelancer_id) {
+        Freelancer freelancer = freelancerRepository.findById(freelancer_id).orElse(null);
+        if (freelancer == null) {
+            return  ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+        }
+        List<ResourceListViewDto> resources = dedicatedResourceRepository.get_all_freelancer_dedicated_resources(freelancer_id);
+        return ResponseHandler.generateGetResponse("Dedicated resources retrieved successfully", HttpStatus.OK, resources,resources.size());
     }
 }

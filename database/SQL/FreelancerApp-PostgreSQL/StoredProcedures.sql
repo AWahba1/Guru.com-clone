@@ -659,45 +659,21 @@ END;
 $$;
 
 CREATE OR REPLACE PROCEDURE add_featured_team_members (
-    IN freelancer_id uuid, 
-    IN member_names varchar(255) ARRAY,
-    IN titles varchar(255) ARRAY,
-    IN member_types varchar(255) ARRAY,
-    IN member_emails varchar(255) ARRAY
+    IN _freelancer_id uuid,
+    IN _member_names varchar(255) ARRAY,
+    IN _titles varchar(255) ARRAY,
+    IN _member_types varchar(255) ARRAY,
+    IN _member_emails varchar(255) ARRAY
 )
 LANGUAGE plpgsql
 AS $$
 BEGIN
     BEGIN
 
-        IF array_length(member_names, 1) IS NOT NULL THEN
-            FOR i IN 1..array_length(member_names, 1) LOOP
+        IF array_length(_member_names, 1) IS NOT NULL THEN
+            FOR i IN 1..array_length(_member_names, 1) LOOP
                 INSERT INTO featured_team_member (team_member_id, freelancer_id, member_name, title, member_type, member_email) 
-                VALUES (UUID(), freelancer_id, member_names[i], titles[i], member_types[i], member_emails[i]);
-            END LOOP;
-        END IF;
-
-    EXCEPTION
-        WHEN others THEN
-            ROLLBACK;
-            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
-    END;
-END;
-$$;
-
-CREATE OR REPLACE PROCEDURE add_no_access_members (
-    IN freelancer_id uuid, 
-    IN member_names varchar(255) ARRAY
-)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    BEGIN
-
-        IF array_length(member_names, 1) IS NOT NULL THEN
-            FOR i IN 1..array_length(member_names, 1) LOOP
-                INSERT INTO featured_team_member (team_member_id, freelancer_id, member_name) 
-                VALUES (UUID(), freelancer_id, member_names[i]);
+                VALUES (UUID(), _freelancer_id, _member_names[i], _titles[i], _member_types[i], _member_emails[i]);
             END LOOP;
         END IF;
 

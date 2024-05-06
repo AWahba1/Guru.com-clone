@@ -91,14 +91,15 @@ AS $$
 BEGIN
     RETURN QUERY
     SELECT s.service_id, s.service_title, s.service_description,
-    ARRAY(SELECT sk.name FROM service_skills ss JOIN skills sk ON ss.skill_id = sk.id WHERE ss.service_id = s.service_id),
+    ARRAY(SELECT sk.name FROM service_skills ss JOIN skills sk ON ss.skill_id = sk.id WHERE ss.service_id = s.service_id UNION
+    SELECT sk.name FROM portfolio_skills ps JOIN skills sk ON ps.skill_id = sk.id JOIN portfolio_service p_s ON p_s.portfolio_id = ps.portfolio_id WHERE p_s.service_id = s.service_id),
     s.service_rate, s.minimum_budget, s.service_thumbnail
     FROM services s WHERE freelancer_id = _freelancer_id;
 END;
 $$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION get_all_freelancer_dedicated_resources (freelancer_id uuid)
+CREATE OR REPLACE FUNCTION get_all_freelancer_dedicated_resources (_freelancer_id uuid)
 RETURNS TABLE (
 resource_id uuid,
 resource_name varchar(255),
@@ -112,10 +113,11 @@ resource_image varchar(255)
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT r.resource_id, r.name, r.title, r.summary,
-    ARRAY(SELECT sk.name FROM resource_skills rs JOIN skills sk ON rs.skill_id = sk.id WHERE rs.resource_id = r.resource_id),
-    r.rate, r.minimum_duration, r.image
-    FROM dedicated_resource r WHERE freelancer_id = freelancer_id;
+    SELECT r.resource_id, r.resource_name, r.resource_title, r.resource_summary,
+    ARRAY(SELECT sk.name FROM resource_skills rs JOIN skills sk ON rs.skill_id = sk.id WHERE rs.resource_id = r.resource_id UNION
+    SELECT sk.name FROM portfolio_skills ps JOIN skills sk ON ps.skill_id = sk.id JOIN portfolio_resource p_r ON p_r.portfolio_id = ps.portfolio_id WHERE p_r.resource_id = r.resource_id),
+    r.resource_rate, r.minimum_duration, r.resource_image
+    FROM dedicated_resource r WHERE freelancer_id = _freelancer_id;
 END;
 $$
 LANGUAGE plpgsql;
@@ -169,36 +171,32 @@ RETURNS TABLE(
     resource_name VARCHAR(255),
     resource_title VARCHAR(255),
     resource_summary VARCHAR(3000),
-    resource_skills varchar(255) ARRAY,
     resource_rate DECIMAL,
-    minimum_duration resource_duration_enum,
+    minimum_duration VARCHAR(255),
     resource_image VARCHAR(255),
     resource_views INT,
-    portfolio_id UUID,
-    portfolio_title VARCHAR(255),
-    portfolio_cover_image_url VARCHAR(255)
+    resource_skills varchar(255) ARRAY,
+    portfolio_ids UUID ARRAY
 ) AS $$
 DECLARE
     portfolio_exists BOOLEAN;
 BEGIN
-    portfolio_exists := EXISTS (SELECT 1 FROM portfolio_resource WHERE resource_id = _resource_id);
+    portfolio_exists := EXISTS (SELECT 1 FROM portfolio_resource pr WHERE pr.resource_id = _resource_id);
 
     IF portfolio_exists THEN
         RETURN QUERY
             SELECT
-                r.*,
+                r.resource_id, r.freelancer_id, r.resource_name, r.resource_title, r.resource_summary, r.resource_rate, r.minimum_duration, r.resource_image, r.resource_views,
                 ARRAY(SELECT sk.name FROM resource_skills rs JOIN skills sk ON rs.skill_id = sk.id WHERE rs.resource_id = _resource_id),
-                p.portfolio_id, p.title, p.cover_image_url
+                ARRAY(SELECT pr.portfolio_id FROM portfolio_resource pr WHERE pr.resource_id = _resource_id)
             FROM dedicated_resource r
-            JOIN portfolio_resource pr ON r.resource_id = pr.resource_id
-            JOIN portfolios p ON pr.portfolio_id = p.portfolio_id
             WHERE r.resource_id = _resource_id;
     ELSE
         RETURN QUERY
             SELECT
-                r.*,
+                r.resource_id, r.freelancer_id, r.resource_name, r.resource_title, r.resource_summary, r.resource_rate, r.minimum_duration, r.resource_image, r.resource_views,
                 ARRAY(SELECT sk.name FROM resource_skills rs JOIN skills sk ON rs.skill_id = sk.id WHERE rs.resource_id = _resource_id),
-                NULL::UUID AS portfolio_id, NULL::TEXT AS title, NULL::TEXT AS cover_image_url
+                NULL::UUID ARRAY AS portfolio_ids
             FROM dedicated_resource r
             WHERE r.resource_id = _resource_id;
     END IF;

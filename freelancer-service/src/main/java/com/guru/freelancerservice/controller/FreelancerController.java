@@ -197,4 +197,14 @@ public class FreelancerController {
     public ResponseEntity<Object> getAllFreelancerServices(@PathVariable("freelancer_id") UUID freelancer_id) {
         return freelancerService.getAllFreelancerServices(freelancer_id);
     }
+
+    @GetMapping(path = "/dedicated_resource/{resource_id}")
+    public ResponseEntity<Object> getDedicatedResource(@PathVariable("resource_id") UUID resource_id) {
+        return freelancerService.getDedicatedResource(resource_id);
+    }
+
+    @GetMapping(path = "/dedicated_resource/all/{freelancer_id}")
+    public ResponseEntity<Object> getAllFreelancerDedicatedResources(@PathVariable("freelancer_id") UUID freelancer_id) {
+        return freelancerService.getAllFreelancerDedicatedResources(freelancer_id);
+    }
 }

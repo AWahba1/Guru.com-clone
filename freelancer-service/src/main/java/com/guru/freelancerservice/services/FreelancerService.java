@@ -63,4 +63,8 @@ public interface FreelancerService {
 
     ResponseEntity<Object> getAllFreelancerServices(UUID freelancer_id);
 
+    ResponseEntity<Object> getDedicatedResource(UUID resource_id);
+
+    ResponseEntity<Object> getAllFreelancerDedicatedResources(UUID freelancer_id);
+
 }

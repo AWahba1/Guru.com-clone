@@ -67,8 +67,8 @@ CREATE TABLE featured_team_member (
     team_member_id UUID PRIMARY KEY,
     freelancer_id UUID,
     member_name VARCHAR(255),
-    title team_member_role,
-    member_type team_member_type,
+    title VARCHAR(255) CHECK (title IN ('CONSULTANT', 'MANAGER')),
+    member_type VARCHAR(255) CHECK (member_type IN ('INDEPENDENT_ACCOUNTS', 'SUB_ACCOUNTS', 'NO_ACCESS_MEMBERS'))
     member_email VARCHAR(255),
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
 );
