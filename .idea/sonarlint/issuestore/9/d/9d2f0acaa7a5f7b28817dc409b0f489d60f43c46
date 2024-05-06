@@ -1,0 +1,14 @@
+
+l	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(‚…åêÿÿÿÿÿ
+g	java:S117›"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ï¥«Á
+l	java:S117§"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ûô¤¢ÿÿÿÿÿ
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(º›°Î
+n	java:S116"YRename this field "MegRepositoray" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÎÀ§Ò
+m	java:S116"XRename this field "SeeRepository" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(‚ôŸ¼
+p	java:S116 "[Rename this field "SearchRepository" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Çóğÿ
+P	java:S1253"<This block of commented-out lines of code should be removed.(Õ¾–
+Q	java:S125A"<This block of commented-out lines of code should be removed.(š¤¤â
+E	java:S106~"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ
+F	java:S106”"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ
+F	java:S106 "+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ
+F	java:S106¬"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ

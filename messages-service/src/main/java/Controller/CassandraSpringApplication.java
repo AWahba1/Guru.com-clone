@@ -33,14 +33,15 @@ public class CassandraSpringApplication {
 
 
 	@PostMapping("/message")
-	public Message saveMessage(@RequestBody Message messages)
+	public Message saveMessage(@RequestBody MessageDTO messagesDTO)
 	{
+		Message message = MessageDTO.buidMessage(messagesDTO);
 		LocalDateTime now = LocalDateTime.now();
 
 		// Convert LocalDateTime to Timestamp
 		Timestamp timestamp = Timestamp.valueOf(now);
 
-		messages.setSent_at(timestamp);
+		message.setSent_at(timestamp);
 
 
 //		See_conversations conversations1 = new See_conversations(messages.getSender_id(),
@@ -65,8 +66,8 @@ public class CassandraSpringApplication {
 //			SeeRepository.deleteConversationByCompositeKey(messages.getSender_id(), messages.getSent_at(), messages.getConversation_id());
 //			SeeRepository.deleteConversationByCompositeKey(messages.getReceiver_id(), messages.getSent_at(), messages.getConversation_id());
 //			SeeRepository.saveAll(seeConversationsList);
-			MegRepositoray.save(messages);
-			return messages;
+			MegRepositoray.save(message);
+			return message;
 
 		} catch (Exception e){
 
@@ -75,7 +76,9 @@ public class CassandraSpringApplication {
 	}
 
 	@PostMapping("/AddConversation")
-	public List<See_conversations> saveConversation(@RequestBody See_conversations conversations) {
+	public List<See_conversations> saveConversation(@RequestBody See_conversationsDTO see_conversationsDTO) {
+
+		See_conversations conversations = See_conversationsDTO.buildSee_converstions(see_conversationsDTO);
 		LocalDateTime now = LocalDateTime.now();
 
 		// Convert LocalDateTime to Timestamp
@@ -155,7 +158,7 @@ public class CassandraSpringApplication {
 	public List<Search_conversation> findConversationByCompositeKey(@RequestParam UUID user_id,@RequestParam String search) {
 		try {
 			search = "%"+search+"$";
-			return SearchRepository.findByCompositeKey(user_id,search);
+			return SeeRepository.searchConversations(user_id,search);
 		}catch (Exception e){
 			System.out.println(e);
 			return null;

@@ -35,15 +35,15 @@ CREATE TABLE see_conversations (
     user_with_conversation_name TEXT,
     lastEdited TIMESTAMP,
     chat_open BOOLEAN,
-    PRIMARY KEY (user_id, lastEdited, conversation_id)
-) WITH CLUSTERING ORDER BY (lastEdited DESC);
+    PRIMARY KEY (user_id, conversation_id)
+);
 
 
 cd etc/cassandra/cassandra.yaml
 
 
-CREATE CUSTOM INDEX search_conversation_user_with_conversation_name_idx
-ON search_conversation(user_with_conversation_name) 
+CREATE CUSTOM INDEX search_conversation_with_conversation_name_idx
+ON see_conversations(user_with_conversation_name) 
 USING 'org.apache.cassandra.index.sasi.SASIIndex'
 WITH OPTIONS = {
     'mode': 'CONTAINS',
@@ -54,4 +54,6 @@ WITH OPTIONS = {
     'analyzed': 'true',
     'tokenization_normalize_lowercase': 'true'
 };
+
+CREATE INDEX lastEdited_idx ON see_conversations (lastEdited);
 

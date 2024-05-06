@@ -4,9 +4,9 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 public class UpdateDTO {
-    UUID conversation_id;
-    Timestamp sent_at;
-    UUID message_id;
+    private UUID conversation_id;
+    private Timestamp sent_at;
+    private UUID message_id;
     private String message_text;
 
     public UpdateDTO(UUID conversation_id, Timestamp sent_at, UUID message_id, String message_text) {

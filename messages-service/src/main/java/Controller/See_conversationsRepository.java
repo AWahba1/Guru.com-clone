@@ -12,6 +12,9 @@ public interface See_conversationsRepository extends CassandraRepository<See_con
     @Query("SELECT * FROM see_conversations WHERE user_id = ?0 ORDER BY lastEdited DESC LIMIT 50")
     List<See_conversations> findByCompositeKey(UUID user_id);
 
+    @Query("SELECT * FROM see_conversations WHERE user_id = ?0 AND user_with_conversation_name LIKE ?1")
+    List<Search_conversation> searchConversations(UUID user_id,String user_with_conversation_name);
+
     @Query("UPDATE see_conversations SET chat_open = ?3 WHERE user_id = ?0 AND lastEdited = ?1 AND conversation_id = ?2")
     void updateConversation(UUID user_id, Timestamp lastEdited, UUID conversation_id,Boolean chat_open);
 
