@@ -16,4 +16,7 @@ public interface FeaturedTeamMemberRepository extends JpaRepository<FeaturedTeam
      */
     @Procedure(name = "add_featured_team_members")
     void add_featured_team_members(UUID freelancer_id, String[] member_names, String[] titles, String[] member_types, String[] member_emails);
+
+    @Procedure(name = "delete_team_member")
+    void delete_team_member(UUID team_member_id);
 }

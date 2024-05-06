@@ -70,4 +70,6 @@ public interface FreelancerService {
 
     ResponseEntity<Object> addFeaturedTeamMembers(AddFeaturedTeamMembersRequestDto addFeaturedTeamMembersRequestDto);
 
+    ResponseEntity<Object> deleteTeamMember(UUID team_member_id);
+
 }

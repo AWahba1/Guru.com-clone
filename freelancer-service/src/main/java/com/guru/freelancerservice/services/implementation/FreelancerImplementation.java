@@ -497,6 +497,17 @@ public class FreelancerImplementation implements FreelancerService {
             );
 
         return ResponseHandler.generateGeneralResponse("Featured team members added successfully", HttpStatus.OK);
-
     }
+
+    @Override
+    public ResponseEntity<Object> deleteTeamMember(UUID team_member_id) {
+        FeaturedTeamMember teamMember = featuredTeamMemberRepository.findById(team_member_id).orElse(null);
+        if (teamMember == null) {
+            return  ResponseHandler.generateErrorResponse("Team member not found", HttpStatus.NOT_FOUND);
+        }
+        featuredTeamMemberRepository.delete_team_member(team_member_id);
+        return ResponseHandler.generateGeneralResponse("Team member deleted successfully", HttpStatus.OK);
+    }
+
+
 }
