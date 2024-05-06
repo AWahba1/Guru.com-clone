@@ -215,7 +215,7 @@ public class FreelancerController {
         return freelancerService.addFeaturedTeamMembers(addFeaturedTeamMembersRequestDto);
     }
 
-    @DeleteMapping(path = "/team_member/{team_member_id}")
+    @DeleteMapping(path = "/featured_team_members/{team_member_id}")
     public ResponseEntity<Object> deleteTeamMember(@PathVariable("team_member_id") UUID team_member_id) {
         return freelancerService.deleteTeamMember(team_member_id);
     }
