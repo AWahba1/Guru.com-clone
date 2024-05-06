@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -44,6 +45,12 @@ public class SavedSearchController {
     public ResponseEntity<?> deleteSavedSearch(@PathVariable UUID id) {
         savedSearchService.deleteSavedSearch(id);
         return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/freelancer/{freelancerId}")
+    public ResponseEntity<List<SavedSearch>> getSavedSearchesByFreelancerId(@PathVariable UUID freelancerId) {
+        List<SavedSearch> savedSearches = savedSearchService.getSavedSearchesByFreelancerId(freelancerId);
+        return new ResponseEntity<>(savedSearches, HttpStatus.OK);
     }
 
 }

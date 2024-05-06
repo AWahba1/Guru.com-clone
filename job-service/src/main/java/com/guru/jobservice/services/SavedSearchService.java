@@ -7,6 +7,7 @@ import com.guru.jobservice.repositories.SavedSearchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -84,6 +85,11 @@ public class SavedSearchService {
                 savedSearchRequest.getNotApplied()
         );
     }
+    public List<SavedSearch> getSavedSearchesByFreelancerId(UUID freelancerId) {
+        //TODO: VERIFY USING MESSAGE QUEUES
+        return savedSearchRepository.getFreelancerSavedSearches(freelancerId);
+    }
+
 
 
 }
