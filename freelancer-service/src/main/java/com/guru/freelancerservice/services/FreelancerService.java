@@ -1,5 +1,6 @@
 package com.guru.freelancerservice.services;
 
+import com.guru.freelancerservice.dtos.featuredTeammember.AddFeaturedTeamMembersRequestDto;
 import com.guru.freelancerservice.dtos.freelancer.FreelancerAboutSectionDto;
 import com.guru.freelancerservice.dtos.freelancer.FreelancerProfileDto;
 import com.guru.freelancerservice.dtos.portfolios.PortfolioRequestDto;
@@ -66,5 +67,7 @@ public interface FreelancerService {
     ResponseEntity<Object> getDedicatedResource(UUID resource_id);
 
     ResponseEntity<Object> getAllFreelancerDedicatedResources(UUID freelancer_id);
+
+    ResponseEntity<Object> addFeaturedTeamMembers(AddFeaturedTeamMembersRequestDto addFeaturedTeamMembersRequestDto);
 
 }

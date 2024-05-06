@@ -1,5 +1,6 @@
 package com.guru.freelancerservice.services.implementation;
 
+import com.guru.freelancerservice.dtos.featuredTeammember.AddFeaturedTeamMembersRequestDto;
 import com.guru.freelancerservice.dtos.freelancer.FreelancerAboutSectionDto;
 import com.guru.freelancerservice.dtos.freelancer.FreelancerProfileDto;
 import com.guru.freelancerservice.dtos.freelancer.FreelancerViewProfileDto;
@@ -29,13 +30,15 @@ public class FreelancerImplementation implements FreelancerService {
     private final ServiceRepository serviceRepository;
     private final DedicatedResoruceRepository dedicatedResourceRepository;
     private final QuoteRepository quoteRepository;
+    private final FeaturedTeamMemberRepository featuredTeamMemberRepository;
     @Autowired
-    public FreelancerImplementation(FreelancerRepository freelancerRepository, PortfolioRepository portfolioRepository, ServiceRepository serviceRepository, DedicatedResoruceRepository dedicatedResourceRepository, QuoteRepository quoteRepository) {
+    public FreelancerImplementation(FreelancerRepository freelancerRepository, PortfolioRepository portfolioRepository, ServiceRepository serviceRepository, DedicatedResoruceRepository dedicatedResourceRepository, QuoteRepository quoteRepository, FeaturedTeamMemberRepository featuredTeamMemberRepository) {
         this.freelancerRepository = freelancerRepository;
         this.portfolioRepository = portfolioRepository;
         this.serviceRepository = serviceRepository;
         this.dedicatedResourceRepository = dedicatedResourceRepository;
         this.quoteRepository = quoteRepository;
+        this.featuredTeamMemberRepository = featuredTeamMemberRepository;
     }
 
     @Override
@@ -477,5 +480,23 @@ public class FreelancerImplementation implements FreelancerService {
         }
         List<ResourceListViewDto> resources = dedicatedResourceRepository.get_all_freelancer_dedicated_resources(freelancer_id);
         return ResponseHandler.generateGetResponse("Dedicated resources retrieved successfully", HttpStatus.OK, resources,resources.size());
+    }
+
+    @Override
+    public ResponseEntity<Object> addFeaturedTeamMembers(AddFeaturedTeamMembersRequestDto featuredTeamMembersRequestDto) {
+        Freelancer freelancer = freelancerRepository.findById(featuredTeamMembersRequestDto.getFreelancer_id()).orElse(null);
+        if( freelancer== null){
+            return  ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+        }
+            featuredTeamMemberRepository.add_featured_team_members(
+                    featuredTeamMembersRequestDto.getFreelancer_id(),
+                    featuredTeamMembersRequestDto.getMember_names(),
+                    featuredTeamMembersRequestDto.getTitles(),
+                    featuredTeamMembersRequestDto.getMember_types(),
+                    featuredTeamMembersRequestDto.getMember_emails()
+            );
+
+        return ResponseHandler.generateGeneralResponse("Featured team members added successfully", HttpStatus.OK);
+
     }
 }
