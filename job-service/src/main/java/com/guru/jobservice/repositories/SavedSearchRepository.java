@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -12,6 +14,9 @@ public interface SavedSearchRepository extends JpaRepository<SavedSearch, UUID> 
 
     @Query(value = "select * from get_saved_search_by_id(?1)", nativeQuery = true)
     SavedSearch getSavedSearchById(UUID savedSearchId);
+
+    @Query(value = "select * from get_freelancer_saved_searches(?1)", nativeQuery = true)
+    List<SavedSearch> getFreelancerSavedSearches(UUID freelancerId);
 
     @Procedure("create_saved_search")
     void createSavedSearch(
