@@ -1,10 +1,11 @@
 package com.guru.payment.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import com.guru.payment.models.Payment;
 import com.guru.payment.repositories.PaymentRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,4 +28,9 @@ public class PaymentService {
     public Payment createPayment(Payment payment) {
         return paymentRepository.save(payment);
     }
+    @CacheEvict(value = {"payments", "payment"}, key = "#id")
+    public void deletePaymentById(Long id) {
+        paymentRepository.deleteById(id);
+    }
+
 }
