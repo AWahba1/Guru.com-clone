@@ -28,8 +28,6 @@ public class CassandraSpringApplication {
 	@Autowired
 	private See_conversationsRepository SeeRepository;
 
-	@Autowired
-	private Search_conversationRepository SearchRepository;
 
 
 	@PostMapping("/message")
@@ -40,32 +38,9 @@ public class CassandraSpringApplication {
 
 		// Convert LocalDateTime to Timestamp
 		Timestamp timestamp = Timestamp.valueOf(now);
-
 		message.setSent_at(timestamp);
 
-
-//		See_conversations conversations1 = new See_conversations(messages.getSender_id(),
-//				timestamp,
-//				messages.getConversation_id(),
-//				messages.getReceiver_id(),
-//				messages.getSender_name(),
-//				messages.getReceiver_name());
-//
-//		See_conversations conversations2 = new See_conversations(messages.getReceiver_id(),
-//				timestamp,
-//				messages.getConversation_id(),
-//				messages.getSender_id(),
-//				messages.getReceiver_name(),
-//				messages.getSender_name());
-//
-//		List<See_conversations> seeConversationsList = new ArrayList<>();
-//		seeConversationsList.add(conversations1);
-//		seeConversationsList.add(conversations2);
-
 		try {
-//			SeeRepository.deleteConversationByCompositeKey(messages.getSender_id(), messages.getSent_at(), messages.getConversation_id());
-//			SeeRepository.deleteConversationByCompositeKey(messages.getReceiver_id(), messages.getSent_at(), messages.getConversation_id());
-//			SeeRepository.saveAll(seeConversationsList);
 			MegRepositoray.save(message);
 			return message;
 
@@ -89,8 +64,8 @@ public class CassandraSpringApplication {
 		conversations.setChat_open(true);
 
 		See_conversations conversations2 = new See_conversations(conversations.getUser_with_conversation_id(),
-				timestamp,
 				conversations.getConversation_id(),
+				timestamp,
 				conversations.getUser_id(),
 				conversations.getUser_with_conversation_name(),
 				conversations.getUser_name(),
@@ -101,28 +76,7 @@ public class CassandraSpringApplication {
 		seeConversationsList.add(conversations2);
 
 
-		Search_conversation search1 =new Search_conversation(conversations.getUser_id(),
-				timestamp,
-				conversations.getConversation_id(),
-				conversations.getUser_with_conversation_id(),
-				conversations.getUser_name(),
-				conversations.getUser_with_conversation_name(),
-				true);
-
-		Search_conversation search2 = new Search_conversation(conversations.getUser_with_conversation_id(),
-				timestamp,
-				conversations.getConversation_id(),
-				conversations.getUser_id(),
-				conversations.getUser_with_conversation_name(),
-				conversations.getUser_name(),
-				true);
-
-		List<Search_conversation> searchConversations = new ArrayList<>();
-		searchConversations.add(search1);
-		searchConversations.add(search2);
-
 		try{
-			SearchRepository.saveAll(searchConversations);
 			return SeeRepository.saveAll(seeConversationsList);
 		}
 		catch (Exception e){
@@ -155,7 +109,7 @@ public class CassandraSpringApplication {
 	}
 
 	@GetMapping("/Search")
-	public List<Search_conversation> findConversationByCompositeKey(@RequestParam UUID user_id,@RequestParam String search) {
+	public List<See_conversations> findConversationByCompositeKey(@RequestParam UUID user_id,@RequestParam String search) {
 		try {
 			search = "%"+search+"$";
 			return SeeRepository.searchConversations(user_id,search);
@@ -192,8 +146,8 @@ public class CassandraSpringApplication {
 	public ResponseEntity<String> closeOrOpenChat(@RequestBody See_conversations conversations) {
 		try {
 			boolean chat = conversations.getChat_open();
-			SeeRepository.updateConversation(conversations.getUser_id(),conversations.getLastEdited(),conversations.getConversation_id(),chat);
-			SeeRepository.updateConversation(conversations.getUser_with_conversation_id(),conversations.getLastEdited(),conversations.getConversation_id(),chat);
+			SeeRepository.updateConversation(conversations.getUser_id(),conversations.getConversation_id(),chat);
+			SeeRepository.updateConversation(conversations.getUser_with_conversation_id(),conversations.getConversation_id(),chat);
 			return ResponseEntity.ok("Message updated successfully");
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update message");

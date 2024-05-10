@@ -17,17 +17,17 @@ import java.util.UUID;
 public class See_conversations {
     @Id
     UUID user_id;
-    @Id
-    Timestamp lastEdited;
+
     @Id
     UUID conversation_id;
 
+    private Timestamp lastEdited;
     private UUID user_with_conversation_id;
     private String user_name;
     private String user_with_conversation_name;
     private Boolean chat_open;
 
-    public See_conversations(UUID user_id, Timestamp lastEdited, UUID conversation_id, UUID user_with_conversation_id, String user_name, String user_with_conversation_name,Boolean chat_open) {
+    public See_conversations(UUID user_id, UUID conversation_id,Timestamp lastEdited, UUID user_with_conversation_id, String user_name, String user_with_conversation_name,Boolean chat_open) {
         this.user_id = user_id;
         this.lastEdited = lastEdited;
         this.conversation_id = conversation_id;

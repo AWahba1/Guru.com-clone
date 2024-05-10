@@ -85,8 +85,8 @@ public class See_conversationsDTO {
     public static See_conversations buildSee_converstions(See_conversationsDTO seeConversationsDTO){
         See_conversations seeConversations = new See_conversations(
                 seeConversationsDTO.getUser_id(),
-                seeConversationsDTO.getLastEdited(),
                 seeConversationsDTO.getConversation_id(),
+                seeConversationsDTO.getLastEdited(),
                 seeConversationsDTO.getUser_with_conversation_id(),
                 seeConversationsDTO.getUser_name(),
                 seeConversationsDTO.getUser_with_conversation_name(),

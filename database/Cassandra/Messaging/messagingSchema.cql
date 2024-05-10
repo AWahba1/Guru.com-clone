@@ -14,7 +14,6 @@ CREATE TABLE search_conversation (
 ) WITH CLUSTERING ORDER BY (user_with_conversation_name ASC, lastEdited DESC);
 
 
-
 CREATE TABLE message (
     conversation_id UUID,
     message_id UUID,
@@ -54,6 +53,4 @@ WITH OPTIONS = {
     'analyzed': 'true',
     'tokenization_normalize_lowercase': 'true'
 };
-
-CREATE INDEX lastEdited_idx ON see_conversations (lastEdited);
 

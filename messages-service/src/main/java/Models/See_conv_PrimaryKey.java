@@ -15,13 +15,10 @@ public class See_conv_PrimaryKey {
 
     UUID user_id;
 
-    Timestamp lastEdited;
-
     UUID conversation_id;
 
-    public See_conv_PrimaryKey(UUID user_id, Timestamp lastEdited, UUID conversation_id) {
+    public See_conv_PrimaryKey(UUID user_id, UUID conversation_id) {
         this.user_id = user_id;
-        this.lastEdited = lastEdited;
         this.conversation_id = conversation_id;
     }
 
@@ -31,14 +28,6 @@ public class See_conv_PrimaryKey {
 
     public void setUser_id(UUID user_id) {
         this.user_id = user_id;
-    }
-
-    public Timestamp getLastEdited() {
-        return lastEdited;
-    }
-
-    public void setLastEdited(Timestamp lastEdited) {
-        this.lastEdited = lastEdited;
     }
 
     public UUID getConversation_id() {
