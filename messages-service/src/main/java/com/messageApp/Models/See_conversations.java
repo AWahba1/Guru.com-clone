@@ -1,4 +1,4 @@
-package Models;
+package com.messageApp.Models;
 
 import lombok.Data;
 

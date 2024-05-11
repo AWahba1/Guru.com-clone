@@ -1,10 +1,11 @@
-package Controller;
+package com.messageApp.Controller;
 
-import Models.*;
+import com.messageApp.Models.*;
+import com.messageApp.Models.See_conv_PrimaryKey;
+import com.messageApp.Models.See_conversations;
 import org.springframework.data.cassandra.repository.CassandraRepository;
 import org.springframework.data.cassandra.repository.Query;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 

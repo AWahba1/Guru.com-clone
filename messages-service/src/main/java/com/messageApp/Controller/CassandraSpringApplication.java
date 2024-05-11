@@ -1,12 +1,17 @@
-package Controller;
+package com.messageApp.Controller;
 
-import Models.*;
-import DTO.*;
+import com.messageApp.Models.*;
+import com.messageApp.DTO.*;
+import com.messageApp.DTO.MessageDTO;
+import com.messageApp.DTO.See_conversationsDTO;
+import com.messageApp.DTO.UpdateDTO;
+import com.messageApp.Models.Message;
+import com.messageApp.Models.See_conversations;
+import com.messageApp.Models.messagePrimaryKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,10 +29,9 @@ import org.springframework.web.bind.annotation.*;
 
 public class CassandraSpringApplication {
 	@Autowired
-	private MessagesRepository MegRepositoray;
+	private MessagesRepository MegRepository;
 	@Autowired
 	private See_conversationsRepository SeeRepository;
-
 
 
 	@PostMapping("/message")
@@ -35,13 +39,10 @@ public class CassandraSpringApplication {
 	{
 		Message message = MessageDTO.buidMessage(messagesDTO);
 		LocalDateTime now = LocalDateTime.now();
-
-		// Convert LocalDateTime to Timestamp
 		Timestamp timestamp = Timestamp.valueOf(now);
 		message.setSent_at(timestamp);
-
 		try {
-			MegRepositoray.save(message);
+			MegRepository.save(message);
 			return message;
 
 		} catch (Exception e){
@@ -56,7 +57,6 @@ public class CassandraSpringApplication {
 		See_conversations conversations = See_conversationsDTO.buildSee_converstions(see_conversationsDTO);
 		LocalDateTime now = LocalDateTime.now();
 
-		// Convert LocalDateTime to Timestamp
 		Timestamp timestamp = Timestamp.valueOf(now);
 
 		conversations.setLastEdited(timestamp);
@@ -88,7 +88,7 @@ public class CassandraSpringApplication {
 
 	@GetMapping("/lists")
 	public List<Message> getMessageAll() {
-		return MegRepositoray.findAll();
+		return MegRepository.findAll();
 	}
 
 	@GetMapping("/AllConversations")
@@ -123,7 +123,7 @@ public class CassandraSpringApplication {
 	@GetMapping("/listsbyid")
 	public List<Message> findMessageByCompositeKey(@RequestParam UUID conversation_id) {
 		try {
-			return MegRepositoray.findByCompositeKey(conversation_id);
+			return MegRepository.findByCompositeKey(conversation_id);
 		}
 		catch (Exception e){
 			System.out.println(e);
@@ -135,7 +135,7 @@ public class CassandraSpringApplication {
 	@PutMapping("/update")
 	public ResponseEntity<String> updateMessage(@RequestBody UpdateDTO dto) {
 		try {
-			MegRepositoray.updateMessage(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_text());
+			MegRepository.updateMessage(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_text());
 			return ResponseEntity.ok("Message updated successfully");
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update message");
@@ -158,7 +158,7 @@ public class CassandraSpringApplication {
 	@DeleteMapping("/delete")
 	public ResponseEntity<String> deleteMessage(@RequestBody messagePrimaryKey mp) {
 		try {
-			MegRepositoray.deleteByCompositeKey(mp.getConversation_id(), mp.getSent_at(), mp.getMessage_id());
+			MegRepository.deleteByCompositeKey(mp.getConversation_id(), mp.getSent_at(), mp.getMessage_id());
 			return ResponseEntity.ok("Message deleted successfully");
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete message");

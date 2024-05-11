@@ -1,7 +1,9 @@
-package Controller;
+package com.messageApp.Controller;
 
-import Models.*;
+import com.messageApp.Models.*;
 
+import com.messageApp.Models.Message;
+import com.messageApp.Models.messagePrimaryKey;
 import org.springframework.data.cassandra.repository.CassandraRepository;
 import org.springframework.data.cassandra.repository.Query;
 
@@ -10,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public interface MessagesRepository extends CassandraRepository<Message,messagePrimaryKey> {
+public interface MessagesRepository extends CassandraRepository<Message, messagePrimaryKey> {
     @Query("SELECT * FROM message WHERE conversation_id = ?0 ORDER BY sent_at DESC LIMIT 50")
     List<Message> findByCompositeKey(UUID conversationId);
 

@@ -1,38 +1,24 @@
-package Models;
+package com.messageApp.DTO;
 
-import lombok.Data;
+import com.messageApp.Models.Message;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+public class MessageDTO {
 
-@Entity
-@Table(name = "message")
-@IdClass(messagePrimaryKey.class)
-@Data
-//@AllArgsConstructor
-//@NoArgsConstructor
-public class Message {
+    private UUID conversation_id;
 
-   @Id
-    UUID conversation_id;
+    private Timestamp sent_at;
 
-    @Id
-    Timestamp sent_at;
-    @Id
-    UUID message_id;
+    private UUID message_id;
     private UUID sender_id;
     private UUID receiver_id;
     private String sender_name;
     private String receiver_name;
     private String message_text;
 
-
-    public Message(UUID conversation_id, Timestamp sent_at, UUID message_id, UUID sender_id, UUID receiver_id, String sender_name, String receiver_name, String message_text) {
+    public MessageDTO(UUID conversation_id, Timestamp sent_at, UUID message_id, UUID sender_id, UUID receiver_id, String sender_name, String receiver_name, String message_text) {
         this.conversation_id = conversation_id;
         this.sent_at = sent_at;
         this.message_id = message_id;
@@ -41,16 +27,6 @@ public class Message {
         this.sender_name = sender_name;
         this.receiver_name = receiver_name;
         this.message_text = message_text;
-
-
-    }
-
-    public Timestamp getSent_at() {
-        return sent_at;
-    }
-
-    public void setSent_at(Timestamp sent_at) {
-        this.sent_at = sent_at;
     }
 
     public UUID getConversation_id() {
@@ -61,6 +37,13 @@ public class Message {
         this.conversation_id = conversation_id;
     }
 
+    public Timestamp getSent_at() {
+        return sent_at;
+    }
+
+    public void setSent_at(Timestamp sent_at) {
+        this.sent_at = sent_at;
+    }
 
     public UUID getMessage_id() {
         return message_id;
@@ -110,7 +93,18 @@ public class Message {
         this.message_text = message_text;
     }
 
+    public static Message buidMessage(MessageDTO messageDTO){
+        Message message = new Message(messageDTO.getConversation_id(),
+                messageDTO.getSent_at(),
+                UUID.randomUUID(),
+                messageDTO.getSender_id(),
+                messageDTO.getReceiver_id(),
+                messageDTO.getSender_name(),
+                messageDTO.getReceiver_name(),
+                messageDTO.getMessage_text()
+        );
+        return message;
 
-
+    }
 
 }
