@@ -141,6 +141,7 @@ END $$;
 		filename VARCHAR(255) NOT NULL,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 	
 	CREATE TABLE jobs_skills (
 		job_id UUID REFERENCES jobs(id),
@@ -184,8 +185,15 @@ CREATE TABLE quote_templates (
     freelancer_id UUID,
     template_name VARCHAR(255),
     template_description VARCHAR(10000),
-    attachments VARCHAR(255) ARRAY,
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE
+);
+
+	CREATE TABLE quote_templates_attachments (
+		id uuid PRIMARY KEY,
+		quote_template_id uuid REFERENCES quote_templates(id) ON DELETE CASCADE,
+		url TEXT NOT NULL,
+		filename VARCHAR(255) NOT NULL,
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE job_watchlist (
@@ -360,12 +368,18 @@ VALUES
 	('22222222-2222-2222-2222-222222222222', '44444444-4444-4444-4444-444444444444', '22222222-2222-2222-2222-222222222222', 'Sample proposal 2', 'ACCEPTED', 2, NOW()),
     ('44444444-4444-4444-4444-444444444444', '55555555-5555-5555-5555-555555555555', '22222222-2222-2222-2222-222222222222', 'Sample proposal 3', 'AWAITING_ACCEPTANCE', 1, NOW());
 
+INSERT INTO quote_templates (id, freelancer_id, template_name, template_description)
+VALUES
+    ('11111111-1111-1111-1111-111111111111', '44444444-4444-4444-4444-444444444444', 'Template 1', 'Description for template 1'),
+    ('22222222-2222-2222-2222-222222222222', '55555555-5555-5555-5555-555555555555', 'Template 2', 'Description for template 2');
+
 
 INSERT INTO job_freelancer_view (job_id, freelancer_id, viewed_at)
 VALUES
     ('11111111-1111-1111-1111-111111111111', '44444444-4444-4444-4444-444444444444', NOW()),
     ('11111111-1111-1111-1111-111111111111', '55555555-5555-5555-5555-555555555555', NOW()),
     ('22222222-2222-2222-2222-222222222222', '66666666-6666-6666-6666-666666666666', NOW());
+
 	
 INSERT INTO saved_searches (id, name, search_query, category_id, subcategory_id, skill_id, featured_only, payment_terms, location_ids, sort_order, status_list, verified_only, min_employer_spend, max_quotes_received, not_viewed, not_applied, freelancer_id)
 VALUES
@@ -377,6 +391,12 @@ VALUES
 
 
 INSERT INTO jobs_attachments (id, job_id, url, filename, created_at) VALUES
+    ('11111111-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111', 'https://example.com/attachment1.pdf', 'attachment1.pdf', NOW()),
+    ('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'https://example.com/attachment2.docx', 'attachment2.docx', NOW()),
+    ('33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222', 'https://example.com/attachment3.png', 'attachment3.png', NOW());
+
+
+INSERT INTO quote_templates_attachments (id, quote_template_id, url, filename, created_at) VALUES
     ('11111111-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111', 'https://example.com/attachment1.pdf', 'attachment1.pdf', NOW()),
     ('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'https://example.com/attachment2.docx', 'attachment2.docx', NOW()),
     ('33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222', 'https://example.com/attachment3.png', 'attachment3.png', NOW());

@@ -1,6 +1,8 @@
 package com.guru.jobservice.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.guru.jobservice.dtos.*;
+import com.guru.jobservice.helpers.AttachmentsHelper;
 import com.guru.jobservice.model.JobInvitations;
 import com.guru.jobservice.model.JobWatchlist;
 import com.guru.jobservice.model.Quote;
@@ -9,12 +11,14 @@ import com.guru.jobservice.repositories.JobInvitationsRepository;
 import com.guru.jobservice.repositories.JobWatchlistRepository;
 import com.guru.jobservice.repositories.QuoteRepository;
 import com.guru.jobservice.repositories.QuoteTemplatesRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class QuoteService {
     private final QuoteRepository quoteRepository;
@@ -49,20 +53,26 @@ public class QuoteService {
         );
     }
 
-    public void addQuoteTemplate(QuoteTemplateRequest quoteTemplateRequest) {
+    public void addQuoteTemplate(QuoteTemplateRequest quoteTemplateRequest) throws JsonProcessingException {
+
+        String [] attachmentJsonArray = AttachmentsHelper.convertAttachmentsToJson(quoteTemplateRequest.getAttachments());
+        log.info(quoteTemplateRequest.getAttachments()[0].getUrl());
+        log.info(quoteTemplateRequest.getAttachments()[0].getFilename());
         quoteTemplatesRepository.addQuoteTemplate(
                 quoteTemplateRequest.getFreelancer_id(),
                 quoteTemplateRequest.getTemplate_name(),
                 quoteTemplateRequest.getTemplate_description(),
-                quoteTemplateRequest.getAttachments()
+                attachmentJsonArray
         );
     }
-    public void updateQuoteTemplate(QuoteTemplateRequest quoteTemplateRequest) {
+    public void updateQuoteTemplate(QuoteTemplateRequest quoteTemplateRequest) throws JsonProcessingException  {
+        String [] attachmentJsonArray = AttachmentsHelper.convertAttachmentsToJson(quoteTemplateRequest.getAttachments());
+
         quoteTemplatesRepository.updateQuoteTemplate(
                 quoteTemplateRequest.getQuote_template_id(),
                 quoteTemplateRequest.getTemplate_name(),
                 quoteTemplateRequest.getTemplate_description(),
-                quoteTemplateRequest.getAttachments()
+                attachmentJsonArray
         );
     }
 

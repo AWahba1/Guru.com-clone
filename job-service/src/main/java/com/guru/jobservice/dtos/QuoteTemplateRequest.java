@@ -1,5 +1,6 @@
 package com.guru.jobservice.dtos;
 
+import com.guru.jobservice.model.Attachment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,7 @@ public class QuoteTemplateRequest {
     private UUID freelancer_id;
     private String template_name;
     private String template_description;
-    private String[] attachments;
+    private Attachment[] attachments;
 
     public UUID getQuote_template_id() {
         return quote_template_id;
@@ -52,11 +53,11 @@ public class QuoteTemplateRequest {
         this.template_description = template_description;
     }
 
-    public String[] getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(String[] attachments) {
-        this.attachments = attachments;
-    }
+//    public Attachment[] getAttachments() {
+//        return attachments;
+//    }
+//
+//    public void setAttachments(String[] attachments) {
+//        this.attachments = attachments;
+//    }
 }

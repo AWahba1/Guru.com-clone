@@ -2,6 +2,10 @@ package com.guru.jobservice.model;
 
 import lombok.*;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.util.List;
 import java.util.UUID;
 
 
@@ -26,6 +30,8 @@ public class QuoteTemplates {
     private UUID freelancer_id;
     private String template_name;
     private String template_description;
-    private String[] attachments;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    private List<Attachment> attachments;
 
 }
