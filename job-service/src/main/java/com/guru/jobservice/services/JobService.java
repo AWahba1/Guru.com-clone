@@ -1,7 +1,6 @@
 package com.guru.jobservice.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.guru.jobservice.dtos.CreateUpdateRequest;
 import com.guru.jobservice.dtos.FiltersRequest;
 import com.guru.jobservice.dtos.JobViewRequest;
@@ -9,7 +8,6 @@ import com.guru.jobservice.dtos.PaginatedResponse;
 import com.guru.jobservice.exceptions.ResourceNotFoundException;
 import com.guru.jobservice.exceptions.ValidationException;
 import com.guru.jobservice.helpers.AttachmentsHelper;
-import com.guru.jobservice.model.Attachment;
 import com.guru.jobservice.model.Job;
 import com.guru.jobservice.repositories.JobRepository;
 import com.guru.jobservice.validators.JobRequestValidator;
@@ -45,15 +43,6 @@ public class JobService {
         JobRequestValidator.validatePaymentType(createUpdateRequest);
 
         String [] attachmentJsonArray = AttachmentsHelper.convertAttachmentsToJson(createUpdateRequest.getAttachments());
-
-        // Convert attachments as JSON
-//        Attachment[] attachments = createUpdateRequest.getAttachments();
-//        ObjectMapper mapper = new ObjectMapper();
-//        String[] attachmentJsonArray = new String[attachments.length];
-//        for (int i = 0; i < attachments.length; i++) {
-//            String attachmentJson = mapper.writeValueAsString(attachments[i]);
-//            attachmentJsonArray[i] = attachmentJson;
-//        }
 
         jobRepository.createJob(
                 createUpdateRequest.getTitle(),

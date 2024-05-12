@@ -54,6 +54,9 @@ public class Job {
     @JdbcTypeCode(SqlTypes.JSON)
     private List<Location> locations;
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    private List<Attachment> attachments;
+
 }
 
 class Skill {

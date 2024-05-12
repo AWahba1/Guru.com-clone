@@ -72,8 +72,6 @@
 -- END;
 -- $$;
 
-DROP FUNCTION IF EXISTS create_job;
-
 CALL drop_procedure('create_job');
 CREATE OR REPLACE PROCEDURE create_job(
     _title VARCHAR(255),
@@ -132,8 +130,8 @@ BEGIN
     -- Insert attachments related to job
     FOREACH attachment_json IN ARRAY _attachments
     LOOP
-        INSERT INTO jobs_attachments (id, job_id, url, filename, created_at)
-        VALUES (gen_random_uuid(), new_job_id, attachment_json::json->'url',  attachment_json::json->'filename', CURRENT_TIMESTAMP);
+        INSERT INTO jobs_attachments (id, job_id, url, filename, created_at) 
+        VALUES (gen_random_uuid(), new_job_id, REPLACE((attachment_json::json->'url')::text, '"', ''), REPLACE((attachment_json::json->'filename')::text, '"', '') , CURRENT_TIMESTAMP);
     END LOOP;
 END;
 $$;
@@ -262,12 +260,13 @@ BEGIN
 		-- Delete existing entries from jobs_attachments
 		DELETE FROM jobs_attachments WHERE job_id = _job_id;
 		
-	    FOREACH attachment_json IN ARRAY _attachments
+		-- Insert attachments related to job
+		FOREACH attachment_json IN ARRAY _attachments
 		LOOP
-			INSERT INTO jobs_attachments (id, job_id, url, filename, created_at)
-			VALUES (gen_random_uuid(), _job_id, attachment_json::json->'url',  attachment_json::json->'filename', CURRENT_TIMESTAMP);
+			INSERT INTO jobs_attachments (id, job_id, url, filename, created_at) 
+			VALUES (gen_random_uuid(), _job_id, REPLACE((attachment_json::json->'url')::text, '"', ''), REPLACE((attachment_json::json->'filename')::text, '"', '') , CURRENT_TIMESTAMP);
 		END LOOP;
-    END IF;
+		END IF;
 	
 END;
 $$ LANGUAGE plpgsql;
@@ -345,7 +344,8 @@ RETURNS TABLE (
     status job_status,
     skills JSON,
     locations JSON,
-    timezones JSON 
+    timezones JSON ,
+	attachments JSON
 )
 AS $$
 BEGIN
@@ -366,14 +366,17 @@ BEGIN
                (SELECT JSON_AGG(json_build_object('id', tz.id, 'name', tz.name)) 
                    FROM jobs_timezones jt 
                    INNER JOIN timezones tz ON jt.timezone_id = tz.id 
-                   WHERE jt.job_id = j.id) AS timezones
+                   WHERE jt.job_id = j.id) AS timezones,
+				(SELECT JSON_AGG(json_build_object('url', ja.url, 'filename', ja.filename)) 
+                   FROM jobs_attachments ja 
+                   WHERE ja.job_id = j.id) AS attachments
         FROM jobs j
         INNER JOIN categories c ON j.category_id = c.id
         INNER JOIN subcategories s ON j.subcategory_id = s.id
         WHERE j.id = _job_id;
 END;
 $$ LANGUAGE plpgsql;
--- select * from get_job_by_id('11111111-1111-1111-1111-111111111111');
+select * from get_job_by_id('11111111-1111-1111-1111-111111111111');
 
 -- call create_dummy_job
  
@@ -419,7 +422,8 @@ RETURNS TABLE (
     status job_status,
     skills JSON,
     locations JSON,
-    timezones JSON
+    timezones JSON,
+	attachments JSON
 )
 AS $$
 BEGIN
@@ -459,7 +463,10 @@ BEGIN
                 FROM jobs_timezones jt 
                 INNER JOIN timezones tz ON jt.timezone_id = tz.id 
                 WHERE jt.job_id = j.id
-            ) AS timezones
+            ) AS timezones,
+				(SELECT JSON_AGG(json_build_object('url', ja.url, 'filename', ja.filename)) 
+                   FROM jobs_attachments ja 
+                   WHERE ja.job_id = j.id) AS attachments
         FROM 
             jobs j
         INNER JOIN users u ON j.client_id = u.id
