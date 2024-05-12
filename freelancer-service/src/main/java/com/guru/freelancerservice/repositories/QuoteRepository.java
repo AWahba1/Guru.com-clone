@@ -4,7 +4,6 @@ import com.guru.freelancerservice.models.Quote;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.query.Procedure;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.UUID;
 

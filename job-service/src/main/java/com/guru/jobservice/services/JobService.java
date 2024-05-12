@@ -36,7 +36,6 @@ public class JobService {
             throw new ResourceNotFoundException();
         }
         return job;
-
     }
 
     public void createJob(CreateUpdateRequest createUpdateRequest) throws JsonProcessingException {
@@ -64,7 +63,7 @@ public class JobService {
                 createUpdateRequest.getLocations(),
                 attachmentJsonArray
         );
-}
+    }
 
     public void updateJob(UUID jobId, CreateUpdateRequest createUpdateRequest) throws Exception {
 
