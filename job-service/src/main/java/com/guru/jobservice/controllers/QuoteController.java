@@ -38,14 +38,14 @@ public class QuoteController {
 
     // DONE
     @PostMapping("/addQuoteTemplate")
-    public ResponseEntity<String> addQuoteTemplate(@RequestBody QuoteTemplateRequest quoteTemplateRequest) {
+    public ResponseEntity<String> addQuoteTemplate(@RequestBody QuoteTemplateRequest quoteTemplateRequest) throws Exception {
         quoteService.addQuoteTemplate(quoteTemplateRequest);
         return new ResponseEntity<>("Quote Template added successfully", HttpStatus.CREATED);
     }
 
     // DONE
     @PutMapping("/updateQuoteTemplate")
-    public ResponseEntity<String> updateQuoteTemplate(@RequestBody QuoteTemplateRequest quoteTemplateRequest) {
+    public ResponseEntity<String> updateQuoteTemplate(@RequestBody QuoteTemplateRequest quoteTemplateRequest) throws Exception {
         quoteService.updateQuoteTemplate(quoteTemplateRequest);
         return new ResponseEntity<>("Quote Template updated successfully", HttpStatus.OK);
     }

@@ -63,15 +63,26 @@ CREATE OR REPLACE PROCEDURE add_quote_template (
     IN freelancer_id uuid,
     IN template_name VARCHAR(255),
     IN template_description VARCHAR(10000),
-    IN attachments VARCHAR(255) ARRAY
+    IN attachments TEXT[]
 )
 LANGUAGE plpgsql
 AS $$
+DECLARE
+	new_quote_template_id UUID;
+    attachment_json text;
 BEGIN
     BEGIN
 
-        INSERT INTO quote_templates (id, freelancer_id, template_name, template_description, attachments)
-        VALUES (gen_random_uuid(), freelancer_id, template_name, template_description, attachments);
+        INSERT INTO quote_templates (id, freelancer_id, template_name, template_description)
+        VALUES (gen_random_uuid(), freelancer_id, template_name, template_description)
+		RETURNING id INTO new_quote_template_id;
+		
+		-- Insert attachments related to quote template
+		FOREACH attachment_json IN ARRAY attachments
+		LOOP
+			INSERT INTO quote_templates_attachments (id, quote_template_id, url, filename, created_at) 
+			VALUES (gen_random_uuid(), new_quote_template_id, REPLACE((attachment_json::json->'url')::text, '"', ''), REPLACE((attachment_json::json->'filename')::text, '"', '') , CURRENT_TIMESTAMP);
+		END LOOP;
 
     EXCEPTION
         WHEN others THEN
@@ -81,28 +92,48 @@ BEGIN
 END;
 $$;
 
+CALL add_quote_template(
+    '44444444-4444-4444-4444-444444444444', -- Freelancer ID
+    'Sample Template',                    -- Template Name
+    'Description for Sample Template',    -- Template Description
+    ARRAY[
+        '{"url": "https://example.com/attachment1.pdf", "filename": "attachment1.pdf"}',
+        '{"url": "https://example.com/attachment2.docx", "filename": "attachment2.docx"}'
+    ]                                     -- Attachments
+);
+
 DROP PROCEDURE IF EXISTS update_quote_template;
 CREATE OR REPLACE PROCEDURE update_quote_template (
-    IN quote_template_id uuid,
+    IN _quote_template_id uuid,
     IN new_template_name VARCHAR(255),
     IN new_template_description VARCHAR(10000),
-    IN new_attachments VARCHAR(255) ARRAY
+    IN new_attachments text[]
 )
 LANGUAGE plpgsql
 AS $$
+DECLARE
+	attachment_json text;
 BEGIN
     BEGIN
 
         IF new_template_name IS NOT NULL THEN
-            UPDATE quote_templates qt SET template_name = new_template_name WHERE qt.id = quote_template_id;
+            UPDATE quote_templates qt SET template_name = new_template_name WHERE qt.id = _quote_template_id;
         END IF;
 
         IF new_template_description IS NOT NULL THEN
-            UPDATE quote_templates qt SET template_description = new_template_description WHERE qt.id = quote_template_id;
+            UPDATE quote_templates qt SET template_description = new_template_description WHERE qt.id = _quote_template_id;
         END IF;
 
         IF new_attachments IS NOT NULL THEN
-            UPDATE quote_templates qt SET attachments = new_attachments WHERE qt.id = quote_template_id;
+			 -- Delete old quote template attachments
+			 DELETE FROM quote_templates_attachments qta WHERE qta.quote_template_id = _quote_template_id;
+
+			 -- Insert attachments related to quote template
+			FOREACH attachment_json IN ARRAY new_attachments
+			LOOP
+				INSERT INTO quote_templates_attachments (id, quote_template_id, url, filename, created_at) 
+				VALUES (gen_random_uuid(), _quote_template_id, REPLACE((attachment_json::json->'url')::text, '"', ''), REPLACE((attachment_json::json->'filename')::text, '"', '') , CURRENT_TIMESTAMP);
+			END LOOP;
         END IF;
 
     EXCEPTION
@@ -112,6 +143,18 @@ BEGIN
     END;
 END;
 $$;
+
+CALL update_quote_template(
+    '22222222-2222-2222-2222-222222222222', -- Freelancer ID
+    'New Template',                    -- Template Name
+    'New Description',    -- Template Description
+    ARRAY[
+        '{"url": "https://example.com/attachment3.pdf", "filename": "attachment3.pdf"}',
+        '{"url": "https://example.com/attachment4.docx", "filename": "attachment4.docx"}'
+    ]                                     -- Attachments
+);
+
+
 
 DROP PROCEDURE IF EXISTS add_job_watchlist;
 CREATE OR REPLACE PROCEDURE add_job_watchlist (
@@ -191,14 +234,33 @@ LANGUAGE plpgsql;
 DROP FUNCTION IF EXISTS get_freelancer_quote_templates;
 CREATE OR REPLACE FUNCTION get_freelancer_quote_templates(_freelancer_id uuid)
 RETURNS TABLE (
-id uuid, freelancer_id uuid, template_name VARCHAR(255), template_description VARCHAR(10000), attachments VARCHAR(255) ARRAY)
+    id uuid, 
+    freelancer_id uuid, 
+    template_name VARCHAR(255), 
+    template_description VARCHAR(10000), 
+    attachments JSON
+)
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT * FROM quote_templates q WHERE q.freelancer_id = _freelancer_id;
+    SELECT 
+        qt.id,
+        qt.freelancer_id,
+        qt.template_name,
+        qt.template_description,
+        (
+            SELECT JSON_AGG(json_build_object('url', qta.url, 'filename', qta.filename)) 
+            FROM quote_templates_attachments qta 
+            WHERE qta.quote_template_id = qt.id
+        ) AS attachments
+    FROM quote_templates qt 
+    WHERE qt.freelancer_id = _freelancer_id;
 END;
 $$
 LANGUAGE plpgsql;
+
+SELECT * FROM get_freelancer_quote_templates('44444444-4444-4444-4444-444444444444');
+
 
 DROP FUNCTION IF EXISTS get_freelancer_job_watchlist;
 CREATE OR REPLACE FUNCTION get_freelancer_job_watchlist (_freelancer_id uuid)
