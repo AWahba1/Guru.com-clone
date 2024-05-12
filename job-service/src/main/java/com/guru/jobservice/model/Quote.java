@@ -1,11 +1,8 @@
-package com.guru.freelancerservice.models;
-
+package com.guru.jobservice.model;
+import lombok.*;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -23,11 +20,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 public class Quote {
+
     @Id
     @GeneratedValue(
             strategy = GenerationType.UUID
     )
-    private UUID quote_id;
+    private UUID id;
     private UUID freelancer_id;
     private UUID job_id;
     private String proposal;

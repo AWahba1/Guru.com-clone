@@ -19,7 +19,6 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class CreateUpdateRequest {
 
     @NotBlank(message = "Title cannot be empty")
@@ -94,7 +93,6 @@ public class CreateUpdateRequest {
 
     public String getPaymentType() {
         return this.paymentType != null ? this.paymentType.getValue() : null;
-
     }
 
     public String getFixedPriceRange() {

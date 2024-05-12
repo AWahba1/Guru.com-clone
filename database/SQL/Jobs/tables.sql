@@ -151,25 +151,6 @@ END $$;
 		timezone_id UUID REFERENCES timezones(id) ON DELETE CASCADE,
 		PRIMARY KEY (job_id, timezone_id)
 	);
-	
-CREATE TABLE quotes (
-	id UUID PRIMARY KEY,
-	freelancer_id UUID REFERENCES freelancers(id) ON DELETE CASCADE,
-	job_id UUID REFERENCES jobs(id),
-	proposal text,
-	quote_status quote_status_enum,
-	bids_used DECIMAL,
-	bid_date TIMESTAMP
-);
-
-CREATE TABLE quote_templates (
-    quote_template_id UUID PRIMARY KEY,
-    freelancer_id UUID,
-    template_name VARCHAR(255),
-    template_description VARCHAR(10000),
-    attachments TEXT[],
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE
-);
 
 CREATE TABLE job_freelancer_view (
     job_id UUID REFERENCES jobs(id) ON DELETE CASCADE,
@@ -179,23 +160,23 @@ CREATE TABLE job_freelancer_view (
 );
 
 CREATE TABLE quotes (
-    quote_id UUID PRIMARY KEY,
+    id UUID PRIMARY KEY,
     freelancer_id UUID,
     job_id UUID,
     proposal VARCHAR(3000),
     quote_status VARCHAR(255) DEFAULT 'AWAITING_ACCEPTANCE' CHECK (quote_status IN ('AWAITING_ACCEPTANCE', 'PRIORITY', 'ACCEPTED', 'ARCHIVED')),
     bids_used int,
     bid_date TIMESTAMP,
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE,
+    FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE,
     FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
 );
 
 CREATE TABLE quote_templates (
-    quote_template_id UUID PRIMARY KEY,
+    id UUID PRIMARY KEY,
     freelancer_id UUID,
     template_name VARCHAR(255),
     template_description VARCHAR(10000),
-    attachments varchar(255) ARRAY,
+    attachments VARCHAR(255) ARRAY,
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
 );
 
@@ -203,19 +184,19 @@ CREATE TABLE job_watchlist (
     watchlist_id UUID PRIMARY KEY,
     freelancer_id UUID,
     job_id UUID,
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE,
+    FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE,
     FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
 );
 
 CREATE TABLE job_invitations (
-    invitation_id UUID PRIMARY KEY,
-    freelancer_id UUID,
-    client_id UUID,
-    job_id UUID,
-    invitation_date TIMESTAMP,
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE,
-    FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
-    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
+   invitation_id UUID PRIMARY KEY,
+   freelancer_id UUID,
+   client_id UUID,
+   job_id UUID,
+   invitation_date TIMESTAMP,
+   FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE,
+   FOREIGN KEY (client_id) REFERENCES users(id) ON DELETE CASCADE,
+   FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
 );
 	
 -- Populate tables with sample data

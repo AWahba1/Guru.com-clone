@@ -36,7 +36,6 @@ public class JobService {
             throw new ResourceNotFoundException();
         }
         return job;
-
     }
 
     public void createJob(CreateUpdateRequest createUpdateRequest) {
@@ -62,7 +61,7 @@ public class JobService {
                 createUpdateRequest.getTimezones(),
                 createUpdateRequest.getLocations()
         );
-}
+    }
 
     public void updateJob(UUID jobId, CreateUpdateRequest createUpdateRequest) {
 

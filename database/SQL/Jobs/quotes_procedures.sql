@@ -11,10 +11,10 @@ AS $$
 BEGIN
     BEGIN
 
-        INSERT INTO quotes (quote_id, freelancer_id, job_id, proposal, bids_used, bid_date)
+        INSERT INTO quotes (id, freelancer_id, job_id, proposal, bids_used, bid_date)
         VALUES (gen_random_uuid(), _freelancer_id, job_id, proposal, bids_used, bid_date);
 
-        UPDATE freelancers SET available_bids = available_bids - bids_used WHERE freelancer_id = _freelancer_id;
+        UPDATE freelancers F SET F.available_bids = available_bids - bids_used WHERE F.freelancer_id = _freelancer_id;
 
     EXCEPTION
         WHEN others THEN
@@ -24,9 +24,11 @@ BEGIN
 END;
 $$;
 
+CALL add_quote('66666666-6666-6666-6666-666666666666'::uuid, '11111111-1111-1111-1111-111111111111'::uuid, 'werak fera5'::varchar, 47, '2024-04-30T00:20:58.390+00:00'::timestamp);
+
 DROP PROCEDURE IF EXISTS update_quote;
 CREATE OR REPLACE PROCEDURE update_quote (
-    IN quote_id uuid,
+    IN _quote_id uuid,
     IN new_proposal varchar(3000),
     IN new_bids_used int,
     IN new_quote_status varchar(255)
@@ -37,15 +39,15 @@ BEGIN
     BEGIN
 
         IF new_proposal IS NOT NULL THEN
-            UPDATE quotes SET proposal = new_proposal WHERE quote_id = quote_id;
+            UPDATE quotes SET proposal = new_proposal WHERE id = _quote_id;
         END IF;
 
         IF new_bids_used IS NOT NULL THEN
-            UPDATE quotes SET bids_used = new_bids_used WHERE quote_id = quote_id;
+            UPDATE quotes SET bids_used = new_bids_used WHERE id = _quote_id;
         END IF;
 
         IF new_quote_status IS NOT NULL THEN
-            UPDATE quotes SET quote_status = new_quote_status WHERE quote_id = quote_id;
+            UPDATE quotes SET quote_status = new_quote_status WHERE id = _quote_id;
         END IF;
 
     EXCEPTION
@@ -59,17 +61,17 @@ $$;
 DROP PROCEDURE IF EXISTS add_quote_template;
 CREATE OR REPLACE PROCEDURE add_quote_template (
     IN freelancer_id uuid,
-    IN template_name varchar(255),
-    IN template_description varchar(10000),
-    IN attachments varchar(255) ARRAY
+    IN template_name VARCHAR(255),
+    IN template_description VARCHAR(10000),
+    IN attachments VARCHAR(255) ARRAY
 )
 LANGUAGE plpgsql
 AS $$
 BEGIN
     BEGIN
 
-        INSERT INTO quote_templates (quote_template_id, freelancer_id, template_name, template_description, attachments)
-        VALUES (UUID(), freelancer_id, template_name, template_description, attachments);
+        INSERT INTO quote_templates (id, freelancer_id, template_name, template_description, attachments)
+        VALUES (gen_random_uuid(), freelancer_id, template_name, template_description, attachments);
 
     EXCEPTION
         WHEN others THEN
@@ -82,9 +84,9 @@ $$;
 DROP PROCEDURE IF EXISTS update_quote_template;
 CREATE OR REPLACE PROCEDURE update_quote_template (
     IN quote_template_id uuid,
-    IN new_template_name varchar(255),
-    IN new_template_description varchar(10000),
-    IN new_attachments varchar(255) ARRAY
+    IN new_template_name VARCHAR(255),
+    IN new_template_description VARCHAR(10000),
+    IN new_attachments VARCHAR(255) ARRAY
 )
 LANGUAGE plpgsql
 AS $$
@@ -92,15 +94,15 @@ BEGIN
     BEGIN
 
         IF new_template_name IS NOT NULL THEN
-            UPDATE quote_templates SET template_name = new_template_name WHERE quote_template_id = quote_template_id;
+            UPDATE quote_templates qt SET template_name = new_template_name WHERE qt.id = quote_template_id;
         END IF;
 
         IF new_template_description IS NOT NULL THEN
-            UPDATE quote_templates SET template_description = new_template_description WHERE quote_template_id = quote_template_id;
+            UPDATE quote_templates qt SET template_description = new_template_description WHERE qt.id = quote_template_id;
         END IF;
 
         IF new_attachments IS NOT NULL THEN
-            UPDATE quote_templates SET attachments = new_attachments WHERE quote_template_id = quote_template_id;
+            UPDATE quote_templates qt SET attachments = new_attachments WHERE qt.id = quote_template_id;
         END IF;
 
     EXCEPTION
@@ -119,18 +121,18 @@ CREATE OR REPLACE PROCEDURE add_job_watchlist (
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    INSERT INTO job_watchlist (watchlist_id, freelancer_id, job_id) VALUES (UUID(), freelancer_id, job_id);
+    INSERT INTO job_watchlist (watchlist_id, freelancer_id, job_id) VALUES (gen_random_uuid(), freelancer_id, job_id);
 END;
 $$;
 
 DROP PROCEDURE IF EXISTS remove_job_watchlist;
 CREATE OR REPLACE PROCEDURE remove_job_watchlist (
-    IN watchlist_id uuid
+    IN _watchlist_id uuid
 )
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    DELETE FROM job_watchlist WHERE watchlist_id = watchlist_id;
+    DELETE FROM job_watchlist jw WHERE jw.watchlist_id = _watchlist_id;
 END;
 $$;
 
@@ -138,34 +140,36 @@ DROP PROCEDURE IF EXISTS invite_to_job;
 CREATE OR REPLACE PROCEDURE invite_to_job (
     IN freelancer_id uuid,
     IN client_id uuid,
-    IN job_id uuid,
-    IN invitation_date timestamp
+    IN job_id uuid
 )
 LANGUAGE plpgsql
 AS $$
 BEGIN
     INSERT INTO job_invitations (invitation_id, freelancer_id, client_id, job_id, invitation_date)
-    VALUES (UUID(), freelancer_id, client_id, job_id, invitation_date);
+    VALUES (gen_random_uuid(), freelancer_id, client_id, job_id, NOW());
 END;
 $$;
 
+CALL invite_to_job('d433a93f-9a0f-4a55-9a72-65e19c2da25a'::uuid, '11111111-1111-1111-1111-111111111111'::uuid,'11111111-1111-1111-1111-111111111111'::uuid, '2024-05-07 18:07:53.868213'::timestamp);
+
 DROP FUNCTION IF EXISTS get_freelancer_quotes;
-CREATE OR REPLACE FUNCTION get_freelancer_quotes (_freelancer_id uuid, _quote_status quote_status_enum)
+CREATE OR REPLACE FUNCTION get_freelancer_quotes (_freelancer_id uuid, _quote_status varchar(255))
 RETURNS TABLE (
-quote_id uuid,
+id uuid,
+freelancer_id uuid,
 job_id uuid,
 proposal varchar(3000),
-quote_status quote_status_enum,
-bids_used decimal, bid_date timestamp
+quote_status varchar(255),
+bids_used integer, bid_date timestamp
 )
 AS $$
 BEGIN
     IF quote_status IS NULL THEN
         RETURN QUERY
-        SELECT * FROM quotes WHERE freelancer_id = _freelancer_id;
+        SELECT * FROM quotes q WHERE q.freelancer_id = _freelancer_id;
     ELSE
         RETURN QUERY
-        SELECT * FROM quotes WHERE freelancer_id = freelancer_id AND quote_status = _quote_status;
+        SELECT * FROM quotes q WHERE q.freelancer_id = _freelancer_id AND q.quote_status = _quote_status;
     END IF;
 END;
 $$
@@ -175,24 +179,23 @@ LANGUAGE plpgsql;
 DROP FUNCTION IF EXISTS get_freelancer_quote_details;
 CREATE OR REPLACE FUNCTION get_freelancer_quote_details (_quote_id uuid)
 RETURNS TABLE (
-quote_id uuid, freelancer_id uuid, job_id uuid, proposal varchar(3000), quote_status quote_status_enum, bids_used decimal, bid_date timestamp)
+id uuid, freelancer_id uuid, job_id uuid, proposal varchar(3000), quote_status varchar(255), bids_used integer, bid_date timestamp)
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT * FROM quotes WHERE quote_id = _quote_id;
+    SELECT * FROM quotes q WHERE q.id = _quote_id;
 END;
 $$
 LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS get_freelancer_quote_templates;
-CREATE OR REPLACE FUNCTION get_freelancer_quote_templates (_freelancer_id uuid)
-RETURNS TABLE (quote_template_id uuid, template_name varchar(255), template_description varchar(10000), attachments varchar(255) ARRAY)
+CREATE OR REPLACE FUNCTION get_freelancer_quote_templates(_freelancer_id uuid)
+RETURNS TABLE (
+id uuid, freelancer_id uuid, template_name VARCHAR(255), template_description VARCHAR(10000), attachments VARCHAR(255) ARRAY)
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT quote_template_id, template_name, template_description, attachments
-    FROM quote_templates
-    WHERE freelancer_id = _freelancer_id;
+    SELECT * FROM quote_templates q WHERE q.freelancer_id = _freelancer_id;
 END;
 $$
 LANGUAGE plpgsql;
@@ -212,13 +215,84 @@ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS get_freelancer_job_invitations;
 CREATE OR REPLACE FUNCTION get_freelancer_job_invitations (_freelancer_id uuid)
-RETURNS TABLE (invitation_id uuid, client_id uuid, job_id uuid, invitation_date timestamp)
+RETURNS TABLE (invitation_id uuid, freelancer_id uuid, client_id uuid, job_id uuid, invitation_date timestamp)
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT invitation_id, client_id, job_id, invitation_date
-    FROM job_invitations
-    WHERE freelancer_id = _freelancer_id;
+    SELECT ji.invitation_id, ji.freelancer_id, ji.client_id, ji.job_id, ji.invitation_date
+    FROM job_invitations ji
+    WHERE ji.freelancer_id = _freelancer_id;
 END;
 $$
 LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS bids_usage_summary;
+CREATE OR REPLACE FUNCTION bids_usage_summary (_freelancer_id uuid)
+RETURNS TABLE (all_time_bids_used decimal, last_month_bids_used decimal, last_year_bids_used decimal)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        COALESCE((SELECT SUM(bids_used)::decimal FROM quotes WHERE freelancer_id = _freelancer_id), 0) AS all_time_bids_used,
+        COALESCE((SELECT SUM(bids_used)::decimal FROM quotes WHERE freelancer_id = _freelancer_id AND bid_date > CURRENT_DATE - INTERVAL '1 month'), 0) AS last_month_bids_used,
+        COALESCE((SELECT SUM(bids_used)::decimal FROM quotes WHERE freelancer_id = _freelancer_id AND bid_date > CURRENT_DATE - INTERVAL '1 year'), 0) AS last_year_bids_used;
+END;
+$$
+LANGUAGE plpgsql;
+
+SELECT * FROM bids_usage_summary('44444444-4444-4444-4444-444444444444');
+
+DROP FUNCTION IF EXISTS get_bids_usage_history;
+CREATE OR REPLACE FUNCTION get_bids_usage_history (_freelancer_id uuid)
+RETURNS TABLE (bids_used int, bid_date timestamp)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT q.bids_used,q.bid_date
+    FROM quotes q
+    WHERE q.freelancer_id = _freelancer_id;
+END;
+$$
+LANGUAGE plpgsql;
+
+SELECT * FROM get_bids_usage_history('44444444-4444-4444-4444-444444444444');
+
+DROP FUNCTION IF EXISTS view_last_bids_until_threshold;
+CREATE OR REPLACE FUNCTION view_last_bids_until_threshold (_freelancer_id uuid, threshold int)
+RETURNS TABLE (
+    id uuid,
+    freelancer_id uuid,
+    job_id uuid,
+    proposal varchar(3000),
+    quote_status varchar(255),
+    bids_used integer,
+    bid_date timestamp,
+    cumulative_sum int
+)
+AS $$
+DECLARE
+    total_bids int := 0;
+    bid_record RECORD;
+BEGIN
+    CREATE TEMP TABLE temp_quotes AS
+    SELECT *, 0 AS cumulative_sum
+    FROM quotes q
+    WHERE q.freelancer_id = _freelancer_id
+    ORDER BY bid_date DESC;
+
+    -- Iterate over the result set and update cumulative_sum
+    FOR bid_record IN SELECT * FROM temp_quotes LOOP
+        total_bids := total_bids + bid_record.bids_used;
+        UPDATE temp_quotes tq SET cumulative_sum = total_bids WHERE tq.id = bid_record.id;
+    END LOOP;
+
+    -- Select from temp_quotes and return the result
+    RETURN QUERY SELECT * FROM temp_quotes tq WHERE tq.cumulative_sum <= threshold ORDER BY bid_date DESC;
+
+    -- Optional: Drop the temporary table
+    DROP TABLE IF EXISTS temp_quotes;
+END;
+$$
+LANGUAGE plpgsql;
+
+SELECT * FROM view_last_bids_until_threshold('44444444-4444-4444-4444-444444444444', 5000);
