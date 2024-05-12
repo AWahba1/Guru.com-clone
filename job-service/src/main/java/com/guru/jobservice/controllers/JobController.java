@@ -46,7 +46,7 @@ public class JobController {
     }
 
     @PutMapping("/{id}")
-    public void updateJob(@PathVariable UUID id, @Valid @RequestBody CreateUpdateRequest createUpdateRequest) {
+    public void updateJob(@PathVariable UUID id, @Valid @RequestBody CreateUpdateRequest createUpdateRequest) throws Exception{
         jobService.updateJob(id, createUpdateRequest);
     }
 

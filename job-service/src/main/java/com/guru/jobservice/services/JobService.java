@@ -8,6 +8,7 @@ import com.guru.jobservice.dtos.JobViewRequest;
 import com.guru.jobservice.dtos.PaginatedResponse;
 import com.guru.jobservice.exceptions.ResourceNotFoundException;
 import com.guru.jobservice.exceptions.ValidationException;
+import com.guru.jobservice.helpers.AttachmentsHelper;
 import com.guru.jobservice.model.Attachment;
 import com.guru.jobservice.model.Job;
 import com.guru.jobservice.repositories.JobRepository;
@@ -43,14 +44,16 @@ public class JobService {
     public void createJob(CreateUpdateRequest createUpdateRequest) throws JsonProcessingException {
         JobRequestValidator.validatePaymentType(createUpdateRequest);
 
+        String [] attachmentJsonArray = AttachmentsHelper.convertAttachmentsToJson(createUpdateRequest.getAttachments());
+
         // Convert attachments as JSON
-        Attachment[] attachments = createUpdateRequest.getAttachments();
-        ObjectMapper mapper = new ObjectMapper();
-        String[] attachmentJsonArray = new String[attachments.length];
-        for (int i = 0; i < attachments.length; i++) {
-            String attachmentJson = mapper.writeValueAsString(attachments[i]);
-            attachmentJsonArray[i] = attachmentJson;
-        }
+//        Attachment[] attachments = createUpdateRequest.getAttachments();
+//        ObjectMapper mapper = new ObjectMapper();
+//        String[] attachmentJsonArray = new String[attachments.length];
+//        for (int i = 0; i < attachments.length; i++) {
+//            String attachmentJson = mapper.writeValueAsString(attachments[i]);
+//            attachmentJsonArray[i] = attachmentJson;
+//        }
 
         jobRepository.createJob(
                 createUpdateRequest.getTitle(),
@@ -74,7 +77,9 @@ public class JobService {
         );
 }
 
-    public void updateJob(UUID jobId, CreateUpdateRequest createUpdateRequest) {
+    public void updateJob(UUID jobId, CreateUpdateRequest createUpdateRequest) throws Exception {
+
+        String [] attachmentJsonArray = AttachmentsHelper.convertAttachmentsToJson(createUpdateRequest.getAttachments());
 
         Job job = jobRepository.getJobById(jobId);
         if (job == null) {
@@ -99,7 +104,8 @@ public class JobService {
                 createUpdateRequest.getStatus(),
                 createUpdateRequest.getSkills(),
                 createUpdateRequest.getTimezones(),
-                createUpdateRequest.getLocations()
+                createUpdateRequest.getLocations(),
+                attachmentJsonArray
         );
     }
 

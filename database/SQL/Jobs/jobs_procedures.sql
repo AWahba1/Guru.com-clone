@@ -172,7 +172,131 @@ BEGIN
 END;
 $$;
 
+CALL drop_procedure('update_job');
+CREATE OR REPLACE PROCEDURE update_job(
+    _job_id UUID,
+    _title VARCHAR(255) DEFAULT NULL,
+    _description TEXT DEFAULT NULL,
+    _category_id UUID DEFAULT NULL,
+    _subcategory_id UUID DEFAULT NULL,
+    _featured BOOLEAN DEFAULT NULL,
+    _payment_type VARCHAR(20) DEFAULT NULL,
+    _fixed_price_range VARCHAR(20) DEFAULT NULL,
+    _duration VARCHAR(100) DEFAULT NULL,
+    _hours_per_week VARCHAR(20) DEFAULT NULL,
+    _min_hourly_rate DECIMAL(10, 2) DEFAULT NULL,
+    _max_hourly_rate DECIMAL(10, 2) DEFAULT NULL,
+    _get_quotes_until DATE DEFAULT NULL,
+    _visibility VARCHAR(50) DEFAULT NULL,
+    _status VARCHAR(50) DEFAULT NULL,
+    _skills TEXT[] DEFAULT NULL,
+    _timezones TEXT[] DEFAULT NULL,
+    _locations TEXT[] DEFAULT NULL,
+	_attachments TEXT[] DEFAULT NULL
+)
+AS $$
+DECLARE
+    skill_id UUID;
+    location_id UUID;
+    timezone_id UUID;
+	attachment_json text;
+BEGIN
+    UPDATE jobs
+    SET 
+        title = COALESCE(_title, title),
+        description = COALESCE(_description, description),
+        category_id = COALESCE(_category_id, category_id),
+        subcategory_id = COALESCE(_subcategory_id, subcategory_id),
+        featured = COALESCE(_featured, featured),
+        payment_type = COALESCE(_payment_type::payment_type, payment_type::payment_type),
+        fixed_price_range = COALESCE(_fixed_price_range::price_range, fixed_price_range::price_range),
+        duration = COALESCE(_duration::job_duration, duration::job_duration),
+        hours_per_week = COALESCE(_hours_per_week::hours_per_week, hours_per_week::hours_per_week),
+        min_hourly_rate = COALESCE(_min_hourly_rate, min_hourly_rate),
+        max_hourly_rate = COALESCE(_max_hourly_rate, max_hourly_rate),
+        get_quotes_until = COALESCE(_get_quotes_until, get_quotes_until),
+        visibility = COALESCE(_visibility::job_visibility, visibility::job_visibility),
+        status = COALESCE(_status::job_status, status::job_status)
+    WHERE id = _job_id;
 
+ 
+
+    -- Insert new entries into jobs_skills
+    IF _skills IS NOT NULL THEN
+	   -- Delete existing entries from jobs_skills
+    	DELETE FROM jobs_skills WHERE job_id = _job_id;
+		
+        FOREACH skill_id IN ARRAY _skills
+        LOOP
+            INSERT INTO jobs_skills (job_id, skill_id) VALUES (_job_id, skill_id);
+        END LOOP;
+    END IF;
+
+
+
+    -- Insert new entries into jobs_timezones
+    IF _timezones IS NOT NULL THEN
+	    -- Delete existing entries from jobs_timezones
+   		DELETE FROM jobs_timezones WHERE job_id = _job_id;
+		 
+        FOREACH timezone_id IN ARRAY _timezones
+        LOOP
+            INSERT INTO jobs_timezones (job_id, timezone_id) VALUES (_job_id, timezone_id);
+        END LOOP;
+    END IF;
+
+
+
+    -- Insert new entries into jobs_locations
+    IF _locations IS NOT NULL THEN
+	    -- Delete existing entries from jobs_locations
+   		DELETE FROM jobs_locations WHERE job_id = _job_id;
+		
+        FOREACH location_id IN ARRAY _locations
+        LOOP
+            INSERT INTO jobs_locations (job_id, location_id) VALUES (_job_id, location_id);
+        END LOOP;
+    END IF;
+	
+	IF _attachments IS NOT NULL THEN
+		-- Delete existing entries from jobs_attachments
+		DELETE FROM jobs_attachments WHERE job_id = _job_id;
+		
+	    FOREACH attachment_json IN ARRAY _attachments
+		LOOP
+			INSERT INTO jobs_attachments (id, job_id, url, filename, created_at)
+			VALUES (gen_random_uuid(), _job_id, attachment_json::json->'url',  attachment_json::json->'filename', CURRENT_TIMESTAMP);
+		END LOOP;
+    END IF;
+	
+END;
+$$ LANGUAGE plpgsql;
+
+
+CALL update_job(
+    '11111111-1111-1111-1111-111111111111',  -- _job_id
+    'Updated Job Title',                     -- _title
+    'Updated job description goes here.',    -- _description
+    '77777777-7777-7777-7777-777777777777',  -- _category_id
+    '00000000-0000-0000-0000-000000000001',  -- _subcategory_id
+    TRUE,                                    -- _featured
+    'hourly',                                -- _payment_type
+    NULL,                                    -- _fixed_price_range
+    'Less than 1 month',                     -- _duration
+    '10-30',                                 -- _hours_per_week
+    15.00,                                   -- _min_hourly_rate
+    30.00,                                   -- _max_hourly_rate
+    '2024-05-20',                            -- _get_quotes_until
+    'Everyone',                              -- _visibility
+    'Closed',                                  -- _status
+    ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'ffffffff-ffff-ffff-ffff-ffffffffffff'],      --skills
+    ARRAY['44444444-4444-4444-4444-444444444444', '55555555-5555-5555-5555-555555555555'], --timezones
+    ARRAY['bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'],             --locations
+    ARRAY[
+        '{"url": "https://example.com/attachment3.pdf", "filename": "attachment3.pdf"}',
+        '{"url": "https://example.com/attachment4.docx", "filename": "attachment4.docx"}'
+    ] -- file attachments
+);
 
 -- CALL create_job(
 --     'Frontend Freelancer Needed',
@@ -425,116 +549,6 @@ $$ LANGUAGE plpgsql;
 --     _location_id := NULL, -- Location ID (optional)
 -- );
 
-CALL drop_procedure('update_job');
-CREATE OR REPLACE PROCEDURE update_job(
-    _job_id UUID,
-    _title VARCHAR(255) DEFAULT NULL,
-    _description TEXT DEFAULT NULL,
-    _category_id UUID DEFAULT NULL,
-    _subcategory_id UUID DEFAULT NULL,
-    _featured BOOLEAN DEFAULT NULL,
-    _payment_type VARCHAR(20) DEFAULT NULL,
-    _fixed_price_range VARCHAR(20) DEFAULT NULL,
-    _duration VARCHAR(100) DEFAULT NULL,
-    _hours_per_week VARCHAR(20) DEFAULT NULL,
-    _min_hourly_rate DECIMAL(10, 2) DEFAULT NULL,
-    _max_hourly_rate DECIMAL(10, 2) DEFAULT NULL,
-    _get_quotes_until DATE DEFAULT NULL,
-    _visibility VARCHAR(50) DEFAULT NULL,
-    _status VARCHAR(50) DEFAULT NULL,
-    _skills TEXT[] DEFAULT NULL,
-    _timezones TEXT[] DEFAULT NULL,
-    _locations TEXT[] DEFAULT NULL
-)
-AS $$
-DECLARE
-    skill_id UUID;
-    location_id UUID;
-    timezone_id UUID;
-BEGIN
-    UPDATE jobs
-    SET 
-        title = COALESCE(_title, title),
-        description = COALESCE(_description, description),
-        category_id = COALESCE(_category_id, category_id),
-        subcategory_id = COALESCE(_subcategory_id, subcategory_id),
-        featured = COALESCE(_featured, featured),
-        payment_type = COALESCE(_payment_type::payment_type, payment_type::payment_type),
-        fixed_price_range = COALESCE(_fixed_price_range::price_range, fixed_price_range::price_range),
-        duration = COALESCE(_duration::job_duration, duration::job_duration),
-        hours_per_week = COALESCE(_hours_per_week::hours_per_week, hours_per_week::hours_per_week),
-        min_hourly_rate = COALESCE(_min_hourly_rate, min_hourly_rate),
-        max_hourly_rate = COALESCE(_max_hourly_rate, max_hourly_rate),
-        get_quotes_until = COALESCE(_get_quotes_until, get_quotes_until),
-        visibility = COALESCE(_visibility::job_visibility, visibility::job_visibility),
-        status = COALESCE(_status::job_status, status::job_status)
-    WHERE id = _job_id;
-
- 
-
-    -- Insert new entries into jobs_skills
-    IF _skills IS NOT NULL THEN
-	   -- Delete existing entries from jobs_skills
-    	DELETE FROM jobs_skills WHERE job_id = _job_id;
-		
-        FOREACH skill_id IN ARRAY _skills
-        LOOP
-            INSERT INTO jobs_skills (job_id, skill_id) VALUES (_job_id, skill_id);
-        END LOOP;
-    END IF;
-
-
-
-    -- Insert new entries into jobs_timezones
-    IF _timezones IS NOT NULL THEN
-	    -- Delete existing entries from jobs_timezones
-   		DELETE FROM jobs_timezones WHERE job_id = _job_id;
-		 
-        FOREACH timezone_id IN ARRAY _timezones
-        LOOP
-            INSERT INTO jobs_timezones (job_id, timezone_id) VALUES (_job_id, timezone_id);
-        END LOOP;
-    END IF;
-
-
-
-    -- Insert new entries into jobs_locations
-    IF _locations IS NOT NULL THEN
-	    -- Delete existing entries from jobs_locations
-   		DELETE FROM jobs_locations WHERE job_id = _job_id;
-		
-        FOREACH location_id IN ARRAY _locations
-        LOOP
-            INSERT INTO jobs_locations (job_id, location_id) VALUES (_job_id, location_id);
-        END LOOP;
-    END IF;
-
-END;
-$$ LANGUAGE plpgsql;
-
-
--- CALL update_job(
---     '11111111-1111-1111-1111-111111111111',  -- _job_id
---     'Updated Job Title',                     -- _title
---     'Updated job description goes here.',    -- _description
---     '77777777-7777-7777-7777-777777777777',  -- _category_id
---     '00000000-0000-0000-0000-000000000001',  -- _subcategory_id
---     TRUE,                                    -- _featured
---     'hourly',                                -- _payment_type
---     NULL,                                    -- _fixed_price_range
---     'Less than 1 month',                     -- _duration
---     '10-30',                                 -- _hours_per_week
---     15.00,                                   -- _min_hourly_rate
---     30.00,                                   -- _max_hourly_rate
---     '2024-05-20',                            -- _get_quotes_until
---     'Everyone',                              -- _visibility
---     'Closed',                                  -- _status
---     ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'ffffffff-ffff-ffff-ffff-ffffffffffff'],      --skills
---     ARRAY['44444444-4444-4444-4444-444444444444', '55555555-5555-5555-5555-555555555555'], --timezones
---     ARRAY['bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb']              --locations
--- );
-
-
 
 CALL drop_procedure('delete_job_by_id');
 CREATE OR REPLACE PROCEDURE delete_job_by_id(
@@ -554,6 +568,8 @@ BEGIN
     DELETE FROM jobs_skills WHERE job_id = _job_id;
 	
 	DELETE FROM jobs_locations WHERE job_id = _job_id;
+	
+	DELETE FROM jobs_attachments WHERE job_id = _job_id;
 
     DELETE FROM jobs WHERE id = _job_id;
 END;

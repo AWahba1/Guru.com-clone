@@ -35,7 +35,8 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
                    String _duration, String _hours_per_week,
                    BigDecimal _min_hourly_rate, BigDecimal _max_hourly_rate,
                    Date _get_quotes_until, String _visibility, String status,
-                   String[] _skills ,String[] _timezones, String[] _locations
+                   String[] _skills ,String[] _timezones, String[] _locations,
+                   String[] _attachments
     );
 
     @Query(value = "select * from get_all_jobs(?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18)", nativeQuery = true)
