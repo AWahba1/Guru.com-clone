@@ -1,7 +1,10 @@
 package com.guru.jobservice.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.guru.jobservice.enums.*;
+import com.guru.jobservice.model.Attachment;
 import com.guru.jobservice.validators.ValidUUIDList;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
@@ -70,6 +73,8 @@ public class CreateUpdateRequest {
 
     @ValidUUIDList
     private String[] locations;
+
+    private Attachment[] attachments;
 
 
 

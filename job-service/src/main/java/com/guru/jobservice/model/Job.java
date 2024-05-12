@@ -44,6 +44,7 @@ public class Job {
     private String status;
 
     private Date createdAt;
+
     @JdbcTypeCode(SqlTypes.JSON)
     private List<Skill> skills;
 
@@ -52,6 +53,9 @@ public class Job {
 
     @JdbcTypeCode(SqlTypes.JSON)
     private List<Location> locations;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    private List<Attachment> attachments;
 
 }
 

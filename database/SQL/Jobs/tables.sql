@@ -134,6 +134,14 @@ END $$;
 		status job_status
 	);
 	
+	CREATE TABLE jobs_attachments (
+		id uuid PRIMARY KEY,
+		job_id uuid REFERENCES jobs(id) ON DELETE CASCADE,
+		url TEXT NOT NULL,
+		filename VARCHAR(255) NOT NULL,
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+	
 	CREATE TABLE jobs_skills (
 		job_id UUID REFERENCES jobs(id),
 		skill_id UUID REFERENCES skills(id),
@@ -177,7 +185,7 @@ CREATE TABLE quote_templates (
     template_name VARCHAR(255),
     template_description VARCHAR(10000),
     attachments VARCHAR(255) ARRAY,
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
+    FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE
 );
 
 CREATE TABLE job_watchlist (
@@ -189,14 +197,34 @@ CREATE TABLE job_watchlist (
 );
 
 CREATE TABLE job_invitations (
-   invitation_id UUID PRIMARY KEY,
-   freelancer_id UUID,
-   client_id UUID,
-   job_id UUID,
-   invitation_date TIMESTAMP,
-   FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE,
-   FOREIGN KEY (client_id) REFERENCES users(id) ON DELETE CASCADE,
-   FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
+    invitation_id UUID PRIMARY KEY,
+    freelancer_id UUID,
+    client_id UUID,
+    job_id UUID,
+    invitation_date TIMESTAMP,
+    FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE,
+    FOREIGN KEY (client_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
+);
+
+CREATE TABLE saved_searches (
+    id UUID PRIMARY KEY,
+	name VARCHAR(255), 
+	freelancer_id UUID references freelancers(id) ON DELETE CASCADE,
+    search_query VARCHAR(255) DEFAULT NULL,
+    category_id UUID references categories(id) ON DELETE CASCADE DEFAULT NULL,
+    subcategory_id UUID references subcategories(id) ON DELETE CASCADE DEFAULT NULL,
+    skill_id UUID references skills(id) ON DELETE CASCADE DEFAULT NULL,
+    featured_only BOOLEAN DEFAULT NULL,
+    payment_terms payment_type DEFAULT NULL,
+    location_ids text[] DEFAULT NULL,
+    sort_order VARCHAR(20) DEFAULT NULL,
+    status_list text[] DEFAULT NULL,
+    verified_only BOOLEAN DEFAULT NULL,
+    min_employer_spend INT DEFAULT NULL,
+    max_quotes_received INT DEFAULT NULL,
+    not_viewed BOOLEAN DEFAULT NULL,
+    not_applied BOOLEAN DEFAULT NULL
 );
 	
 -- Populate tables with sample data
@@ -339,7 +367,16 @@ VALUES
     ('11111111-1111-1111-1111-111111111111', '55555555-5555-5555-5555-555555555555', NOW()),
     ('22222222-2222-2222-2222-222222222222', '66666666-6666-6666-6666-666666666666', NOW());
 	
+INSERT INTO saved_searches (id, name, search_query, category_id, subcategory_id, skill_id, featured_only, payment_terms, location_ids, sort_order, status_list, verified_only, min_employer_spend, max_quotes_received, not_viewed, not_applied, freelancer_id)
+VALUES
+    ('11111111-1111-1111-1111-111111111111', 'Saved Search 1', 'Web Developer', '77777777-7777-7777-7777-777777777777', '00000000-0000-0000-0000-000000000001', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', FALSE, 'fixed', ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'], 'newest', ARRAY['Open', 'Under Review'], TRUE, 100, 5, TRUE, FALSE, '44444444-4444-4444-4444-444444444444'),
+    ('22222222-2222-2222-2222-222222222222', 'Saved Search 2', 'Logo Design', '88888888-8888-8888-8888-888888888888', '00000000-0000-0000-0000-000000000002', 'dddddddd-dddd-dddd-dddd-dddddddddddd', TRUE, 'hourly', ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'], 'oldest', ARRAY['Open'], FALSE, 200, 10, FALSE, TRUE, '55555555-5555-5555-5555-555555555555'),
+    ('33333333-3333-3333-3333-333333333333', 'Saved Search 3', 'Content Writing', '99999999-9999-9999-9999-999999999999', '00000000-0000-0000-0000-000000000003', 'ffffffff-ffff-ffff-ffff-ffffffffffff', FALSE, NULL, ARRAY['cccccccc-cccc-cccc-cccc-cccccccccccc'], 'newest', ARRAY['Open', 'Under Review'], FALSE, 300, NULL, FALSE, TRUE, '66666666-6666-6666-6666-666666666666'),
+    ('44444444-4444-4444-4444-444444444444', 'Saved Search 4', 'Web Developer', '77777777-7777-7777-7777-777777777777', '00000000-0000-0000-0000-000000000001', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', TRUE, 'hourly', NULL, 'newest', ARRAY['Open', 'Under Review'], TRUE, 400, 12, TRUE, TRUE, '55555555-5555-5555-5555-555555555555'),
+    ('55555555-5555-5555-5555-555555555555', 'Saved Search 5', 'Logo Design', '88888888-8888-8888-8888-888888888888', '00000000-0000-0000-0000-000000000002', 'dddddddd-dddd-dddd-dddd-dddddddddddd', TRUE, NULL, ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'], 'oldest', ARRAY['Open'], FALSE, 500, NULL, FALSE, TRUE, '66666666-6666-6666-6666-666666666666');
 
 
-
-
+INSERT INTO jobs_attachments (id, job_id, url, filename, created_at) VALUES
+    ('11111111-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111', 'https://example.com/attachment1.pdf', 'attachment1.pdf', NOW()),
+    ('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'https://example.com/attachment2.docx', 'attachment2.docx', NOW()),
+    ('33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222', 'https://example.com/attachment3.png', 'attachment3.png', NOW());
