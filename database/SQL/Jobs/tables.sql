@@ -134,6 +134,14 @@ END $$;
 		status job_status
 	);
 	
+	CREATE TABLE jobs_attachments (
+		id uuid PRIMARY KEY,
+		job_id uuid REFERENCES jobs(id) ON DELETE CASCADE,
+		url TEXT NOT NULL,
+		filename VARCHAR(255) NOT NULL,
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+	
 	CREATE TABLE jobs_skills (
 		job_id UUID REFERENCES jobs(id),
 		skill_id UUID REFERENCES skills(id),
@@ -164,11 +172,10 @@ CREATE TABLE quotes (
 
 CREATE TABLE quote_templates (
     quote_template_id UUID PRIMARY KEY,
-    freelancer_id UUID,
+    freelancer_id UUID REFERENCES freelancers(id) ON DELETE CASCADE,
     template_name VARCHAR(255),
     template_description VARCHAR(10000),
-    attachments TEXT[],
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE
+    attachments TEXT[]
 );
 
 CREATE TABLE job_freelancer_view (
@@ -178,32 +185,32 @@ CREATE TABLE job_freelancer_view (
     PRIMARY KEY (job_id, freelancer_id)
 );
 
-CREATE TABLE quotes (
-    quote_id UUID PRIMARY KEY,
-    freelancer_id UUID,
-    job_id UUID,
-    proposal VARCHAR(3000),
-    quote_status VARCHAR(255) DEFAULT 'AWAITING_ACCEPTANCE' CHECK (quote_status IN ('AWAITING_ACCEPTANCE', 'PRIORITY', 'ACCEPTED', 'ARCHIVED')),
-    bids_used int,
-    bid_date TIMESTAMP,
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE,
-    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
-);
+-- CREATE TABLE quotes (
+--     quote_id UUID PRIMARY KEY,
+--     freelancer_id UUID,
+--     job_id UUID,
+--     proposal VARCHAR(3000),
+--     quote_status VARCHAR(255) DEFAULT 'AWAITING_ACCEPTANCE' CHECK (quote_status IN ('AWAITING_ACCEPTANCE', 'PRIORITY', 'ACCEPTED', 'ARCHIVED')),
+--     bids_used int,
+--     bid_date TIMESTAMP,
+--     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE,
+--     FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
+-- );
 
-CREATE TABLE quote_templates (
-    quote_template_id UUID PRIMARY KEY,
-    freelancer_id UUID,
-    template_name VARCHAR(255),
-    template_description VARCHAR(10000),
-    attachments varchar(255) ARRAY,
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
-);
+-- CREATE TABLE quote_templates (
+--     quote_template_id UUID PRIMARY KEY,
+--     freelancer_id UUID,
+--     template_name VARCHAR(255),
+--     template_description VARCHAR(10000),
+--     attachments varchar(255) ARRAY,
+--     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
+-- );
 
 CREATE TABLE job_watchlist (
     watchlist_id UUID PRIMARY KEY,
     freelancer_id UUID,
     job_id UUID,
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE,
+    FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE,
     FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
 );
 
@@ -213,14 +220,15 @@ CREATE TABLE job_invitations (
     client_id UUID,
     job_id UUID,
     invitation_date TIMESTAMP,
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE,
-    FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
+    FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE,
+    FOREIGN KEY (client_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
+);
 
 CREATE TABLE saved_searches (
     id UUID PRIMARY KEY,
 	name VARCHAR(255), 
-	freelancer_id UUID references freelancers(id) ON DELETE CASCADE
+	freelancer_id UUID references freelancers(id) ON DELETE CASCADE,
     search_query VARCHAR(255) DEFAULT NULL,
     category_id UUID references categories(id) ON DELETE CASCADE DEFAULT NULL,
     subcategory_id UUID references subcategories(id) ON DELETE CASCADE DEFAULT NULL,
@@ -234,8 +242,7 @@ CREATE TABLE saved_searches (
     min_employer_spend INT DEFAULT NULL,
     max_quotes_received INT DEFAULT NULL,
     not_viewed BOOLEAN DEFAULT NULL,
-    not_applied BOOLEAN DEFAULT NULL,
-	-- 	client_id UUID references users(id) ON DELETE CASCADE DEFAULT NULL
+    not_applied BOOLEAN DEFAULT NULL
 );
 	
 -- Populate tables with sample data
@@ -387,4 +394,7 @@ VALUES
     ('55555555-5555-5555-5555-555555555555', 'Saved Search 5', 'Logo Design', '88888888-8888-8888-8888-888888888888', '00000000-0000-0000-0000-000000000002', 'dddddddd-dddd-dddd-dddd-dddddddddddd', TRUE, NULL, ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'], 'oldest', ARRAY['Open'], FALSE, 500, NULL, FALSE, TRUE, '66666666-6666-6666-6666-666666666666');
 
 
-
+INSERT INTO jobs_attachments (id, job_id, url, filename, created_at) VALUES
+    ('11111111-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111', 'https://example.com/attachment1.pdf', 'attachment1.pdf', NOW()),
+    ('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'https://example.com/attachment2.docx', 'attachment2.docx', NOW()),
+    ('33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222', 'https://example.com/attachment3.png', 'attachment3.png', NOW());

@@ -1,22 +1,26 @@
 package com.guru.jobservice.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.guru.jobservice.dtos.CreateUpdateRequest;
 import com.guru.jobservice.dtos.FiltersRequest;
 import com.guru.jobservice.dtos.JobViewRequest;
 import com.guru.jobservice.dtos.PaginatedResponse;
 import com.guru.jobservice.exceptions.ResourceNotFoundException;
 import com.guru.jobservice.exceptions.ValidationException;
+import com.guru.jobservice.model.Attachment;
 import com.guru.jobservice.model.Job;
 import com.guru.jobservice.repositories.JobRepository;
 import com.guru.jobservice.validators.JobRequestValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @Service
+@Slf4j
 public class JobService {
 
     private final JobRepository jobRepository;
@@ -36,9 +40,17 @@ public class JobService {
 
     }
 
-    public void createJob(CreateUpdateRequest createUpdateRequest) {
-
+    public void createJob(CreateUpdateRequest createUpdateRequest) throws JsonProcessingException {
         JobRequestValidator.validatePaymentType(createUpdateRequest);
+
+        // Convert attachments as JSON
+        Attachment[] attachments = createUpdateRequest.getAttachments();
+        ObjectMapper mapper = new ObjectMapper();
+        String[] attachmentJsonArray = new String[attachments.length];
+        for (int i = 0; i < attachments.length; i++) {
+            String attachmentJson = mapper.writeValueAsString(attachments[i]);
+            attachmentJsonArray[i] = attachmentJson;
+        }
 
         jobRepository.createJob(
                 createUpdateRequest.getTitle(),
@@ -57,7 +69,8 @@ public class JobService {
                 createUpdateRequest.getVisibility(),
                 createUpdateRequest.getSkills(),
                 createUpdateRequest.getTimezones(),
-                createUpdateRequest.getLocations()
+                createUpdateRequest.getLocations(),
+                attachmentJsonArray
         );
 }
 
