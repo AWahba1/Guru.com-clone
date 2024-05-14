@@ -4,9 +4,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public class FeedbackByClientDTO {
-    @NotNull
-    private UUID feedback_id;
+public class FeedbackDTO {
 
     @NotNull
     private UUID freelancer_id;
@@ -26,8 +24,7 @@ public class FeedbackByClientDTO {
     @NotNull
     private Boolean satisfied;
 
-    public FeedbackByClientDTO(UUID feedback_id, UUID freelancer_id, UUID client_id, UUID job_id, String client_name, String job_title, Boolean satisfied) {
-        this.feedback_id = feedback_id;
+    public FeedbackDTO(UUID freelancer_id, UUID client_id, UUID job_id, String client_name, String job_title, Boolean satisfied) {
         this.freelancer_id = freelancer_id;
         this.client_id = client_id;
         this.job_id = job_id;
@@ -36,13 +33,6 @@ public class FeedbackByClientDTO {
         this.satisfied = satisfied;
     }
 
-    public UUID getFeedback_id() {
-        return feedback_id;
-    }
-
-    public void setFeedback_id(UUID feedback_id) {
-        this.feedback_id = feedback_id;
-    }
 
     public UUID getFreelancer_id() {
         return freelancer_id;

@@ -13,7 +13,7 @@ import java.util.UUID;
 
 
 public interface MessagesRepository extends CassandraRepository<Message, messagePrimaryKey> {
-    @Query("SELECT * FROM message WHERE conversation_id = ?0 ORDER BY sent_at DESC LIMIT 50")
+    @Query("SELECT * FROM message WHERE conversation_id = ?0 ORDER BY sent_at DESC")
     List<Message> findByCompositeKey(UUID conversationId);
 
     @Query("UPDATE message SET message_text = ?3 WHERE conversation_id = ?0 AND sent_at = ?1 AND message_id = ?2")

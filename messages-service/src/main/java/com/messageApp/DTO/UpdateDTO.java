@@ -15,8 +15,7 @@ public class UpdateDTO {
     private Timestamp sent_at;
     @NotNull
     private UUID message_id;
-    @NotNull
-    @NotBlank(message = "message_text is mandatory")
+
     private String message_text;
 
     public UpdateDTO(UUID conversation_id, Timestamp sent_at, UUID message_id, String message_text) {

@@ -13,8 +13,7 @@ public class MessageInputDTO {
     @NotNull
     private UUID conversation_id;
 
-    @NotNull
-    @NotBlank(message = "message_text is mandatory")
+
     private String message_text;
 
 
