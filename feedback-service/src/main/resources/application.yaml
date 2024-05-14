@@ -1,7 +1,7 @@
 spring:
   data:
     cassandra:
-      port: 9043
-      contact-points: my_cassandra_feedback
-      keyspace-name: freelancer
-#      entity-base-package: com.feedbackApp.model
+      port: 9042
+      contact-points: my_cassandra
+      keyspace-name: my_keyspace
+#      entity-base-package: com.example.cassandra.springbootcassandrademo.model
