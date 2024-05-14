@@ -16,8 +16,6 @@ import java.util.UUID;
 @Table(name = "Feedback_By_Project")
 @IdClass(Feedback_By_Project_Pkey.class)
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class Feedback_By_Project {
     @Id
     UUID job_id;

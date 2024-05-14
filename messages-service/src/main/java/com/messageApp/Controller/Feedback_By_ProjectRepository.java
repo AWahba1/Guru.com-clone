@@ -11,6 +11,6 @@ import java.util.UUID;
 
 public interface Feedback_By_ProjectRepository extends CassandraRepository<Feedback_By_Project, Feedback_By_Project_Pkey> {
     @Query("SELECT * FROM Feedback_By_Project WHERE job_id = ?0 ORDER BY created_at DESC")
-    List<Feedback_By_Client> findByCompositeKey(UUID job_id );
+    List<Feedback_By_Project> findByCompositeKey(UUID job_id );
 
 }

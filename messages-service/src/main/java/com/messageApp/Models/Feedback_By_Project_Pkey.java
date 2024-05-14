@@ -10,8 +10,6 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @EqualsAndHashCode
 public class Feedback_By_Project_Pkey implements Serializable {
     UUID job_id;

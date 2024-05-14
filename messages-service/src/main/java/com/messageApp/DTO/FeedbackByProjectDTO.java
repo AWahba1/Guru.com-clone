@@ -3,25 +3,30 @@ package com.messageApp.DTO;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
-import java.sql.Timestamp;
 
-public class FeedbackByFreelancerDTO {
+public class FeedbackByProjectDTO {
     @NotNull
     private UUID feedback_id;
+
     @NotNull
     private UUID freelancer_id;
+
     @NotNull
     private UUID client_id;
+
     @NotNull
     private UUID job_id;
+
     @NotNull
     private String client_name;
+
     @NotNull
     private String job_title;
+
     @NotNull
     private Boolean satisfied;
 
-    public FeedbackByFreelancerDTO(UUID feedback_id, UUID freelancer_id, UUID client_id, UUID job_id, String client_name, String job_title, Boolean satisfied) {
+    public FeedbackByProjectDTO(UUID feedback_id, UUID freelancer_id, UUID client_id, UUID job_id, String client_name, String job_title, Boolean satisfied) {
         this.feedback_id = feedback_id;
         this.freelancer_id = freelancer_id;
         this.client_id = client_id;
@@ -86,5 +91,4 @@ public class FeedbackByFreelancerDTO {
     public void setSatisfied(Boolean satisfied) {
         this.satisfied = satisfied;
     }
-
 }
