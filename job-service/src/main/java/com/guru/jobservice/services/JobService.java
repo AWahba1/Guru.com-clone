@@ -1,21 +1,25 @@
 package com.guru.jobservice.services;
 
-//import com.guru.jobservice.dtos.JobDTO;
-//import com.guru.jobservice.repositories.JobRepository;
-//import com.guru.jobservice.dtos.JobResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.guru.jobservice.dtos.CreateUpdateRequest;
+import com.guru.jobservice.dtos.FiltersRequest;
+import com.guru.jobservice.dtos.JobViewRequest;
+import com.guru.jobservice.dtos.PaginatedResponse;
 import com.guru.jobservice.exceptions.ResourceNotFoundException;
+import com.guru.jobservice.exceptions.ValidationException;
+import com.guru.jobservice.helpers.AttachmentsHelper;
 import com.guru.jobservice.model.Job;
 import com.guru.jobservice.repositories.JobRepository;
+import com.guru.jobservice.validators.JobRequestValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class JobService {
 
     private final JobRepository jobRepository;
@@ -25,17 +29,6 @@ public class JobService {
         this.jobRepository = jobRepository;
     }
 
-//    public void createJob(JobDTO jobDTO) {
-//        //jobRepository.createJob(jobDTO);
-//    }
-//
-//    public void updateJob(UUID jobId, JobDTO jobDTO) {
-//        //jobRepository.updateJob(jobId, jobDTO);
-//    }
-//
-    public void deleteJobById(UUID jobId) {
-        jobRepository.deleteJobById(jobId);
-    }
 
     public Job getJobById(UUID jobId){
         Job job = jobRepository.getJobById(jobId);
@@ -43,14 +36,116 @@ public class JobService {
             throw new ResourceNotFoundException();
         }
         return job;
-
     }
 
-//    public List<JobDTO> getAllJobs(int page, int pageSize, String searchQuery, UUID categoryId,
-//                                   UUID subcategoryId, UUID skillId, Boolean featuredOnly,
-//                                   String paymentTerms, UUID locationId, String sortOrder,
-//                                   List<String> statusList) {
-//        return jobRepository.getAllJobs(page, pageSize, searchQuery, categoryId, subcategoryId,
-//                skillId, featuredOnly, paymentTerms, locationId, sortOrder, statusList);
-//    }
+    public void createJob(CreateUpdateRequest createUpdateRequest) throws JsonProcessingException {
+        JobRequestValidator.validatePaymentType(createUpdateRequest);
+
+        String [] attachmentJsonArray = AttachmentsHelper.convertAttachmentsToJson(createUpdateRequest.getAttachments());
+
+        jobRepository.createJob(
+                createUpdateRequest.getTitle(),
+                createUpdateRequest.getDescription(),
+                createUpdateRequest.getCategoryId(),
+                createUpdateRequest.getSubcategoryId(),
+                createUpdateRequest.getIsFeatured(),
+                createUpdateRequest.getClientId(),
+                createUpdateRequest.getPaymentType(),
+                createUpdateRequest.getFixedPriceRange(),
+                createUpdateRequest.getDuration(),
+                createUpdateRequest.getHoursPerWeek(),
+                createUpdateRequest.getMinHourlyRate(),
+                createUpdateRequest.getMaxHourlyRate(),
+                createUpdateRequest.getGetQuotesUntil(),
+                createUpdateRequest.getVisibility(),
+                createUpdateRequest.getSkills(),
+                createUpdateRequest.getTimezones(),
+                createUpdateRequest.getLocations(),
+                attachmentJsonArray
+        );
+    }
+
+    public void updateJob(UUID jobId, CreateUpdateRequest createUpdateRequest) throws Exception {
+
+        String [] attachmentJsonArray = AttachmentsHelper.convertAttachmentsToJson(createUpdateRequest.getAttachments());
+
+        Job job = jobRepository.getJobById(jobId);
+        if (job == null) {
+            throw new ResourceNotFoundException();
+        }
+        JobRequestValidator.validatePaymentType(createUpdateRequest);
+        jobRepository.updateJob(
+                jobId,
+                createUpdateRequest.getTitle(),
+                createUpdateRequest.getDescription(),
+                createUpdateRequest.getCategoryId(),
+                createUpdateRequest.getSubcategoryId(),
+                createUpdateRequest.getIsFeatured(),
+                createUpdateRequest.getPaymentType(),
+                createUpdateRequest.getFixedPriceRange(),
+                createUpdateRequest.getDuration(),
+                createUpdateRequest.getHoursPerWeek(),
+                createUpdateRequest.getMinHourlyRate(),
+                createUpdateRequest.getMaxHourlyRate(),
+                createUpdateRequest.getGetQuotesUntil(),
+                createUpdateRequest.getVisibility(),
+                createUpdateRequest.getStatus(),
+                createUpdateRequest.getSkills(),
+                createUpdateRequest.getTimezones(),
+                createUpdateRequest.getLocations(),
+                attachmentJsonArray
+        );
+    }
+
+    public void deleteJobById(UUID jobId) {
+        Job job = jobRepository.getJobById(jobId);
+        if (job == null) {
+            throw new ResourceNotFoundException();
+        }
+        jobRepository.deleteJobById(jobId);
+    }
+
+
+    public PaginatedResponse<Job> getAllJobs(FiltersRequest filtersRequest) {
+
+        if ((filtersRequest.getNotApplied() != null || filtersRequest.getNotViewed() != null) && filtersRequest.getFreelancerId() == null) {
+            throw new ValidationException("Freelancer ID must be set if not applied or viewed filters are applied");
+        }
+
+        List<Job> jobs = jobRepository.getAllJobs(
+                filtersRequest.getPage(),
+                filtersRequest.getPageSize(),
+                filtersRequest.getSearchQuery(),
+                filtersRequest.getCategoryId(),
+                filtersRequest.getSubcategoryId(),
+                filtersRequest.getSkillId(),
+                filtersRequest.getFeaturedOnly(),
+                filtersRequest.getPaymentType(),
+                filtersRequest.getLocationIds(),
+                filtersRequest.getSortOrder(),
+                filtersRequest.getStatusList(),
+                filtersRequest.getVerifiedOnlyClients(),
+                filtersRequest.getMinEmployerSpend(),
+                filtersRequest.getMaxQuotesReceived(),
+                filtersRequest.getNotViewed(),
+                filtersRequest.getNotApplied(),
+                filtersRequest.getFreelancerId(),
+                filtersRequest.getClientId()
+        );
+
+        int recordsCount = jobs.size();
+        return new PaginatedResponse<Job>(jobs, filtersRequest.getPage(), recordsCount);
+    }
+
+    public void markJobAsViewed(JobViewRequest jobViewRequest) {
+        UUID jobId = jobViewRequest.getJobId();
+        UUID freelancerId = jobViewRequest.getFreelancerId();
+        Job job = jobRepository.getJobById(jobId);
+        if (job == null) {
+            throw new ResourceNotFoundException();
+        }
+
+        // TODO: VALIDATE FREELANCER ID USING MESSAGE QUEUE HERE
+        jobRepository.markJobAsViewed(jobId, freelancerId);
+    }
 }

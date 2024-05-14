@@ -1,5 +1,6 @@
 package com.guru.jobservice.model;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -11,8 +12,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.io.Serializable;
-import java.sql.Time;
 import java.util.*;
 
 
@@ -38,17 +37,25 @@ public class Job {
     private String fixedPriceRange;
     private String duration;
     private String hoursPerWeek;
-    private double minHourlyRate;
-    private double maxHourlyRate;
+    private Double minHourlyRate;
+    private Double maxHourlyRate;
     private Date getQuotesUntil;
     private String visibility;
     private String status;
+
+    private Date createdAt;
+
     @JdbcTypeCode(SqlTypes.JSON)
     private List<Skill> skills;
+
     @JdbcTypeCode(SqlTypes.JSON)
     private List<Timezone> timezones;
+
     @JdbcTypeCode(SqlTypes.JSON)
     private List<Location> locations;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    private List<Attachment> attachments;
 
 }
 
