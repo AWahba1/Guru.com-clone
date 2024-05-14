@@ -93,18 +93,5 @@ public class MessageDTO {
         this.message_text = message_text;
     }
 
-    public static Message buidMessage(MessageDTO messageDTO){
-        Message message = new Message(messageDTO.getConversation_id(),
-                messageDTO.getSent_at(),
-                UUID.randomUUID(),
-                messageDTO.getSender_id(),
-                messageDTO.getReceiver_id(),
-                messageDTO.getSender_name(),
-                messageDTO.getReceiver_name(),
-                messageDTO.getMessage_text()
-        );
-        return message;
-
-    }
 
 }

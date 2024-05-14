@@ -1,12 +1,22 @@
 package com.messageApp.DTO;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.sql.Timestamp;
 import java.util.UUID;
 
 public class UpdateDTO {
+
+    @NotNull
     private UUID conversation_id;
+
+    @NotNull
     private Timestamp sent_at;
+    @NotNull
     private UUID message_id;
+    @NotNull
+    @NotBlank(message = "message_text is mandatory")
     private String message_text;
 
     public UpdateDTO(UUID conversation_id, Timestamp sent_at, UUID message_id, String message_text) {

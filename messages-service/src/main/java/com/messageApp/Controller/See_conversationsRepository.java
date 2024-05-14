@@ -13,6 +13,8 @@ public interface See_conversationsRepository extends CassandraRepository<See_con
     @Query("SELECT * FROM see_conversations WHERE user_id = ?0")
     List<See_conversations> findByCompositeKey(UUID user_id);
 
+    @Query("SELECT * FROM see_conversations WHERE user_id = ?0 AND conversation_id = ?1 LIMIT 1")
+    List<See_conversations> findConversationProperty(UUID user_id,UUID conversation_id);
     @Query("SELECT * FROM see_conversations WHERE user_id = ?0 AND user_with_conversation_name LIKE ?1")
     List<See_conversations> searchConversations(UUID user_id,String user_with_conversation_name);
 

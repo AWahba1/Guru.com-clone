@@ -1,58 +1,36 @@
-package com.messageApp.Models;
+package com.messageApp.DTO;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
-import java.sql.Timestamp;
 import java.util.UUID;
+import java.sql.Timestamp;
 
+public class FeedbackByFreelancerDTO {
 
-@Entity
-@Table(name = "Feedback_By_Freelancer")
-@IdClass(Feedback_By_Freelancer_PKey.class)
-@Data
-public class Feedback_By_Freelancer {
-    @Id
-    UUID freelancer_id;
-    @Id
-    Timestamp created_at ;
-    @Id
-    UUID feedback_id;
+    @NotNull
+    private UUID feedback_id;
+    @NotNull
+    private UUID freelancer_id;
+    @NotNull
     private UUID client_id;
+    @NotNull
     private UUID job_id;
+    @NotNull
     private String client_name;
+    @NotNull
     private String job_title;
-    private boolean satisfied;
+    @NotNull
+    private Boolean satisfied;
+    private Timestamp created_at;
 
-    public Feedback_By_Freelancer(UUID freelancer_id, Timestamp created_at, UUID feedback_id, UUID client_id, UUID job_id, String client_name, String job_title, boolean satisfied) {
-        this.freelancer_id = freelancer_id;
-        this.created_at = created_at;
+    public FeedbackByFreelancerDTO(UUID feedback_id, UUID freelancer_id, UUID client_id, UUID job_id, String client_name, String job_title, Boolean satisfied, Timestamp created_at) {
         this.feedback_id = feedback_id;
+        this.freelancer_id = freelancer_id;
         this.client_id = client_id;
         this.job_id = job_id;
         this.client_name = client_name;
         this.job_title = job_title;
         this.satisfied = satisfied;
-    }
-
-    public UUID getFreelancer_id() {
-        return freelancer_id;
-    }
-
-    public void setFreelancer_id(UUID freelancer_id) {
-        this.freelancer_id = freelancer_id;
-    }
-
-    public Timestamp getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(Timestamp created_at) {
         this.created_at = created_at;
     }
 
@@ -62,6 +40,14 @@ public class Feedback_By_Freelancer {
 
     public void setFeedback_id(UUID feedback_id) {
         this.feedback_id = feedback_id;
+    }
+
+    public UUID getFreelancer_id() {
+        return freelancer_id;
+    }
+
+    public void setFreelancer_id(UUID freelancer_id) {
+        this.freelancer_id = freelancer_id;
     }
 
     public UUID getClient_id() {
@@ -96,11 +82,19 @@ public class Feedback_By_Freelancer {
         this.job_title = job_title;
     }
 
-    public boolean isSatisfied() {
+    public Boolean getSatisfied() {
         return satisfied;
     }
 
-    public void setSatisfied(boolean satisfied) {
+    public void setSatisfied(Boolean satisfied) {
         this.satisfied = satisfied;
+    }
+
+    public Timestamp getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Timestamp created_at) {
+        this.created_at = created_at;
     }
 }

@@ -8,18 +8,19 @@ import com.messageApp.DTO.UpdateDTO;
 import com.messageApp.Models.Message;
 import com.messageApp.Models.See_conversations;
 import com.messageApp.Models.messagePrimaryKey;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -33,23 +34,30 @@ public class CassandraSpringApplication {
 	@Autowired
 	private See_conversationsRepository SeeRepository;
 
+	@Autowired
+	private MessageService messageService;
 
 	@PostMapping("/message")
-	public Message saveMessage(@RequestBody MessageDTO messagesDTO)
+	public ResponseEntity<?> saveMessage(@Valid @RequestBody MessageInputDTO messageInputDTO)
 	{
-		Message message = MessageDTO.buidMessage(messagesDTO);
-		LocalDateTime now = LocalDateTime.now();
-		Timestamp timestamp = Timestamp.valueOf(now);
-		message.setSent_at(timestamp);
+
+		List<See_conversations> s1 = SeeRepository.findConversationProperty(messageInputDTO.getSender_id(),messageInputDTO.getConversation_id());
+		if(s1.isEmpty()){
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid sender_id or conversation_id");
+		}
+		See_conversations conversationsData =s1.get(0);
+
+		Message message = messageService.buidMessageFromSee_conversations(conversationsData,messageInputDTO.getMessage_text());
+
 		try {
 			MegRepository.save(message);
-			return message;
+			return ResponseEntity.status(HttpStatus.CREATED).body(message);
 
 		} catch (Exception e){
-
-			return null;
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while saving the message");
 		}
 	}
+
 
 	@PostMapping("/AddConversation")
 	public List<See_conversations> saveConversation(@RequestBody See_conversationsDTO see_conversationsDTO) {
@@ -120,7 +128,7 @@ public class CassandraSpringApplication {
 
 	}
 
-	@GetMapping("/listsbyid")
+	@GetMapping("/chatMessages")
 	public List<Message> findMessageByCompositeKey(@RequestParam UUID conversation_id) {
 		try {
 			return MegRepository.findByCompositeKey(conversation_id);
@@ -133,7 +141,7 @@ public class CassandraSpringApplication {
 	}
 
 	@PutMapping("/update")
-	public ResponseEntity<String> updateMessage(@RequestBody UpdateDTO dto) {
+	public ResponseEntity<String> updateMessage(@Valid @RequestBody UpdateDTO dto) {
 		try {
 			MegRepository.updateMessage(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_text());
 			return ResponseEntity.ok("Message updated successfully");
@@ -143,11 +151,18 @@ public class CassandraSpringApplication {
 	}
 
 	@PutMapping("/closeChat")
-	public ResponseEntity<String> closeOrOpenChat(@RequestBody See_conversations conversations) {
+	public ResponseEntity<String> closeOrOpenChat(@Valid @RequestBody See_conversationCloseChatDTO conversations) {
 		try {
+
+			List<See_conversations> s1 = SeeRepository.findConversationProperty(conversations.getUser_id(),conversations.getConversation_id());
+			if(s1.isEmpty()){
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid sender_id or conversation_id");
+			}
+			See_conversations conversationsData =s1.get(0);
+
 			boolean chat = conversations.getChat_open();
-			SeeRepository.updateConversation(conversations.getUser_id(),conversations.getConversation_id(),chat);
-			SeeRepository.updateConversation(conversations.getUser_with_conversation_id(),conversations.getConversation_id(),chat);
+			SeeRepository.updateConversation(conversationsData.getUser_id(),conversationsData.getConversation_id(),chat);
+			SeeRepository.updateConversation(conversationsData.getUser_with_conversation_id(),conversationsData.getConversation_id(),chat);
 			return ResponseEntity.ok("Message updated successfully");
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update message");
@@ -167,6 +182,19 @@ public class CassandraSpringApplication {
 
 		public static void main(String[] args) {
 		SpringApplication.run(CassandraSpringApplication.class, args);
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public Map<String, String> handleValidationExceptions(
+			MethodArgumentNotValidException ex) {
+		Map<String, String> errors = new HashMap<>();
+		ex.getBindingResult().getAllErrors().forEach((error) -> {
+			String fieldName = ((FieldError) error).getField();
+			String errorMessage = error.getDefaultMessage();
+			errors.put(fieldName, errorMessage);
+		});
+		return errors;
 	}
 
 }
