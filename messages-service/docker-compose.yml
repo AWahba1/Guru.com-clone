@@ -1,0 +1,7 @@
+  version: '4.0.7'
+  services:
+    my_cassandra:
+      image: cassandra
+      container_name: my_cassandra
+      ports:
+        - "9042:9042"

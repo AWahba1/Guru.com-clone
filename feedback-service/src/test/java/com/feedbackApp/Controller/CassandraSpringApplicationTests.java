@@ -1,10 +1,10 @@
-package messagesMS;
+package com.feedbackApp.Controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MessagesMsApplicationTests {
+class CassandraSpringApplicationTests {
 
 	@Test
 	void contextLoads() {

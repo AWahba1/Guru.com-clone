@@ -2,7 +2,6 @@ package com.guru.freelancerservice.services;
 
 import com.guru.freelancerservice.dtos.featuredTeammember.AddFeaturedTeamMembersRequestDto;
 import com.guru.freelancerservice.dtos.freelancer.FreelancerAboutSectionDto;
-import com.guru.freelancerservice.dtos.freelancer.FreelancerProfileDto;
 import com.guru.freelancerservice.dtos.portfolios.PortfolioRequestDto;
 import com.guru.freelancerservice.dtos.resources.ResourceDto;
 import com.guru.freelancerservice.dtos.services.ServiceDto;
