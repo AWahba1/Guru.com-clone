@@ -1,4 +1,9 @@
 version: '3.8'
+
+networks:
+  payment-network:
+    driver: bridge
+
 services:
   postgres:
     container_name: my-postgres
@@ -9,7 +14,12 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: guru
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/guru
+    networks:
+      - payment-network
     restart: unless-stopped
+
+
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -17,8 +27,10 @@ services:
       - "5672:5672"
       - "15672:15672"
     environment:
-      - RABBITMQ_DEFAULT_USER=rappitmq
-      - RABBITMQ_DEFAULT_PASS=rappitmq
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - payment-network
 
 
   springapipayment:
@@ -33,8 +45,10 @@ services:
       - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_PORT=5672
-      - SPRING_RABBITMQ_USERNAME=rappitmq
-      - SPRING_RABBITMQ_PASSWORD=rappitmq
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+    networks:
+      - payment-network
     depends_on:
       - postgres
       - rabbitmq
