@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+  postgres:
+    container_name: my-postgres
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: guru
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=rappitmq
+      - RABBITMQ_DEFAULT_PASS=rappitmq
+
+
+  springapipayment:
+    build: .
+    image: springapipayment
+    container_name: spring-payment-app
+    ports:
+      - "8888:8888"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/guru
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=rappitmq
+      - SPRING_RABBITMQ_PASSWORD=rappitmq
+    depends_on:
+      - postgres
+      - rabbitmq
