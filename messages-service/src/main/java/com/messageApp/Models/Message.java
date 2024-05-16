@@ -31,8 +31,10 @@ public class Message {
     private String receiver_name;
     private String message_text;
 
+    private String message_file;
 
-    public Message(UUID conversation_id, Timestamp sent_at, UUID message_id, UUID sender_id, UUID receiver_id, String sender_name, String receiver_name, String message_text) {
+
+    public Message(UUID conversation_id, Timestamp sent_at, UUID message_id, UUID sender_id, UUID receiver_id, String sender_name, String receiver_name, String message_text,String message_file) {
         this.conversation_id = conversation_id;
         this.sent_at = sent_at;
         this.message_id = message_id;
@@ -41,7 +43,7 @@ public class Message {
         this.sender_name = sender_name;
         this.receiver_name = receiver_name;
         this.message_text = message_text;
-
+        this.message_file = message_file;
 
     }
 
@@ -110,7 +112,11 @@ public class Message {
         this.message_text = message_text;
     }
 
+    public String getMessage_file() {
+        return message_file;
+    }
 
-
-
+    public void setMessage_file(String message_file) {
+        this.message_file = message_file;
+    }
 }

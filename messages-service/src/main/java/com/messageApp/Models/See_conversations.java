@@ -27,7 +27,9 @@ public class See_conversations {
     private String user_with_conversation_name;
     private Boolean chat_open;
 
-    public See_conversations(UUID user_id, UUID conversation_id,Timestamp lastEdited, UUID user_with_conversation_id, String user_name, String user_with_conversation_name,Boolean chat_open) {
+    private String user_role;
+
+    public See_conversations(UUID user_id, UUID conversation_id,Timestamp lastEdited, UUID user_with_conversation_id, String user_name, String user_with_conversation_name,Boolean chat_open,String user_role) {
         this.user_id = user_id;
         this.lastEdited = lastEdited;
         this.conversation_id = conversation_id;
@@ -35,6 +37,7 @@ public class See_conversations {
         this.user_name = user_name;
         this.user_with_conversation_name = user_with_conversation_name;
         this.chat_open = chat_open;
+        this.user_role = user_role;
 
     }
 
@@ -94,5 +97,11 @@ public class See_conversations {
         this.user_name = user_name;
     }
 
+    public String getUser_role() {
+        return user_role;
+    }
 
+    public void setUser_role(String user_role) {
+        this.user_role = user_role;
+    }
 }

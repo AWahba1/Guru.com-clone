@@ -1,16 +1,10 @@
 package com.messageApp.Controller;
 import com.messageApp.Models.*;
 import com.messageApp.DTO.*;
-import com.messageApp.DTO.MessageDTO;
 import com.messageApp.DTO.See_conversationsDTO;
-import com.messageApp.DTO.UpdateDTO;
-import com.messageApp.Models.Message;
 import com.messageApp.Models.See_conversations;
-import com.messageApp.Models.messagePrimaryKey;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +25,14 @@ public class See_conversationController {
     private MessageService messageService;
 
     @PostMapping("/AddConversation")
-    public List<See_conversations> saveConversation(@RequestBody See_conversationsDTO see_conversationsDTO) {
+    public ResponseEntity<?> saveConversation(@RequestBody See_conversationsDTO see_conversationsDTO) {
+        if(see_conversationsDTO.getUser_role()==null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user_role should be client or freelancer");
+        }
 
+        if(!see_conversationsDTO.getUser_role().equalsIgnoreCase("client") && !see_conversationsDTO.getUser_role().equalsIgnoreCase("freelancer")){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user_role should be client or freelancer");
+        }
         See_conversations conversations = See_conversationsDTO.buildSee_converstions(see_conversationsDTO);
         LocalDateTime now = LocalDateTime.now();
 
@@ -41,14 +41,18 @@ public class See_conversationController {
         conversations.setLastEdited(timestamp);
 
         conversations.setChat_open(true);
-
+        String rule ="client";
+        if(see_conversationsDTO.getUser_role().equalsIgnoreCase("client")){
+            rule = "freelancer";
+        }
         See_conversations conversations2 = new See_conversations(conversations.getUser_with_conversation_id(),
                 conversations.getConversation_id(),
                 timestamp,
                 conversations.getUser_id(),
                 conversations.getUser_with_conversation_name(),
                 conversations.getUser_name(),
-                true);
+                true,rule)
+                ;
 
         List<See_conversations> seeConversationsList = new ArrayList<>();
         seeConversationsList.add(conversations);
@@ -56,11 +60,12 @@ public class See_conversationController {
 
 
         try{
-            return SeeRepository.saveAll(seeConversationsList);
+            SeeRepository.saveAll(seeConversationsList);
+            return ResponseEntity.status(HttpStatus.CREATED).body(seeConversationsList);
         }
         catch (Exception e){
-            System.out.println(e);
-            return null;
+            //System.out.println(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while saving the message");
         }
     }
 
@@ -104,12 +109,16 @@ public class See_conversationController {
             }
             See_conversations conversationsData =s1.get(0);
 
+            if (conversationsData.getUser_role().equalsIgnoreCase("freelancer")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("only client can close or open chat");
+            }
+
             boolean chat = conversations.getChat_open();
             SeeRepository.updateConversation(conversationsData.getUser_id(),conversationsData.getConversation_id(),chat);
             SeeRepository.updateConversation(conversationsData.getUser_with_conversation_id(),conversationsData.getConversation_id(),chat);
-            return ResponseEntity.ok("Message updated successfully");
+            return ResponseEntity.ok("conversation updated successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update message");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update conversation");
         }
     }
 

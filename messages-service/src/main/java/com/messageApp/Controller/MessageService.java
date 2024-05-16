@@ -1,6 +1,5 @@
 package com.messageApp.Controller;
 
-import com.messageApp.DTO.MessageDTO;
 import com.messageApp.DTO.MessageInputDTO;
 import com.messageApp.Models.Message;
 import com.messageApp.Models.See_conversations;
@@ -18,21 +17,21 @@ import java.util.UUID;
 
 @Service
 public class MessageService {
-        public  Message buidMessageFromMessageDTO(MessageDTO messageDTO){
-            return new Message(messageDTO.getConversation_id(),
-                messageDTO.getSent_at(),
-                UUID.randomUUID(),
-                messageDTO.getSender_id(),
-                messageDTO.getReceiver_id(),
-                messageDTO.getSender_name(),
-                messageDTO.getReceiver_name(),
-                messageDTO.getMessage_text()
-        );
+//        public  Message buidMessageFromMessageDTO(MessageDTO messageDTO){
+//            return new Message(messageDTO.getConversation_id(),
+//                messageDTO.getSent_at(),
+//                UUID.randomUUID(),
+//                messageDTO.getSender_id(),
+//                messageDTO.getReceiver_id(),
+//                messageDTO.getSender_name(),
+//                messageDTO.getReceiver_name(),
+//                messageDTO.getMessage_text()
+//        );
 
 
-    }
+//    }
 
-    public Message buidMessageFromSee_conversations(See_conversations seeConversations, String messageText) {
+    public Message buidMessageFromSee_conversations(See_conversations seeConversations, String messageText,String messageFile) {
         LocalDateTime now = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(now);
         return new Message(
@@ -43,7 +42,8 @@ public class MessageService {
                 seeConversations.getUser_with_conversation_id(),
                 seeConversations.getUser_name(),
                 seeConversations.getUser_with_conversation_name(),
-                messageText
+                messageText,
+                messageFile
         );
     }
 
