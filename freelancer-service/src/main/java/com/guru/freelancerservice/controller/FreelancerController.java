@@ -11,6 +11,7 @@ import com.guru.freelancerservice.models.Freelancer;
 import com.guru.freelancerservice.models.Quote;
 import com.guru.freelancerservice.services.FreelancerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,8 @@ import com.guru.freelancerservice.response.ResponseHandler;
 
 import java.util.List;
 import java.util.UUID;
+
+import static java.lang.Thread.sleep;
 
 @RestController
 @RequestMapping("/freelancer")
@@ -30,9 +33,9 @@ public class FreelancerController {
         this.freelancerService = freelancerService;
         this.editFreelancerAboutSectionCommand = editFreelancerAboutSectionCommand;
     }
-
+    
     @GetMapping
-    public ResponseEntity<Object> getAllFreelancers(){
+    public ResponseEntity<Object> getAllFreelancers() throws InterruptedException {
         List<Freelancer> freelancers = freelancerService.getAllFreelancers();
         return ResponseHandler.generateGetResponse("Freelancers retrieved successfully", HttpStatus.OK, freelancers, freelancers.size());
     }

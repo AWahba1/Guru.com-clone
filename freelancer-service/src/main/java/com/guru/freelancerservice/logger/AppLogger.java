@@ -21,7 +21,7 @@ import java.util.Date;
 public class AppLogger {
 
     private static final Logger log = LoggerFactory.getLogger(AppLogger.class);
-    private static final String LOG_FILE_PATH = "logs.txt";
+    private static final String LOG_FILE_PATH = "FreelancerAppLogs.txt";
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     @Pointcut("execution(* com.guru.freelancerservice.services.*.*(..))")

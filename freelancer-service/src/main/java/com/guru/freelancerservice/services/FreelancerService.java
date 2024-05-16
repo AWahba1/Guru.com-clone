@@ -16,7 +16,7 @@ import java.util.UUID;
 public interface FreelancerService {
     ResponseEntity<Object> getFreelancerProfile(UUID freelancer_id, UUID viewer_id);
 
-    List<Freelancer> getAllFreelancers();
+    List<Freelancer> getAllFreelancers() throws InterruptedException;
 
     Freelancer getFreelancer(UUID freeLancerId);
 

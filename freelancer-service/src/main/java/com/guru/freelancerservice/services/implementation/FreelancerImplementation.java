@@ -14,6 +14,8 @@ import com.guru.freelancerservice.repositories.*;
 import com.guru.freelancerservice.response.ResponseHandler;
 import com.guru.freelancerservice.services.FreelancerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+
+import static java.lang.Thread.sleep;
 
 @Service
 public class FreelancerImplementation implements FreelancerService {
@@ -87,8 +91,9 @@ public class FreelancerImplementation implements FreelancerService {
         return ResponseHandler.generateGetResponse("Freelancer profile retrieved successfully", HttpStatus.OK, freelancerViewProfileDto,1);
     }
 
+    @Cacheable(value = "freelancers",key= "#root.methodName")
     @Override
-    public List<Freelancer> getAllFreelancers() {
+    public List<Freelancer> getAllFreelancers() throws InterruptedException {
         return freelancerRepository.findAll();
     }
 

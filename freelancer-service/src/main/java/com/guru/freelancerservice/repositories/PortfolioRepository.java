@@ -3,6 +3,7 @@ package com.guru.freelancerservice.repositories;
 import com.guru.freelancerservice.dtos.portfolios.PortfolioDetailsDto;
 import com.guru.freelancerservice.dtos.portfolios.PortfolioListViewDto;
 import com.guru.freelancerservice.models.Portfolio;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
