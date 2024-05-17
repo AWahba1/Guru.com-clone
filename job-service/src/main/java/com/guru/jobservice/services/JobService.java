@@ -13,8 +13,6 @@ import com.guru.jobservice.repositories.JobRepository;
 import com.guru.jobservice.validators.JobRequestValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -40,12 +38,12 @@ public class JobService {
         return job;
     }
 
-    public void createJob(CreateUpdateRequest createUpdateRequest) throws JsonProcessingException {
+        public Job createJob(CreateUpdateRequest createUpdateRequest) throws JsonProcessingException {
         JobRequestValidator.validatePaymentType(createUpdateRequest);
 
         String [] attachmentJsonArray = AttachmentsHelper.convertAttachmentsToJson(createUpdateRequest.getAttachments());
 
-        jobRepository.createJob(
+        return jobRepository.createJob(
                 createUpdateRequest.getTitle(),
                 createUpdateRequest.getDescription(),
                 createUpdateRequest.getCategoryId(),

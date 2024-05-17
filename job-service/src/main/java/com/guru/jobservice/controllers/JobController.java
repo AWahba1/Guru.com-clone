@@ -39,8 +39,8 @@ public class JobController {
     }
 
     @PostMapping("/")
-    public void createJob(@Valid @RequestBody CreateUpdateRequest createUpdateRequest) throws JsonProcessingException {
-        jobService.createJob(createUpdateRequest);
+    public Job createJob(@Valid @RequestBody CreateUpdateRequest createUpdateRequest) throws JsonProcessingException {
+        return jobService.createJob(createUpdateRequest);
     }
 
     @PutMapping("/{id}")
