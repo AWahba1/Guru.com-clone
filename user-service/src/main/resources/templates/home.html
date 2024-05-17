@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="fragments :: boots_trap">
+    <meta charset="UTF-8">
+    <title>The Demo App</title>
+</head>
+
+<body>
+<div class="container offset-sm-2 col-md-8 mt-lg-5">
+    <div th:replace="fragments :: nav_bar"></div>
+    <h2 class="m-lg-5">Welcome to our end to end web application security demo </h2>
+
+    <div th:if="${auth}" sec:authorize="isAuthenticated()">
+<span>I am AUthenticatedddddd</span>
+    </div>
+    <div sec:authorize="!isAuthenticated()">
+        User is not authenticated.
+    </div>
+</div>
+</body>
+
+</html>

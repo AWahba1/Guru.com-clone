@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments :: boots_trap">
+    <meta charset="UTF-8">
+    <title> Users</title>
+</head>
+<body>
+<div class="container col-md-offset-3 col-md-8 mt-lg-5">
+    <div th:replace="fragments :: nav_bar"></div>
+    <div class="row mt-2">
+        <div th:if="${param.update_success}" class=" alert alert-info">
+            A User has been updated successfully.
+        </div>
+        <div th:if="${param.delete_success}" class=" alert alert-info">
+            A User has been deleted successfully.
+        </div>
+    </div>
+    <div th:switch="${users}">
+        <h2 th:case="null">There are no users to display</h2>
+        <div th:case="*">
+            <h2>All Users</h2>
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Full Name</th>
+
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                    <th colspan="2">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.fullname}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${user.role}"></td>
+                    <td><a href="#" th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-info">Edit</a></td>
+                    <td><a th:href="@{/users/delete/{id}(id=${user.id})}" class="btn btn-danger">Delete</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p><a href="#" th:href="@{/registration/registration-form}" class="btn btn-info">Add a new user</a> </p>
+    </div>
+</div>
+</body>
+</html>
