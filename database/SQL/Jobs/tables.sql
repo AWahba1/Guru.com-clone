@@ -10,7 +10,8 @@ END $$;
 	CREATE TABLE users (
 		id uuid PRIMARY KEY,
 		is_verified BOOLEAN,
-		amount_spent DECIMAL(10,2)
+		amount_spent DECIMAL(10,2),
+		name VARCHAR(255)
 	);
 
 	CREATE TABLE freelancers (
@@ -233,6 +234,16 @@ CREATE TABLE saved_searches (
     max_quotes_received INT DEFAULT NULL,
     not_viewed BOOLEAN DEFAULT NULL,
     not_applied BOOLEAN DEFAULT NULL
+);
+
+CREATE TYPE team_member_role_client AS ENUM ('administrator', 'manager', 'coordinator');
+
+CREATE TABLE team_members_client (
+    owner_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    team_member_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    role team_member_role NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    PRIMARY KEY (owner_id, team_member_id)
 );
 	
 -- Populate tables with sample data
