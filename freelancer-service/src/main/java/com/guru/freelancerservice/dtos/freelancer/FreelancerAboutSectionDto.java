@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class FreelancerAboutSectionDto {
 
-    private UUID freelancer_id;
+    private UUID id;
     private String freelancer_name;
     private String image_url;
     private String tagline;

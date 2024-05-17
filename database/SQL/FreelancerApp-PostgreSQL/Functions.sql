@@ -1,6 +1,6 @@
 CREATE OR REPLACE FUNCTION get_freelancer_profile (_freelancer_id UUID)
 RETURNS TABLE (
-freelancer_id UUID,
+    id UUID,
     freelancer_name VARCHAR(50),
     image_url VARCHAR(255),
     visibility BOOLEAN,
@@ -37,7 +37,7 @@ RETURN QUERY
         ARRAY(SELECT sk.name FROM portfolio_skills ps JOIN portfolios p ON ps.portfolio_id = p.portfolio_id JOIN skills sk ON sk.id = ps.skill_id JOIN portfolio_service p_s ON p_s.portfolio_id = ps.portfolio_id WHERE p.freelancer_id = _freelancer_id),
         ARRAY(SELECT sk.name FROM portfolio_skills ps JOIN portfolios p ON ps.portfolio_id = p.portfolio_id JOIN skills sk ON sk.id = ps.skill_id JOIN portfolio_resource p_r ON p_r.portfolio_id = ps.portfolio_id WHERE p.freelancer_id = _freelancer_id)
     FROM freelancers f
-    WHERE f.freelancer_id = _freelancer_id;
+    WHERE f.id = _freelancer_id;
 END;
 $$
 LANGUAGE plpgsql;

@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class FreelancerViewProfileDto {
-    private UUID freelancer_id;
+    private UUID id;
     private String freelancer_name;
     private String image_url;
     private boolean visibility;

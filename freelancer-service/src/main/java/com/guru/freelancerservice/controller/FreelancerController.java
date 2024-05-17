@@ -7,10 +7,8 @@ import com.guru.freelancerservice.dtos.resources.ResourceDto;
 import com.guru.freelancerservice.dtos.featuredTeammember.AddFeaturedTeamMembersRequestDto;
 import com.guru.freelancerservice.dtos.services.ServiceDto;
 import com.guru.freelancerservice.models.Freelancer;
-import com.guru.freelancerservice.models.Quote;
 import com.guru.freelancerservice.services.FreelancerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,7 +53,7 @@ public class FreelancerController {
 
     @PatchMapping(path = "/profile/about/{freelancer_id}")
     public ResponseEntity<Object> updateFreelancerAbout(@PathVariable("freelancer_id") UUID freelancer_id, @RequestBody FreelancerAboutSectionDto freelancerAboutSectionDto) {
-        freelancerAboutSectionDto.setFreelancer_id(freelancer_id);
+        freelancerAboutSectionDto.setId(freelancer_id);
         boolean updated =freelancerService.updateFreelancerAbout(freelancerAboutSectionDto);
 
         if(updated){
@@ -225,5 +223,20 @@ public class FreelancerController {
     @GetMapping(path = "/{freelancer_id}/featured_team_members")
     public ResponseEntity<Object> getFreelancerTeamMembers(@PathVariable("freelancer_id") UUID freelancer_id) {
         return freelancerService.getFreelancerTeamMembers(freelancer_id);
+    }
+
+    @PostMapping("/{clientId}/add/{freelancerId}")
+    public ResponseEntity<Object> addToFavourites(@PathVariable UUID clientId, @PathVariable UUID freelancerId) {
+        return freelancerService.addToFavourites(clientId, freelancerId);
+    }
+
+    @DeleteMapping("/{clientId}/remove/{freelancerId}")
+    public ResponseEntity<Object> removeFromFavourites(@PathVariable UUID clientId, @PathVariable UUID freelancerId) {
+        return freelancerService.removeFromFavourites(clientId, freelancerId);
+    }
+
+    @GetMapping("/getAllFavourites/{clientId}")
+    public ResponseEntity<Object> getAllFavourites(@PathVariable UUID clientId) {
+        return freelancerService.getClientFavourites(clientId);
     }
 }
