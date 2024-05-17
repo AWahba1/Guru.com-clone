@@ -16,6 +16,7 @@ public class PaymentConsumer {
 
     @RabbitListener(queues = "paymentQueue")
     private void consumeMessage(PaymentRequest paymentRequest){
+        System.out.println("Received payment request: " + paymentRequest);
         transactionService.processPayment(paymentRequest);
     }
 }

@@ -24,8 +24,12 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
     private UserService userService;
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+
+    public TransactionController(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
+
+    private final RabbitTemplate rabbitTemplate;
     @Autowired
     private PaymentProducer paymentProducer;
 

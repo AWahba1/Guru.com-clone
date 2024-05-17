@@ -22,6 +22,7 @@ public class PaymentProducer {
     }
 
     public void sendPayment(PaymentRequest paymentRequest) {
+        System.out.println("Sending payment request: " + paymentRequest);
         rabbitTemplate.convertAndSend("payments", "payment.process", paymentRequest);
     }
 }
