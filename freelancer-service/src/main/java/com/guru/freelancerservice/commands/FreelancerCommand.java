@@ -1,10 +1,8 @@
 package com.guru.freelancerservice.commands;
 
-import com.guru.freelancerservice.messages.MessageDto;
-
-import java.util.Optional;
+import com.guru.freelancerservice.messages.ViewProfileMessageDto;
 
 public interface FreelancerCommand {
 
-    void execute(MessageDto messageDto);
+    void execute(ViewProfileMessageDto viewProfileMessageDto);
 }

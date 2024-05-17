@@ -554,7 +554,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
     INSERT INTO profile_views (freelancer_id, viewer_id) VALUES (_freelancer_id, _viewer_id);
-    UPDATE freelancers SET profile_views = profile_views + 1 WHERE freelancer_id = _freelancer_id;
+    UPDATE freelancers SET profile_views = profile_views + 1 WHERE id = _freelancer_id;
     EXCEPTION
         WHEN others THEN
             ROLLBACK;
