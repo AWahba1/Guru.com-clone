@@ -1,6 +1,8 @@
 package com.messageApp.Models;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -14,7 +16,7 @@ import java.util.UUID;
 @Table(name = "message")
 @IdClass(messagePrimaryKey.class)
 @Data
-//@AllArgsConstructor
+//@Builder
 //@NoArgsConstructor
 public class Message {
 

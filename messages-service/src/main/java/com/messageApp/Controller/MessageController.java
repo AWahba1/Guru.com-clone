@@ -32,28 +32,8 @@ public class MessageController {
     private MessageService messageService;
 
     @PostMapping
-    public ResponseEntity<?> saveMessage(@Valid @RequestBody MessageInputDTO messageInputDTO)
-    {
-
-        List<See_conversations> s1 = SeeRepository.findConversationProperty(messageInputDTO.getSender_id(),messageInputDTO.getConversation_id());
-        if(s1.isEmpty()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid sender_id or conversation_id");
-        }
-        See_conversations conversationsData =s1.get(0);
-
-        if(messageInputDTO.getMessage_file()==null & messageInputDTO.getMessage_text()==null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("message_text and message_file fields are both null");
-        }
-
-        Message message = messageService.buidMessageFromSee_conversations(conversationsData,messageInputDTO.getMessage_text(),messageInputDTO.getMessage_file());
-
-        try {
-            MegRepository.save(message);
-            return ResponseEntity.status(HttpStatus.CREATED).body(message);
-
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while saving the message");
-        }
+    public ResponseEntity<?> saveMessage(@Valid @RequestBody MessageInputDTO messageInputDTO) {
+        return messageService.saveMessage(messageInputDTO);
     }
 
     @GetMapping("/lists")
@@ -75,27 +55,7 @@ public class MessageController {
 
     @PutMapping("/update")
     public ResponseEntity<String> updateMessage(@Valid @RequestBody UpdateDTO dto) {
-        if(dto.getMessage_text() == null & dto.getMessage_file()==null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("message_text and message_file fields are both null");
-        }
-        if(dto.getMessage_text() == "" & dto.getMessage_file()==""){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("message_text and message_file fields are both empty");
-        }
-        try {
-            if(dto.getMessage_text() == null){
-                MegRepository.updateMessageFile(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_file());
-                return ResponseEntity.ok("Message updated successfully");
-            }
-            else if(dto.getMessage_file()==null){
-                MegRepository.updateMessageText(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_text());
-                return ResponseEntity.ok("Message updated successfully");
-            }else{
-                MegRepository.updateMessageBoth(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_text(),dto.getMessage_file());
-                return ResponseEntity.ok("Message updated successfully");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update message");
-        }
+        return messageService.updateMessage(dto);
     }
 
 
