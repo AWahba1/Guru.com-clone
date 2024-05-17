@@ -205,71 +205,15 @@ $$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_freelancer_team_members (_freelancer_id uuid)
-RETURNS TABLE (team_member_id uuid, member_name varchar(255), title team_member_role, member_type team_member_type, member_email varchar(255))
+RETURNS TABLE (team_member_id uuid,freelancer_id uuid, member_name varchar(255), title varchar(255), member_type varchar(255), member_email varchar(255))
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT team_member_id, member_name, title, member_type, member_email
-    FROM featured_team_member
-    WHERE freelancer_id = _freelancer_id;
+    SELECT *
+    FROM featured_team_member f
+    WHERE f.freelancer_id = _freelancer_id;
 END;
 $$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION bids_usage_summary (_freelancer_id uuid)
-RETURNS TABLE (all_time_bids_used decimal, last_month_bids_used decimal, last_year_bids_used decimal)
-AS $$
-BEGIN
-    RETURN QUERY
-    SELECT 
-        (SELECT SUM(bids_used) FROM quotes WHERE freelancer_id = _freelancer_id) AS all_time_bids_used,
-        (SELECT SUM(bids_used) FROM quotes WHERE freelancer_id = _freelancer_id AND bid_date > CURRENT_DATE - INTERVAL '1 month') AS last_month_bids_used,
-        (SELECT SUM(bids_used) FROM quotes WHERE freelancer_id = _freelancer_id AND bid_date > CURRENT_DATE - INTERVAL '1 year') AS last_year_bids_used;
-END;
-$$
-LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION get_bids_usage_history (_freelancer_id uuid)
-RETURNS TABLE (bids_used decimal, bid_date timestamp)
-AS $$
-BEGIN
-    RETURN QUERY
-    SELECT bids_used, bid_date
-    FROM quotes
-    WHERE freelancer_id = _freelancer_id;
-END;
-$$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION view_last_bids_until_threshold (_freelancer_id uuid)
-RETURNS TABLE (
-    quote_id uuid,
-    freelancer_id uuid,
-    job_id uuid,
-    proposal varchar(3000),
-    quote_status varchar(255),
-    bids_used decimal,
-    bid_date timestamp
-) 
-AS $$
-DECLARE
-    total_bids DECIMAL := 0;
-    bid_record RECORD;
-BEGIN
-    CREATE TEMP TABLE temp_quotes AS
-    SELECT *, 0 AS cumulative_sum
-    FROM quotes
-    WHERE freelancer_id = _freelancer_id
-    ORDER BY bid_date DESC;
-
-    FOR bid_record IN SELECT * FROM temp_quotes LOOP
-        total_bids := total_bids + bid_record.bids_used;
-        UPDATE temp_quotes SET cumulative_sum = total_bids WHERE quote_id = bid_record.quote_id;
-    END LOOP;
-
-    RETURN QUERY SELECT * FROM temp_quotes WHERE cumulative_sum <= 100 ORDER BY bid_date DESC;
-
-    DROP TABLE IF EXISTS temp_quotes;
-END;
-$$ 
-LANGUAGE plpgsql;

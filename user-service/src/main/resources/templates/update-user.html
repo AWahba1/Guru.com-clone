@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments :: boots_trap">
+    <meta charset="UTF-8">
+    <title>Update User</title>
+</head>
+<body>
+<div class="container col-md-offset-3 col-md-8 mt-lg-5 mb-md-5">
+    <div th:replace="fragments :: nav_bar"></div>
+    <h2 class="m-4">Edit User</h2>
+    <form th:action="@{/users/update/{id}(id=${user.id})}" method="post" th:object="${user}" class="px-4">
+        <input type="hidden" th:field="*{id}">
+        <div class="mb-3 row">
+            <label for="firstName" class="col-sm-2 col-form-label">first Name</label>
+            <div class="col-sm-6">
+                <input type="text"  id="firstName" autofocus="autofocus"
+                       class="form-control" required name="firstName" th:field="*{firstName}" >
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="lastName" class="col-sm-2 col-form-label">Last Name</label>
+            <div class="col-sm-6">
+                <input type="text"  id="lastName" autofocus="autofocus"
+                       class="form-control" required name="lastName" th:field="*{lastName}" >
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="email" class="col-sm-2 col-form-label">Email</label>
+            <div class="col-sm-6">
+                <input type="text"  id="email" autofocus="autofocus"
+                       class="form-control" required name="email" th:field="*{email}" >
+            </div>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-success">Update User</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
