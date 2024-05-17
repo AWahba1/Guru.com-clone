@@ -170,5 +170,9 @@ CREATE TABLE portfolio_resource (
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(portfolio_id) ON DELETE CASCADE    
 );
 
-
-
+CREATE TABLE client_favourites (
+    client_id UUID references users(id) ON DELETE CASCADE,
+    freelancer_id UUID references freelancers(freelancer_id) ON DELETE CASCADE,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (client_id, freelancer_id)
+);

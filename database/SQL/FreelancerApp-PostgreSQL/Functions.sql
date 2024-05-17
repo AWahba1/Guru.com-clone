@@ -217,3 +217,90 @@ $$
 LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE FUNCTION get_bids_usage_history (_freelancer_id uuid)
+RETURNS TABLE (bids_used decimal, bid_date timestamp)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT bids_used, bid_date
+    FROM quotes
+    WHERE freelancer_id = _freelancer_id;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION view_last_bids_until_threshold (_freelancer_id uuid)
+RETURNS TABLE (
+    quote_id uuid,
+    freelancer_id uuid,
+    job_id uuid,
+    proposal varchar(3000),
+    quote_status varchar(255),
+    bids_used decimal,
+    bid_date timestamp
+) 
+AS $$
+DECLARE
+    total_bids DECIMAL := 0;
+    bid_record RECORD;
+BEGIN
+    CREATE TEMP TABLE temp_quotes AS
+    SELECT *, 0 AS cumulative_sum
+    FROM quotes
+    WHERE freelancer_id = _freelancer_id
+    ORDER BY bid_date DESC;
+
+    FOR bid_record IN SELECT * FROM temp_quotes LOOP
+        total_bids := total_bids + bid_record.bids_used;
+        UPDATE temp_quotes SET cumulative_sum = total_bids WHERE quote_id = bid_record.quote_id;
+    END LOOP;
+
+    RETURN QUERY SELECT * FROM temp_quotes WHERE cumulative_sum <= 100 ORDER BY bid_date DESC;
+
+    DROP TABLE IF EXISTS temp_quotes;
+END;
+$$ 
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_client_favourites(client UUID)
+RETURNS TABLE (
+freelancer_id UUID,
+    freelancer_name VARCHAR(50),
+    image_url VARCHAR(255),
+    visibility BOOLEAN,
+    profile_views INT,
+    job_invitations_num INT,
+    available_bids INT,
+    all_time_earnings DECIMAL,
+    employers_num INT,
+    highest_paid DECIMAL,
+    membership_date TIMESTAMP,
+    tagline VARCHAR(190),
+    bio VARCHAR(3000),
+    work_terms VARCHAR(2000),
+    attachments VARCHAR(255) ARRAY,
+    user_type varchar(255),
+    website_link VARCHAR(255),
+    facebook_link VARCHAR(255),
+    linkedin_link VARCHAR(255),
+    professional_video_link VARCHAR(255),
+    company_history VARCHAR(3000),
+    operating_since TIMESTAMP,
+    service_skills varchar(100) ARRAY,
+    resource_skills varchar(100) ARRAY,
+    portfolio_service_skills varchar(100) ARRAY,
+    portfolio_resource_skills varchar(100) ARRAY
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+            f.*,
+            ARRAY(SELECT sk.name FROM service_skills ss JOIN services s ON ss.service_id = s.service_id JOIN skills sk ON sk.id = ss.skill_id WHERE s.freelancer_id = _freelancer_id AND s.is_draft = false),
+            ARRAY(SELECT sk.name FROM resource_skills rs JOIN dedicated_resource r ON rs.resource_id = r.resource_id JOIN skills sk ON sk.id =rs.skill_id WHERE r.freelancer_id = _freelancer_id AND r.is_draft = false),
+            ARRAY(SELECT sk.name FROM portfolio_skills ps JOIN portfolios p ON ps.portfolio_id = p.portfolio_id JOIN skills sk ON sk.id = ps.skill_id JOIN portfolio_service p_s ON p_s.portfolio_id = ps.portfolio_id WHERE p.freelancer_id = _freelancer_id),
+            ARRAY(SELECT sk.name FROM portfolio_skills ps JOIN portfolios p ON ps.portfolio_id = p.portfolio_id JOIN skills sk ON sk.id = ps.skill_id JOIN portfolio_resource p_r ON p_r.portfolio_id = ps.portfolio_id WHERE p.freelancer_id = _freelancer_id)
+    FROM client_favourites cf
+    JOIN freelancers f ON cf.freelancer_id = f.freelancer_id
+    WHERE cf.client_id = client;
+END;
+$$ LANGUAGE plpgsql;
