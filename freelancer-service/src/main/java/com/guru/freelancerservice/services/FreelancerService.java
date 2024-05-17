@@ -66,4 +66,10 @@ public interface FreelancerService {
 
     ResponseEntity<Object> getAllFreelancerDedicatedResources(UUID freelancer_id);
 
+    ResponseEntity<Object> addToFavourites(UUID clientId, UUID freelancerId);
+
+    ResponseEntity<Object> removeFromFavourites(UUID clientId, UUID freelancerId);
+
+    ResponseEntity<Object> getClientFavourites(UUID clientId);
+
 }

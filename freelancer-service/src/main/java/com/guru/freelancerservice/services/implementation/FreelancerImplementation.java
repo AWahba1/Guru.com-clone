@@ -478,4 +478,47 @@ public class FreelancerImplementation implements FreelancerService {
         List<ResourceListViewDto> resources = dedicatedResourceRepository.get_all_freelancer_dedicated_resources(freelancer_id);
         return ResponseHandler.generateGetResponse("Dedicated resources retrieved successfully", HttpStatus.OK, resources,resources.size());
     }
+
+    @Override
+    public ResponseEntity<Object> addToFavourites(UUID clientId, UUID freelancerId) {
+        Freelancer freelancer = freelancerRepository.findById(freelancerId).orElse(null);
+        if (freelancer == null) {
+            return  ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+        }
+        try {
+            freelancerRepository.addToFavourites(clientId, freelancerId);
+            return ResponseHandler.generateGetResponse("Freelancer added to favorites successfully", HttpStatus.CREATED, null, 0);
+        } catch (Exception e) {
+            return ResponseHandler.generateErrorResponse("Failed to add freelancer to favorites", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Object> removeFromFavourites(UUID clientId, UUID freelancerId) {
+        Freelancer freelancer = freelancerRepository.findById(freelancerId).orElse(null);
+        if (freelancer == null) {
+            return  ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+        }
+        try {
+            freelancerRepository.removeFromFavourites(clientId, freelancerId);
+            return ResponseHandler.generateGetResponse("Freelancer removed from favorites successfully", HttpStatus.OK, null, 0);
+        } catch (Exception e) {
+            return ResponseHandler.generateErrorResponse("Failed to remove freelancer from favorites", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Object> getClientFavourites(UUID clientId) {
+        try {
+            List<FreelancerProfileDto> favourites = freelancerRepository.getClientFavourites(clientId);
+
+            if (favourites.isEmpty()) {
+                return ResponseHandler.generateErrorResponse("No favourites found for the client", HttpStatus.NOT_FOUND);
+            }
+            return ResponseHandler.generateGetResponse("Favourites retrieved successfully", HttpStatus.OK, favourites, favourites.size());
+        } catch (Exception e) {
+            return ResponseHandler.generateErrorResponse("Failed to retrieve favourites", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

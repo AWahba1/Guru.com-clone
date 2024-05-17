@@ -206,4 +206,19 @@ public class FreelancerController {
     public ResponseEntity<Object> getAllFreelancerDedicatedResources(@PathVariable("freelancer_id") UUID freelancer_id) {
         return freelancerService.getAllFreelancerDedicatedResources(freelancer_id);
     }
+
+    @PostMapping("/{clientId}/add/{freelancerId}")
+    public ResponseEntity<Object> addToFavourites(@PathVariable UUID clientId, @PathVariable UUID freelancerId) {
+        return freelancerService.addToFavourites(clientId, freelancerId);
+    }
+
+    @DeleteMapping("/{clientId}/remove/{freelancerId}")
+    public ResponseEntity<Object> removeFromFavourites(@PathVariable UUID clientId, @PathVariable UUID freelancerId) {
+        return freelancerService.removeFromFavourites(clientId, freelancerId);
+    }
+
+    @GetMapping("/getAllFavourites/{clientId}")
+    public ResponseEntity<Object> getAllFavourites(@PathVariable UUID clientId) {
+        return freelancerService.getClientFavourites(clientId);
+    }
 }

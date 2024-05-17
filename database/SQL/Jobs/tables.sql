@@ -234,13 +234,6 @@ CREATE TABLE saved_searches (
     not_viewed BOOLEAN DEFAULT NULL,
     not_applied BOOLEAN DEFAULT NULL
 );
-
-CREATE TABLE client_favourites (
-    client_id UUID references users(id) ON DELETE CASCADE,
-    freelancer_id UUID references freelancers(id) ON DELETE CASCADE,
-    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (client_id, freelancer_id),
-);
 	
 -- Populate tables with sample data
 -- Users

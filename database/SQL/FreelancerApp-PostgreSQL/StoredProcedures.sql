@@ -548,3 +548,37 @@ BEGIN
     DELETE FROM featured_team_member WHERE team_member_id = team_member_id;
 END;
 $$;
+
+DROP PROCEDURE IF EXISTS add_to_favourites;
+
+CREATE OR REPLACE PROCEDURE add_to_favourites(
+    _client_id UUID,
+    _freelancer_id UUID
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Insert the freelancer into the client's favorites if not already present
+    IF NOT EXISTS (SELECT 1 FROM client_favourites WHERE client_id = _client_id AND freelancer_id = _freelancer_id) THEN
+        INSERT INTO client_favourites (client_id, freelancer_id, added_at)
+        VALUES (_client_id, _freelancer_id, CURRENT_TIMESTAMP);
+    END IF;
+END;
+$$;
+
+DROP PROCEDURE IF EXISTS remove_from_favourites;
+
+CREATE OR REPLACE PROCEDURE remove_from_favourites(
+    _client_id UUID,
+    _freelancer_id UUID
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Delete the freelancer from the client's favorites if present
+    IF EXISTS (SELECT 1 FROM client_favourites WHERE client_id = _client_id AND freelancer_id = _freelancer_id) THEN
+        DELETE FROM client_favourites
+        WHERE client_id = _client_id AND freelancer_id = _freelancer_id;
+    END IF;
+END;
+$$;

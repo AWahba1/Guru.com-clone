@@ -5,6 +5,7 @@ import com.guru.freelancerservice.models.Freelancer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
+import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -22,12 +23,13 @@ public interface FreelancerRepository extends JpaRepository<Freelancer, UUID> {
     @Procedure(name = "toggle_profile_visibility")
     void toggle_profile_visibility(UUID freelancer_id);
 
+    @Procedure(name = "add_to_favourites")
+    void addToFavourites(@Param("_client_id") UUID clientId, @Param("_freelancer_id") UUID freelancerId);
 
+    @Procedure(name = "remove_from_favourites")
+    void removeFromFavourites(@Param("_client_id") UUID clientId, @Param("_freelancer_id") UUID freelancerId);
+
+    @Query(value = "select * from get_client_favourites(?1)", nativeQuery = true)
+    List<FreelancerProfileDto> getClientFavourites(UUID client);
 
 }
-
-
-
-
-
-
