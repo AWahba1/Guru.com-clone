@@ -25,7 +25,7 @@ public class Freelancer implements Serializable {
     @GeneratedValue(
             strategy = GenerationType.UUID
     )
-    private UUID freelancer_id;
+    private UUID id;
     private String freelancer_name;
     private String image_url;
     private boolean visibility;

@@ -16,7 +16,7 @@ import java.util.UUID;
         "company_history", "operating_since", "resourceSkills", "serviceSkills"
 })
 public interface FreelancerProfileDto {
-    UUID getFreelancer_id();
+    UUID getId();
     String getFreelancer_name();
     String getImage_url();
     boolean getVisibility();
