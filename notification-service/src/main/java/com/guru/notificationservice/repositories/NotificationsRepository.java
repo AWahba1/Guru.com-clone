@@ -1,6 +1,6 @@
-package repositories;
+package com.guru.notificationservice.repositories;
 
-import models.Notifications;
+import com.guru.notificationservice.models.Notifications;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

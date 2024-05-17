@@ -1,4 +1,4 @@
-package com.guru.freelancerservice.messaging;
+package com.guru.notificationservice.messaging;
 
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;

@@ -9,6 +9,8 @@ import com.guru.freelancerservice.dtos.portfolios.PortfolioListViewDto;
 import com.guru.freelancerservice.dtos.portfolios.PortfolioRequestDto;
 import com.guru.freelancerservice.dtos.resources.*;
 import com.guru.freelancerservice.dtos.services.*;
+import com.guru.freelancerservice.messages.ViewProfileMessageDto;
+import com.guru.freelancerservice.messaging.ViewProfileMessageProducer;
 import com.guru.freelancerservice.models.*;
 import com.guru.freelancerservice.repositories.*;
 import com.guru.freelancerservice.response.ResponseHandler;
@@ -34,14 +36,17 @@ public class FreelancerImplementation implements FreelancerService {
     private final DedicatedResoruceRepository dedicatedResourceRepository;
     private final QuoteRepository quoteRepository;
     private final FeaturedTeamMemberRepository featuredTeamMemberRepository;
+    private final ViewProfileMessageProducer viewProfileMessageProducer;
+
     @Autowired
-    public FreelancerImplementation(FreelancerRepository freelancerRepository, PortfolioRepository portfolioRepository, ServiceRepository serviceRepository, DedicatedResoruceRepository dedicatedResourceRepository, QuoteRepository quoteRepository, FeaturedTeamMemberRepository featuredTeamMemberRepository) {
+    public FreelancerImplementation(FreelancerRepository freelancerRepository, PortfolioRepository portfolioRepository, ServiceRepository serviceRepository, DedicatedResoruceRepository dedicatedResourceRepository, QuoteRepository quoteRepository, FeaturedTeamMemberRepository featuredTeamMemberRepository, ViewProfileMessageProducer viewProfileMessageProducer) {
         this.freelancerRepository = freelancerRepository;
         this.portfolioRepository = portfolioRepository;
         this.serviceRepository = serviceRepository;
         this.dedicatedResourceRepository = dedicatedResourceRepository;
         this.quoteRepository = quoteRepository;
         this.featuredTeamMemberRepository = featuredTeamMemberRepository;
+        this.viewProfileMessageProducer = viewProfileMessageProducer;
     }
 
     @Override
@@ -51,9 +56,14 @@ public class FreelancerImplementation implements FreelancerService {
             return ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
         }
         List<UUID> profileViews = freelancerRepository.get_profile_views(freelancer_id, viewer_id);
-        if (profileViews.isEmpty() && !freelancer_id.equals(viewer_id)) {
-            freelancerRepository.increment_profile_views(freelancer_id, viewer_id);
+        if(!freelancer_id.equals(viewer_id)){
+            String viewerName= freelancerRepository.getFreelancerName(viewer_id).getFirst();
+            viewProfileMessageProducer.sendMessage(new ViewProfileMessageDto(freelancer_id, viewer_id, viewerName));
+            if (profileViews.isEmpty()) {
+                freelancerRepository.increment_profile_views(freelancer_id, viewer_id);
+            }
         }
+
         FreelancerProfileDto returnedProfile = freelancerRepository.getFreelancerProfile(freelancer_id).getFirst();
         HashSet<String> uniqueSkills = new HashSet<>();
         uniqueSkills.addAll(List.of(returnedProfile.getService_skills()));
