@@ -1,5 +1,6 @@
 package com.guru.freelancerservice.services;
 
+import com.guru.freelancerservice.dtos.featuredTeammember.AddFeaturedTeamMembersRequestDto;
 import com.guru.freelancerservice.dtos.freelancer.FreelancerAboutSectionDto;
 import com.guru.freelancerservice.dtos.portfolios.PortfolioRequestDto;
 import com.guru.freelancerservice.dtos.resources.ResourceDto;
@@ -12,9 +13,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface FreelancerService {
-    ResponseEntity<Object> getFreelancerProfile(UUID freelancer_id);
+    ResponseEntity<Object> getFreelancerProfile(UUID freelancer_id, UUID viewer_id);
 
-    List<Freelancer> getAllFreelancers();
+    List<Freelancer> getAllFreelancers() throws InterruptedException;
 
     Freelancer getFreelancer(UUID freeLancerId);
 
@@ -52,7 +53,7 @@ public interface FreelancerService {
 
     ResponseEntity<Object> updateDedicatedResource(ResourceDto resourceDto);
 
-    ResponseEntity<Object> addQuote(Quote quote);
+//    ResponseEntity<Object> addQuote(Quote quote);
 
     ResponseEntity<Object> getPortfolio(UUID portfolio_id);
 
@@ -65,5 +66,17 @@ public interface FreelancerService {
     ResponseEntity<Object> getDedicatedResource(UUID resource_id);
 
     ResponseEntity<Object> getAllFreelancerDedicatedResources(UUID freelancer_id);
+
+    ResponseEntity<Object> addFeaturedTeamMembers(AddFeaturedTeamMembersRequestDto addFeaturedTeamMembersRequestDto);
+
+    ResponseEntity<Object> deleteTeamMember(UUID team_member_id);
+
+    ResponseEntity<Object> getFreelancerTeamMembers(UUID freelancer_id);
+
+    ResponseEntity<Object> addToFavourites(UUID clientId, UUID freelancerId);
+
+    ResponseEntity<Object> removeFromFavourites(UUID clientId, UUID freelancerId);
+
+    ResponseEntity<Object> getClientFavourites(UUID clientId);
 
 }

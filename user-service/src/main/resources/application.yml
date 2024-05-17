@@ -1,0 +1,65 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://Localhost:5332/users
+    username: basbosa
+    password: password
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 762171813451-lq8q46gmduir7kg2rfr3mlahv2osi7ae.apps.googleusercontent.com
+            clientSecret: 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
+          facebook:
+            clientId: 987610049424223
+            clientSecret: 876fad142642405e8cee0020f3e8f7b4
+          github:
+            clientId: Ov23lisFjAMPPRL4Kxdt
+            clientSecret: 5df2e90eb94707c11a6a6d03b68c0fe026a4f9ff
+  rabbitmq:
+    host: "localhost"
+    port: 5672
+    username: "guest"
+    password: "guest"
+
+
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  main:
+    web-application-type: servlet
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: basmala.mahmoud498@gmail.com
+    password: nmltgjdrvomxfecw
+
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: true
+
+  cache:
+    type: redis
+    cache-names:
+      - userCache
+      - dataCache
+    redis:
+      time-to-live: 6000
+      cache-null-values: true
+

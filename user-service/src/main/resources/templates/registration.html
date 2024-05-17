@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments :: boots_trap">
+    <meta charset="UTF-8">
+    <title>User Registration Form</title>
+</head>
+<body>
+<div class="container col-md-offset-3 col-md-8 mt-lg-5">
+    <div th:replace="fragments :: nav_bar"></div>
+    <div class="row mt-2">
+        <h2 class="m-4">User Registration Form</h2>
+    </div>
+
+    <div th:if="${param.error}" class="col-sm-8">
+        <p class="alert alert-danger alert-dismissible fade show" role="alert">ERROR</p>
+    </div>
+    <div th:if="${param.errorUser}" class="col-sm-8">
+        <p class="alert alert-danger alert-dismissible fade show" role="alert">User Already exist</p>
+    </div>
+    <div th:if="${param.success}" class=" alert alert-info">
+        Registration successful,
+        please check your email to complete your registration.
+    </div>
+    <div th:if="${param.errorPassword}" class="col-sm-8">
+        <p class="alert alert-danger alert-dismissible fade show" role="alert">Password must contain at least 8 characters, lowercase, uppercase, and special characters: !,@,#,$,*,^,&,*,(")</p>
+    </div>
+</div>
+    <form th:action="@{/signup/signup-request}" method="post" th:object="${user}" class="px-4">
+        <div class="mb-3 row">
+            <label for="fullname" class="col-sm-2 col-form-label">Full Name</label>
+            <div class="col-sm-6">
+                <input type="text"  id="fullname" autofocus="autofocus"
+                       class="form-control" required name="fullname" th:field="*{fullname}" >
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="role" class="col-sm-2 col-form-label">Role</label>
+            <div class="col-sm-6">
+                <input type="text"  id="role" autofocus="autofocus"
+                       class="form-control" required name="role" th:field="*{role}" >
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="email" class="col-sm-2 col-form-label">Email</label>
+            <div class="col-sm-6">
+                <input type="text"  id="email" autofocus="autofocus"
+                       class="form-control" required name="email" th:field="*{email}" >
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="password" class="col-sm-2 col-form-label">Password</label>
+            <div class="col-sm-6">
+                <input type="password"  id="password" autofocus="autofocus"
+                       class="form-control" required name="password" th:field="*{password}" >
+            </div>
+        </div>
+ <div>
+     <button type="submit" class="btn btn-success">Register</button>
+
+     <span>Registered already? <a href="/" th:href="@{/login}">
+         Login here.
+     </a></span>
+ </div>
+    </form>
+</div>
+
+</body>
+</html>

@@ -4,9 +4,9 @@ import com.guru.freelancerservice.commands.EditFreelancerAboutSectionCommand;
 import com.guru.freelancerservice.dtos.freelancer.FreelancerAboutSectionDto;
 import com.guru.freelancerservice.dtos.portfolios.PortfolioRequestDto;
 import com.guru.freelancerservice.dtos.resources.ResourceDto;
+import com.guru.freelancerservice.dtos.featuredTeammember.AddFeaturedTeamMembersRequestDto;
 import com.guru.freelancerservice.dtos.services.ServiceDto;
 import com.guru.freelancerservice.models.Freelancer;
-import com.guru.freelancerservice.models.Quote;
 import com.guru.freelancerservice.services.FreelancerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +16,8 @@ import com.guru.freelancerservice.response.ResponseHandler;
 
 import java.util.List;
 import java.util.UUID;
+
+import static java.lang.Thread.sleep;
 
 @RestController
 @RequestMapping("/freelancer")
@@ -28,9 +30,9 @@ public class FreelancerController {
         this.freelancerService = freelancerService;
         this.editFreelancerAboutSectionCommand = editFreelancerAboutSectionCommand;
     }
-
+    
     @GetMapping
-    public ResponseEntity<Object> getAllFreelancers(){
+    public ResponseEntity<Object> getAllFreelancers() throws InterruptedException {
         List<Freelancer> freelancers = freelancerService.getAllFreelancers();
         return ResponseHandler.generateGetResponse("Freelancers retrieved successfully", HttpStatus.OK, freelancers, freelancers.size());
     }
@@ -44,14 +46,14 @@ public class FreelancerController {
         return ResponseHandler.generateGetResponse("Freelancer fetched successfully", HttpStatus.OK, freelancer, 1);
     }
 
-    @GetMapping(path = "/profile/{freelancer_id}")
-    public ResponseEntity<Object> getFreelancerProfile(@PathVariable("freelancer_id") UUID freeLancer_id) {
-        return freelancerService.getFreelancerProfile(freeLancer_id);
+    @GetMapping(path = "/profile/{freelancer_id}/{viewer_id}")
+    public ResponseEntity<Object> getFreelancerProfile(@PathVariable("freelancer_id") UUID freeLancer_id, @PathVariable("viewer_id") UUID viewer_id) {
+        return freelancerService.getFreelancerProfile(freeLancer_id, viewer_id);
     }
 
     @PatchMapping(path = "/profile/about/{freelancer_id}")
     public ResponseEntity<Object> updateFreelancerAbout(@PathVariable("freelancer_id") UUID freelancer_id, @RequestBody FreelancerAboutSectionDto freelancerAboutSectionDto) {
-        freelancerAboutSectionDto.setFreelancer_id(freelancer_id);
+        freelancerAboutSectionDto.setId(freelancer_id);
         boolean updated =freelancerService.updateFreelancerAbout(freelancerAboutSectionDto);
 
         if(updated){
@@ -170,12 +172,12 @@ public class FreelancerController {
         return freelancerService.updateDedicatedResource(resourceDto);
     }
 
-    @PostMapping(path = "/{freelancer_id}/quote/{job_id}")
-    public ResponseEntity<Object> addQuote(@PathVariable("freelancer_id") UUID freelancer_id,@PathVariable("job_id") UUID job_id,@RequestBody Quote quote) {
-        quote.setFreelancer_id(freelancer_id);
-        quote.setJob_id(job_id);
-        return freelancerService.addQuote(quote);
-    }
+//    @PostMapping(path = "/{freelancer_id}/quote/{job_id}")
+//    public ResponseEntity<Object> addQuote(@PathVariable("freelancer_id") UUID freelancer_id,@PathVariable("job_id") UUID job_id,@RequestBody Quote quote) {
+//        quote.setFreelancer_id(freelancer_id);
+//        quote.setJob_id(job_id);
+//        return freelancerService.addQuote(quote);
+//    }
 
     @GetMapping(path = "/portfolio/{portfolio_id}")
     public ResponseEntity<Object> getPortfolio(@PathVariable("portfolio_id") UUID portfolio_id) {
@@ -205,5 +207,36 @@ public class FreelancerController {
     @GetMapping(path = "/dedicated_resource/all/{freelancer_id}")
     public ResponseEntity<Object> getAllFreelancerDedicatedResources(@PathVariable("freelancer_id") UUID freelancer_id) {
         return freelancerService.getAllFreelancerDedicatedResources(freelancer_id);
+    }
+
+    @PostMapping(path = "{freelancer_id}/featured_team_members")
+    public ResponseEntity<Object> addFeaturedTeamMembers(@PathVariable("freelancer_id") UUID freelancer_id, @RequestBody AddFeaturedTeamMembersRequestDto addFeaturedTeamMembersRequestDto) {
+        addFeaturedTeamMembersRequestDto.setFreelancer_id(freelancer_id);
+        return freelancerService.addFeaturedTeamMembers(addFeaturedTeamMembersRequestDto);
+    }
+
+    @DeleteMapping(path = "/featured_team_members/{team_member_id}")
+    public ResponseEntity<Object> deleteTeamMember(@PathVariable("team_member_id") UUID team_member_id) {
+        return freelancerService.deleteTeamMember(team_member_id);
+    }
+
+    @GetMapping(path = "/{freelancer_id}/featured_team_members")
+    public ResponseEntity<Object> getFreelancerTeamMembers(@PathVariable("freelancer_id") UUID freelancer_id) {
+        return freelancerService.getFreelancerTeamMembers(freelancer_id);
+    }
+
+    @PostMapping("/{clientId}/add/{freelancerId}")
+    public ResponseEntity<Object> addToFavourites(@PathVariable UUID clientId, @PathVariable UUID freelancerId) {
+        return freelancerService.addToFavourites(clientId, freelancerId);
+    }
+
+    @DeleteMapping("/{clientId}/remove/{freelancerId}")
+    public ResponseEntity<Object> removeFromFavourites(@PathVariable UUID clientId, @PathVariable UUID freelancerId) {
+        return freelancerService.removeFromFavourites(clientId, freelancerId);
+    }
+
+    @GetMapping("/getAllFavourites/{clientId}")
+    public ResponseEntity<Object> getAllFavourites(@PathVariable UUID clientId) {
+        return freelancerService.getClientFavourites(clientId);
     }
 }

@@ -16,6 +16,7 @@ DROP TABLE IF EXISTS quotes CASCADE;
 DROP TABLE IF EXISTS quote_templates CASCADE;
 DROP TABLE IF EXISTS job_watchlist CASCADE;
 DROP TABLE IF EXISTS job_invitations CASCADE;
+DROP TABLE IF EXISTS client_favourites CASCADE;
 DROP TYPE IF EXISTS user_type_enum CASCADE;
 DROP TYPE IF EXISTS resource_duration_enum CASCADE;
 DROP TYPE IF EXISTS quote_status_enum CASCADE;
@@ -33,7 +34,7 @@ CREATE TYPE team_member_role AS ENUM ('CONSULTANT', 'MANAGER');
 --);
 
 CREATE TABLE freelancers (
-    freelancer_id UUID PRIMARY KEY,
+    id UUID PRIMARY KEY,
     freelancer_name VARCHAR(50),
     image_url VARCHAR(255),
     visibility BOOLEAN,
@@ -58,9 +59,10 @@ CREATE TABLE freelancers (
 );
 
 CREATE TABLE profile_views(
-    freelancer_id UUID PRIMARY KEY,
+    freelancer_id UUID,
     viewer_id UUID,
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
+    PRIMARY KEY (freelancer_id,viewer_id),
+    FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE
 );
 
 CREATE TABLE featured_team_member (
@@ -70,18 +72,18 @@ CREATE TABLE featured_team_member (
     title VARCHAR(255) CHECK (title IN ('CONSULTANT', 'MANAGER')),
     member_type VARCHAR(255) CHECK (member_type IN ('INDEPENDENT_ACCOUNTS', 'SUB_ACCOUNTS', 'NO_ACCESS_MEMBERS')),
     member_email VARCHAR(255),
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
+    FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE
 );
 
 CREATE TABLE portfolios (
-    portfolio_id UUID PRIMARY KEY,    
+    portfolio_id UUID PRIMARY KEY,
     freelancer_id UUID,
     title VARCHAR(255),
     cover_image_url VARCHAR(255),    
     attachments varchar(255) ARRAY,
     is_draft BOOLEAN,    
     portfolio_views INT DEFAULT 0,
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE  
+    FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE
 );
 
 CREATE TABLE portfolio_skills (
@@ -108,7 +110,7 @@ CREATE TABLE services (
     service_thumbnail VARCHAR(255),  
     service_views INT DEFAULT 0,
     is_draft BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE  
+    FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE
 );
 
 CREATE TABLE service_views(
@@ -144,7 +146,7 @@ CREATE TABLE dedicated_resource (
     resource_image VARCHAR(255),
     resource_views INT DEFAULT 0,
     is_draft BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
+    FOREIGN KEY (freelancer_id) REFERENCES freelancers(id) ON DELETE CASCADE
 );
 
 CREATE TABLE resource_views(
@@ -169,5 +171,9 @@ CREATE TABLE portfolio_resource (
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(portfolio_id) ON DELETE CASCADE    
 );
 
-
-
+CREATE TABLE client_favourites (
+    client_id UUID references users(id) ON DELETE CASCADE,
+    freelancer_id UUID references freelancers(id) ON DELETE CASCADE,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (client_id, freelancer_id)
+);

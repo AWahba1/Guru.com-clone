@@ -1,5 +1,6 @@
 package com.guru.freelancerservice.services.implementation;
 
+import com.guru.freelancerservice.dtos.featuredTeammember.AddFeaturedTeamMembersRequestDto;
 import com.guru.freelancerservice.dtos.freelancer.FreelancerAboutSectionDto;
 import com.guru.freelancerservice.dtos.freelancer.FreelancerProfileDto;
 import com.guru.freelancerservice.dtos.freelancer.FreelancerViewProfileDto;
@@ -8,11 +9,14 @@ import com.guru.freelancerservice.dtos.portfolios.PortfolioListViewDto;
 import com.guru.freelancerservice.dtos.portfolios.PortfolioRequestDto;
 import com.guru.freelancerservice.dtos.resources.*;
 import com.guru.freelancerservice.dtos.services.*;
+import com.guru.freelancerservice.messages.ViewProfileMessageDto;
+import com.guru.freelancerservice.messaging.ViewProfileMessageProducer;
 import com.guru.freelancerservice.models.*;
 import com.guru.freelancerservice.repositories.*;
 import com.guru.freelancerservice.response.ResponseHandler;
 import com.guru.freelancerservice.services.FreelancerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
+import static java.lang.Thread.sleep;
+
 @Service
 public class FreelancerImplementation implements FreelancerService {
     private final FreelancerRepository freelancerRepository;
@@ -29,21 +35,35 @@ public class FreelancerImplementation implements FreelancerService {
     private final ServiceRepository serviceRepository;
     private final DedicatedResoruceRepository dedicatedResourceRepository;
     private final QuoteRepository quoteRepository;
+    private final FeaturedTeamMemberRepository featuredTeamMemberRepository;
+    private final ViewProfileMessageProducer viewProfileMessageProducer;
+
     @Autowired
-    public FreelancerImplementation(FreelancerRepository freelancerRepository, PortfolioRepository portfolioRepository, ServiceRepository serviceRepository, DedicatedResoruceRepository dedicatedResourceRepository, QuoteRepository quoteRepository) {
+    public FreelancerImplementation(FreelancerRepository freelancerRepository, PortfolioRepository portfolioRepository, ServiceRepository serviceRepository, DedicatedResoruceRepository dedicatedResourceRepository, QuoteRepository quoteRepository, FeaturedTeamMemberRepository featuredTeamMemberRepository, ViewProfileMessageProducer viewProfileMessageProducer) {
         this.freelancerRepository = freelancerRepository;
         this.portfolioRepository = portfolioRepository;
         this.serviceRepository = serviceRepository;
         this.dedicatedResourceRepository = dedicatedResourceRepository;
         this.quoteRepository = quoteRepository;
+        this.featuredTeamMemberRepository = featuredTeamMemberRepository;
+        this.viewProfileMessageProducer = viewProfileMessageProducer;
     }
 
     @Override
-    public ResponseEntity<Object> getFreelancerProfile(UUID freelancer_id) {
+    public ResponseEntity<Object> getFreelancerProfile(UUID freelancer_id, UUID viewer_id) {
         Freelancer freelancer = freelancerRepository.findById(freelancer_id).orElse(null);
         if (freelancer == null) {
             return ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
         }
+        List<UUID> profileViews = freelancerRepository.get_profile_views(freelancer_id, viewer_id);
+        if(!freelancer_id.equals(viewer_id)){
+            String viewerName= freelancerRepository.getFreelancerName(viewer_id).getFirst();
+            viewProfileMessageProducer.sendMessage(new ViewProfileMessageDto(freelancer_id, viewer_id, viewerName));
+            if (profileViews.isEmpty()) {
+                freelancerRepository.increment_profile_views(freelancer_id, viewer_id);
+            }
+        }
+
         FreelancerProfileDto returnedProfile = freelancerRepository.getFreelancerProfile(freelancer_id).getFirst();
         HashSet<String> uniqueSkills = new HashSet<>();
         uniqueSkills.addAll(List.of(returnedProfile.getService_skills()));
@@ -52,9 +72,17 @@ public class FreelancerImplementation implements FreelancerService {
         uniqueSkills.addAll(List.of(returnedProfile.getPortfolio_resource_skills()));
 
         FreelancerViewProfileDto freelancerViewProfileDto = FreelancerViewProfileDto.builder()
-                .freelancer_id(returnedProfile.getFreelancer_id())
+                .id(returnedProfile.getId())
                 .freelancer_name(returnedProfile.getFreelancer_name())
                 .image_url(returnedProfile.getImage_url())
+                .visibility(returnedProfile.getVisibility())
+                .profile_views(returnedProfile.getProfile_views())
+                .job_invitations_num(returnedProfile.getJob_invitations_num())
+                .available_bids(returnedProfile.getAvailable_bids())
+                .all_time_earnings(returnedProfile.getAll_time_earnings())
+                .employers_num(returnedProfile.getEmployers_num())
+                .highest_paid(returnedProfile.getHighest_paid())
+                .membership_date(returnedProfile.getMembership_date())
                 .tagline(returnedProfile.getTagline())
                 .bio(returnedProfile.getBio())
                 .work_terms(returnedProfile.getWork_terms())
@@ -72,8 +100,9 @@ public class FreelancerImplementation implements FreelancerService {
         return ResponseHandler.generateGetResponse("Freelancer profile retrieved successfully", HttpStatus.OK, freelancerViewProfileDto,1);
     }
 
+    @Cacheable(value = "freelancers",key= "#root.methodName")
     @Override
-    public List<Freelancer> getAllFreelancers() {
+    public List<Freelancer> getAllFreelancers() throws InterruptedException {
         return freelancerRepository.findAll();
     }
 
@@ -85,13 +114,13 @@ public class FreelancerImplementation implements FreelancerService {
 
     @Override
     public boolean updateFreelancerAbout(FreelancerAboutSectionDto freelancerAboutSectionDto) {
-        Freelancer freelancer = freelancerRepository.findById(freelancerAboutSectionDto.getFreelancer_id()).orElse(null);
+        Freelancer freelancer = freelancerRepository.findById(freelancerAboutSectionDto.getId()).orElse(null);
         if (freelancer == null) {
             return false;
         }
 
         freelancerRepository.update_freelancer_profile_about_section(
-                freelancerAboutSectionDto.getFreelancer_id(),
+                freelancerAboutSectionDto.getId(),
                 freelancerAboutSectionDto.getFreelancer_name(),
                 freelancerAboutSectionDto.getImage_url(),
                 freelancerAboutSectionDto.getTagline(),
@@ -347,22 +376,22 @@ public class FreelancerImplementation implements FreelancerService {
         return ResponseHandler.generateGeneralResponse("Freelancer dedicated resource updated successfully", HttpStatus.OK);
     }
 
-    @Override
-    public ResponseEntity<Object> addQuote(Quote quote) {
-        Freelancer freelancer = freelancerRepository.findById(quote.getFreelancer_id()).orElse(null);
-        if (freelancer == null) {
-            return  ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
-        }
-        // message queue to check if the job exists
-        quoteRepository.add_quote(
-                quote.getFreelancer_id(),
-                quote.getJob_id(),
-                quote.getProposal(),
-                quote.getBids_used(),
-                quote.getBid_date()
-        );
-        return ResponseHandler.generateGeneralResponse("Freelancer quote added successfully", HttpStatus.OK);
-    }
+//    @Override
+//    public ResponseEntity<Object> addQuote(Quote quote) {
+//        Freelancer freelancer = freelancerRepository.findById(quote.getFreelancer_id()).orElse(null);
+//        if (freelancer == null) {
+//            return  ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+//        }
+//        // message queue to check if the job exists
+//        quoteRepository.add_quote(
+//                quote.getFreelancer_id(),
+//                quote.getJob_id(),
+//                quote.getProposal(),
+//                quote.getBids_used(),
+//                quote.getBid_date()
+//        );
+//        return ResponseHandler.generateGeneralResponse("Freelancer quote added successfully", HttpStatus.OK);
+//    }
 
     @Override
     public ResponseEntity<Object> getPortfolio(UUID portfolio_id) {
@@ -478,4 +507,84 @@ public class FreelancerImplementation implements FreelancerService {
         List<ResourceListViewDto> resources = dedicatedResourceRepository.get_all_freelancer_dedicated_resources(freelancer_id);
         return ResponseHandler.generateGetResponse("Dedicated resources retrieved successfully", HttpStatus.OK, resources,resources.size());
     }
+
+    @Override
+    public ResponseEntity<Object> addFeaturedTeamMembers(AddFeaturedTeamMembersRequestDto featuredTeamMembersRequestDto) {
+        Freelancer freelancer = freelancerRepository.findById(featuredTeamMembersRequestDto.getFreelancer_id()).orElse(null);
+        if( freelancer== null){
+            return  ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+        }
+            featuredTeamMemberRepository.add_featured_team_members(
+                    featuredTeamMembersRequestDto.getFreelancer_id(),
+                    featuredTeamMembersRequestDto.getMember_names(),
+                    featuredTeamMembersRequestDto.getTitles(),
+                    featuredTeamMembersRequestDto.getMember_types(),
+                    featuredTeamMembersRequestDto.getMember_emails()
+            );
+
+        return ResponseHandler.generateGeneralResponse("Featured team members added successfully", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Object> deleteTeamMember(UUID team_member_id) {
+        FeaturedTeamMember teamMember = featuredTeamMemberRepository.findById(team_member_id).orElse(null);
+        if (teamMember == null) {
+            return  ResponseHandler.generateErrorResponse("Team member not found", HttpStatus.NOT_FOUND);
+        }
+        featuredTeamMemberRepository.delete_team_member(team_member_id);
+        return ResponseHandler.generateGeneralResponse("Team member deleted successfully", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Object> getFreelancerTeamMembers(UUID freelancer_id) {
+        Freelancer freelancer = freelancerRepository.findById(freelancer_id).orElse(null);
+        if (freelancer == null) {
+            return  ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+        }
+        List<FeaturedTeamMember> teamMembers = featuredTeamMemberRepository.get_freelancer_team_members(freelancer_id);
+        return ResponseHandler.generateGetResponse("Team members retrieved successfully", HttpStatus.OK, teamMembers,teamMembers.size());
+    }
+
+    @Override
+    public ResponseEntity<Object> addToFavourites(UUID clientId, UUID freelancerId) {
+        Freelancer freelancer = freelancerRepository.findById(freelancerId).orElse(null);
+        if (freelancer == null) {
+            return  ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+        }
+        try {
+            freelancerRepository.addToFavourites(clientId, freelancerId);
+            return ResponseHandler.generateGetResponse("Freelancer added to favorites successfully", HttpStatus.CREATED, null, 0);
+        } catch (Exception e) {
+            return ResponseHandler.generateErrorResponse("Failed to add freelancer to favorites", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Object> removeFromFavourites(UUID clientId, UUID freelancerId) {
+        Freelancer freelancer = freelancerRepository.findById(freelancerId).orElse(null);
+        if (freelancer == null) {
+            return  ResponseHandler.generateErrorResponse("Freelancer not found", HttpStatus.NOT_FOUND);
+        }
+        try {
+            freelancerRepository.removeFromFavourites(clientId, freelancerId);
+            return ResponseHandler.generateGetResponse("Freelancer removed from favorites successfully", HttpStatus.OK, null, 0);
+        } catch (Exception e) {
+            return ResponseHandler.generateErrorResponse("Failed to remove freelancer from favorites", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Object> getClientFavourites(UUID clientId) {
+        try {
+            List<FreelancerProfileDto> favourites = freelancerRepository.getClientFavourites(clientId);
+
+            if (favourites.isEmpty()) {
+                return ResponseHandler.generateErrorResponse("No favourites found for the client", HttpStatus.NOT_FOUND);
+            }
+            return ResponseHandler.generateGetResponse("Favourites retrieved successfully", HttpStatus.OK, favourites, favourites.size());
+        } catch (Exception e) {
+            return ResponseHandler.generateErrorResponse("Failed to retrieve favourites", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

@@ -13,6 +13,7 @@ import com.guru.jobservice.repositories.JobRepository;
 import com.guru.jobservice.validators.JobRequestValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,7 +30,6 @@ public class JobService {
         this.jobRepository = jobRepository;
     }
 
-
     public Job getJobById(UUID jobId){
         Job job = jobRepository.getJobById(jobId);
         if (job == null) {
@@ -38,12 +38,12 @@ public class JobService {
         return job;
     }
 
-    public void createJob(CreateUpdateRequest createUpdateRequest) throws JsonProcessingException {
+        public Job createJob(CreateUpdateRequest createUpdateRequest) throws JsonProcessingException {
         JobRequestValidator.validatePaymentType(createUpdateRequest);
 
         String [] attachmentJsonArray = AttachmentsHelper.convertAttachmentsToJson(createUpdateRequest.getAttachments());
 
-        jobRepository.createJob(
+        return jobRepository.createJob(
                 createUpdateRequest.getTitle(),
                 createUpdateRequest.getDescription(),
                 createUpdateRequest.getCategoryId(),
@@ -106,6 +106,7 @@ public class JobService {
     }
 
 
+    @Cacheable(value = "jobs", key = "#filtersRequest")
     public PaginatedResponse<Job> getAllJobs(FiltersRequest filtersRequest) {
 
         if ((filtersRequest.getNotApplied() != null || filtersRequest.getNotViewed() != null) && filtersRequest.getFreelancerId() == null) {

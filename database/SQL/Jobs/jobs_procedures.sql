@@ -2,48 +2,35 @@
 -- FROM pg_proc
 -- WHERE proname = 'create_job';
 
--- CREATE OR REPLACE PROCEDURE drop_procedure(proc_name VARCHAR)
--- LANGUAGE plpgsql
--- AS $$
--- DECLARE
---     rec record;
--- BEGIN
---     FOR rec IN
---         SELECT proname
---         FROM pg_proc
---         WHERE proname = proc_name
---     LOOP
---         EXECUTE format('DROP PROCEDURE IF EXISTS %I;', rec.proname);
---     END LOOP;
--- END$$;
-
 -- CALL drop_procedure('create_job');
 -- CREATE OR REPLACE PROCEDURE create_job(
 --     _title VARCHAR(255),
--- 	_description TEXT,
--- 	_category_id UUID,
+--     _description TEXT,
+--     _category_id UUID,
 --     _subcategory_id UUID,
--- 	_featured BOOLEAN,
+--     _featured BOOLEAN,
 --     _client_id UUID,
 --     _payment_type VARCHAR(255),
--- 	_fixed_price_range VARCHAR(255),
+--     _fixed_price_range VARCHAR(255),
 --     _duration VARCHAR(255),
 --     _hours_per_week VARCHAR(255),
--- 	_min_hourly_rate DECIMAL(10, 2),
+--     _min_hourly_rate DECIMAL(10, 2),
 --     _max_hourly_rate DECIMAL(10, 2),
--- 	_get_quotes_until DATE,
+--     _get_quotes_until DATE,
 --     _visibility VARCHAR(255),
--- 	_skills text[],
--- 	_timezones text[],
--- 	_locations text[]
--- )
+--     _skills TEXT[],
+--     _timezones TEXT[],
+--     _locations TEXT[],
+--     _attachments TEXT[]
+-- ) 
 -- LANGUAGE plpgsql
 -- AS $$
 -- DECLARE
 --     new_job_id UUID;
 --     skill_id UUID;
--- 	location_id UUID;
--- 	timezone_id UUID;
+--     location_id UUID;
+--     timezone_id UUID;
+--     attachment_json text;
 -- BEGIN
 --     INSERT INTO jobs (id, title, description, category_id, subcategory_id, featured, client_id, payment_type, fixed_price_range, duration, hours_per_week, min_hourly_rate, max_hourly_rate, get_quotes_until, visibility, status)
 --     VALUES (gen_random_uuid(), _title,  _description, _category_id, _subcategory_id, _featured, _client_id, _payment_type::payment_type, _fixed_price_range::price_range, _duration::job_duration, _hours_per_week::hours_per_week, _min_hourly_rate, _max_hourly_rate, _get_quotes_until, _visibility::job_visibility, 'Under Review')
@@ -55,25 +42,32 @@
 --         INSERT INTO jobs_skills (job_id, skill_id)
 --         VALUES (new_job_id, skill_id);
 --     END LOOP;
-	
--- 	-- Insert locations related to job
+    
+--     -- Insert locations related to job
 --     FOREACH location_id IN ARRAY _locations
 --     LOOP
 --         INSERT INTO jobs_locations (job_id, location_id)
 --         VALUES (new_job_id, location_id);
 --     END LOOP;
-	
--- 	-- Insert timezones related to job
+    
+--     -- Insert timezones related to job
 --     FOREACH timezone_id IN ARRAY _timezones
 --     LOOP
 --         INSERT INTO jobs_timezones (job_id, timezone_id)
 --         VALUES (new_job_id, timezone_id);
 --     END LOOP;
+
+--     -- Insert attachments related to job
+--     FOREACH attachment_json IN ARRAY _attachments
+--     LOOP
+--         INSERT INTO jobs_attachments (id, job_id, url, filename, created_at) 
+--         VALUES (gen_random_uuid(), new_job_id, REPLACE((attachment_json::json->'url')::text, '"', ''), REPLACE((attachment_json::json->'filename')::text, '"', '') , CURRENT_TIMESTAMP);
+--     END LOOP;
 -- END;
 -- $$;
 
-CALL drop_procedure('create_job');
-CREATE OR REPLACE PROCEDURE create_job(
+DROP FUNCTION IF EXISTS create_job;
+CREATE OR REPLACE FUNCTION create_job(
     _title VARCHAR(255),
     _description TEXT,
     _category_id UUID,
@@ -93,6 +87,31 @@ CREATE OR REPLACE PROCEDURE create_job(
     _locations TEXT[],
     _attachments TEXT[]
 ) 
+RETURNS TABLE (
+    id UUID,
+    title VARCHAR(255),
+    description TEXT,
+    category_id UUID,
+    category_name VARCHAR(100),
+    subcategory_id UUID,
+    subcategory_name VARCHAR(100),
+    featured BOOLEAN,
+    client_id UUID,
+    created_at TIMESTAMP,
+    payment_type payment_type,
+    fixed_price_range price_range,
+    duration job_duration,
+    hours_per_week hours_per_week,
+    min_hourly_rate DECIMAL(10, 2),
+    max_hourly_rate DECIMAL(10, 2),
+    get_quotes_until DATE,
+    visibility job_visibility,
+    status job_status,
+    skills JSON,
+    locations JSON,
+    timezones JSON ,
+	attachments JSON
+)
 LANGUAGE plpgsql
 AS $$
 DECLARE
@@ -102,9 +121,12 @@ DECLARE
     timezone_id UUID;
     attachment_json text;
 BEGIN
+	new_job_id := gen_random_uuid();
+-- 	SELECT gen_random_uuid() INTO new_job_id;
+
     INSERT INTO jobs (id, title, description, category_id, subcategory_id, featured, client_id, payment_type, fixed_price_range, duration, hours_per_week, min_hourly_rate, max_hourly_rate, get_quotes_until, visibility, status)
-    VALUES (gen_random_uuid(), _title,  _description, _category_id, _subcategory_id, _featured, _client_id, _payment_type::payment_type, _fixed_price_range::price_range, _duration::job_duration, _hours_per_week::hours_per_week, _min_hourly_rate, _max_hourly_rate, _get_quotes_until, _visibility::job_visibility, 'Under Review')
-    RETURNING id INTO new_job_id;
+    VALUES (new_job_id, _title,  _description, _category_id, _subcategory_id, _featured, _client_id, _payment_type::payment_type, _fixed_price_range::price_range, _duration::job_duration, _hours_per_week::hours_per_week, _min_hourly_rate, _max_hourly_rate, _get_quotes_until, _visibility::job_visibility, 'Under Review');
+-- --     RETURNING id INTO new_job_id;
 
     -- Insert skills related to job
     FOREACH skill_id IN ARRAY _skills
@@ -133,19 +155,15 @@ BEGIN
         INSERT INTO jobs_attachments (id, job_id, url, filename, created_at) 
         VALUES (gen_random_uuid(), new_job_id, REPLACE((attachment_json::json->'url')::text, '"', ''), REPLACE((attachment_json::json->'filename')::text, '"', '') , CURRENT_TIMESTAMP);
     END LOOP;
+	
+	-- Fetch the newly created job
+	  RETURN QUERY SELECT * FROM get_job_by_id(new_job_id);
+
 END;
 $$;
 
-Call create_dummy_job();
-
-CALL drop_procedure('create_dummy_job');
-CREATE OR REPLACE PROCEDURE create_dummy_job(
-)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    CALL create_job(
-        'Frontend Freelancer Needed',
+select * from create_job(
+        'Test new Function',
         'Looking for a skilled backend developer to create a responsive website.',
         '77777777-7777-7777-7777-777777777777',
         '00000000-0000-0000-0000-000000000001',
@@ -166,9 +184,43 @@ BEGIN
         '{"url": "https://example.com/attachment1.pdf", "filename": "attachment1.pdf"}',
         '{"url": "https://example.com/attachment2.docx", "filename": "attachment2.docx"}'
     ]
-    );
-END;
-$$;
+);
+
+
+
+-- Call create_dummy_job();
+
+-- CALL drop_procedure('create_dummy_job');
+-- CREATE OR REPLACE PROCEDURE create_dummy_job(
+-- )
+-- LANGUAGE plpgsql
+-- AS $$
+-- BEGIN
+--     CALL create_job(
+--         'Frontend Freelancer Needed',
+--         'Looking for a skilled backend developer to create a responsive website.',
+--         '77777777-7777-7777-7777-777777777777',
+--         '00000000-0000-0000-0000-000000000001',
+--         FALSE,
+--         '11111111-1111-1111-1111-111111111111',
+--         'fixed',
+--         'Under $250',
+--         'Less than 1 month',
+--         '10-30',
+--         NULL,
+--         NULL,
+--         '2024-05-01',
+--         'Everyone',
+--         ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc'],
+--         ARRAY['11111111-1111-1111-1111-111111111111'],
+--         ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc'],
+-- 		 ARRAY[
+--         '{"url": "https://example.com/attachment1.pdf", "filename": "attachment1.pdf"}',
+--         '{"url": "https://example.com/attachment2.docx", "filename": "attachment2.docx"}'
+--     ]
+--     );
+-- END;
+-- $$;
 
 CALL drop_procedure('update_job');
 CREATE OR REPLACE PROCEDURE update_job(
@@ -646,4 +698,3 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- CALL view_job('11111111-1111-1111-1111-111111111111', '66666666-6666-6666-6666-666666666666');
-

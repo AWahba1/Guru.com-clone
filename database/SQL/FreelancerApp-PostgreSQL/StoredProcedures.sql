@@ -529,7 +529,7 @@ BEGIN
         IF array_length(_member_names, 1) IS NOT NULL THEN
             FOR i IN 1..array_length(_member_names, 1) LOOP
                 INSERT INTO featured_team_member (team_member_id, freelancer_id, member_name, title, member_type, member_email) 
-                VALUES (UUID(), _freelancer_id, _member_names[i], _titles[i], _member_types[i], _member_emails[i]);
+                VALUES (gen_random_uuid(), _freelancer_id, _member_names[i], _titles[i], _member_types[i], _member_emails[i]);
             END LOOP;
         END IF;
 
@@ -541,10 +541,101 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE PROCEDURE delete_team_member (IN team_member_id uuid)
+CREATE OR REPLACE PROCEDURE delete_team_member (IN _team_member_id uuid)
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    DELETE FROM featured_team_member WHERE team_member_id = team_member_id;
+    DELETE FROM featured_team_member WHERE team_member_id = _team_member_id;
 END;
 $$;
+
+CREATE OR REPLACE PROCEDURE increment_profile_views(IN _freelancer_id uuid, IN _viewer_id uuid)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO profile_views (freelancer_id, viewer_id) VALUES (_freelancer_id, _viewer_id);
+    UPDATE freelancers SET profile_views = profile_views + 1 WHERE id = _freelancer_id;
+    EXCEPTION
+        WHEN others THEN
+            ROLLBACK;
+            RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+
+END;
+$$;
+
+DROP PROCEDURE IF EXISTS add_to_favourites;
+
+CREATE OR REPLACE PROCEDURE add_to_favourites(
+    _client_id UUID,
+    _freelancer_id UUID
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Insert the freelancer into the client's favorites if not already present
+    IF NOT EXISTS (SELECT 1 FROM client_favourites WHERE client_id = _client_id AND freelancer_id = _freelancer_id) THEN
+        INSERT INTO client_favourites (client_id, freelancer_id, added_at)
+        VALUES (_client_id, _freelancer_id, CURRENT_TIMESTAMP);
+    END IF;
+END;
+$$;
+
+DROP PROCEDURE IF EXISTS remove_from_favourites;
+
+CREATE OR REPLACE PROCEDURE remove_from_favourites(
+    _client_id UUID,
+    _freelancer_id UUID
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Delete the freelancer from the client's favorites if present
+    IF EXISTS (SELECT 1 FROM client_favourites WHERE client_id = _client_id AND freelancer_id = _freelancer_id) THEN
+        DELETE FROM client_favourites
+        WHERE client_id = _client_id AND freelancer_id = _freelancer_id;
+    END IF;
+END;
+$$;
+
+
+-- CREATE OR REPLACE PROCEDURE increment_portfolio_views (IN _portfolio_id uuid, IN _viewer_id uuid)
+-- LANGUAGE plpgsql
+-- AS $$
+-- BEGIN
+--     INSERT INTO portfolio_views (portfolio_id, viewer_id) VALUES (_portfolio_id, _viewer_id);
+--     UPDATE portfolios SET portfolio_views = portfolio_views + 1 WHERE portfolio_id = _portfolio_id;
+--     EXCEPTION
+--         WHEN others THEN
+--             ROLLBACK;
+--             RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+
+-- END;
+-- $$;
+
+-- CREATE OR REPLACE PROCEDURE increment_service_views (IN _service_id uuid, IN _viewer_id uuid)
+-- LANGUAGE plpgsql
+-- AS $$
+-- BEGIN
+--     INSERT INTO service_views (service_id, viewer_id) VALUES (_service_id, _viewer_id);
+--     UPDATE services SET service_views = service_views + 1 WHERE service_id = _service_id;
+--     EXCEPTION
+--         WHEN others THEN
+--             ROLLBACK;
+--             RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+
+-- END;
+-- $$;
+
+-- CREATE OR REPLACE PROCEDURE increment_resource_views (IN _resource_id uuid, IN _viewer_id uuid)
+-- LANGUAGE plpgsql
+-- AS $$
+-- BEGIN
+--     INSERT INTO resource_views (resource_id, viewer_id) VALUES (_resource_id, _viewer_id);
+--     UPDATE dedicated_resource SET resource_views = resource_views + 1 WHERE resource_id = _resource_id;
+--     EXCEPTION
+--         WHEN others THEN
+--             ROLLBACK;
+--             RAISE EXCEPTION 'Error occurred: % - %', SQLSTATE, SQLERRM;
+
+-- END;
+-- $$;

@@ -1,5 +1,6 @@
 package com.guru.freelancerservice.models;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
@@ -18,12 +20,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Freelancer {
+public class Freelancer implements Serializable {
     @Id
     @GeneratedValue(
             strategy = GenerationType.UUID
     )
-    private UUID freelancer_id;
+    private UUID id;
     private String freelancer_name;
     private String image_url;
     private boolean visibility;

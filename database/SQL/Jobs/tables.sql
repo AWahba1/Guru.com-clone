@@ -162,8 +162,8 @@ END $$;
 	);
 
 CREATE TABLE job_freelancer_view (
-    job_id UUID REFERENCES jobs(id) ON DELETE CASCADE,
-    freelancer_id UUID REFERENCES freelancers(id) ON DELETE CASCADE,
+    job_id UUID REFERENCES jobs(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    freelancer_id UUID REFERENCES freelancers(id) ON DELETE CASCADE ON UPDATE CASCADE,
     viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (job_id, freelancer_id)
 );

@@ -1,7 +1,9 @@
 package PaymentMS.Services;
 
+import PaymentMS.DTOs.PaymentRequest;
 import PaymentMS.Models.Transaction;
 import PaymentMS.Models.User;
+import PaymentMS.RabbitMQ.PaymentProducer;
 import PaymentMS.Repositories.TransactionRepository;
 import PaymentMS.Repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -19,8 +21,45 @@ public class TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Autowired
+    private PaymentProducer paymentProducer;
+
+//    @Transactional
+//    public Transaction processPayment(Long senderId, Long receiverId, BigDecimal amount) {
+//        User sender = userRepository.findById(senderId)
+//                .orElseThrow(() -> new EntityNotFoundException("Sender not found"));
+//
+//        User receiver = userRepository.findById(receiverId)
+//                .orElseThrow(() -> new EntityNotFoundException("Receiver not found"));
+//
+//        if (sender.getBalance().compareTo(amount) < 0) {
+//            throw new IllegalArgumentException("Insufficient balance");
+//        }
+//
+//        BigDecimal platformShare = amount.multiply(BigDecimal.valueOf(0.02));
+//        BigDecimal receiverAmount = amount.subtract(platformShare);
+//
+//        sender.setBalance(sender.getBalance().subtract(amount));
+//        receiver.setBalance(receiver.getBalance().add(receiverAmount));
+//
+//        userRepository.save(sender);
+//        userRepository.save(receiver);
+//
+//        Transaction transaction = new Transaction();
+//        transaction.setSenderId(senderId);
+//        transaction.setReceiverId(receiverId);
+//        transaction.setAmount(amount);
+//        transaction.setPlatformShare(platformShare);
+//        transaction.setTimestamp(LocalDateTime.now());
+//
+//        return transactionRepository.save(transaction);
+//    }
+
     @Transactional
-    public Transaction processPayment(Long senderId, Long receiverId, BigDecimal amount) {
+    public Transaction processPayment(PaymentRequest paymentRequest) {
+        Long senderId = paymentRequest.getSenderId();
+        Long receiverId = paymentRequest.getReceiverId();
+        BigDecimal amount = paymentRequest.getAmount();
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new EntityNotFoundException("Sender not found"));
 
