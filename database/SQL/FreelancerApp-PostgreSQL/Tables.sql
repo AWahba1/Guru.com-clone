@@ -58,8 +58,9 @@ CREATE TABLE freelancers (
 );
 
 CREATE TABLE profile_views(
-    freelancer_id UUID PRIMARY KEY,
+    freelancer_id UUID,
     viewer_id UUID,
+    PRIMARY KEY (freelancer_id,viewer_id),
     FOREIGN KEY (freelancer_id) REFERENCES freelancers(freelancer_id) ON DELETE CASCADE
 );
 
