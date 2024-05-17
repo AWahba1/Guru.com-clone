@@ -13,6 +13,9 @@ import com.guru.jobservice.repositories.JobRepository;
 import com.guru.jobservice.validators.JobRequestValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,7 +31,6 @@ public class JobService {
     public JobService(JobRepository jobRepository) {
         this.jobRepository = jobRepository;
     }
-
 
     public Job getJobById(UUID jobId){
         Job job = jobRepository.getJobById(jobId);
@@ -65,7 +67,7 @@ public class JobService {
         );
     }
 
-    public void updateJob(UUID jobId, CreateUpdateRequest createUpdateRequest) throws Exception {
+    public Job updateJob(UUID jobId, CreateUpdateRequest createUpdateRequest) throws Exception {
 
         String [] attachmentJsonArray = AttachmentsHelper.convertAttachmentsToJson(createUpdateRequest.getAttachments());
 
@@ -95,6 +97,8 @@ public class JobService {
                 createUpdateRequest.getLocations(),
                 attachmentJsonArray
         );
+
+        return jobRepository.getJobById(jobId);
     }
 
     public void deleteJobById(UUID jobId) {
@@ -106,6 +110,7 @@ public class JobService {
     }
 
 
+    @Cacheable(value = "jobs", key = "#filtersRequest")
     public PaginatedResponse<Job> getAllJobs(FiltersRequest filtersRequest) {
 
         if ((filtersRequest.getNotApplied() != null || filtersRequest.getNotViewed() != null) && filtersRequest.getFreelancerId() == null) {

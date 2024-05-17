@@ -40,14 +40,12 @@ public class JobController {
 
     @PostMapping("/")
     public void createJob(@Valid @RequestBody CreateUpdateRequest createUpdateRequest) throws JsonProcessingException {
-
-
         jobService.createJob(createUpdateRequest);
     }
 
     @PutMapping("/{id}")
-    public void updateJob(@PathVariable UUID id, @Valid @RequestBody CreateUpdateRequest createUpdateRequest) throws Exception{
-        jobService.updateJob(id, createUpdateRequest);
+    public Job updateJob(@PathVariable UUID id, @Valid @RequestBody CreateUpdateRequest createUpdateRequest) throws Exception{
+        return jobService.updateJob(id, createUpdateRequest);
     }
 
     @DeleteMapping("/{id}")
