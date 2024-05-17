@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments :: boots_trap">
+    <meta charset="UTF-8">
+    <title>Error</title>
+</head>
+<body>
+
+<div class="container offset-sm-3 col-md-8 mt-lg-5">
+    <!-- show errors if any . -->
+
+        <div class="row mt-2">
+            <div th:if="${param.invalid}" class="col-sm-8">
+                <p class="alert alert-danger">Invalid verification token</p>
+            </div>
+            <div class="row mt-2">
+                <div th:if="${param.invalid_token}" class="col-sm-8">
+                    <p class="alert alert-danger">ERROR: Password cannot be verified </p>
+                </div>
+                <div class="row mt-2">
+                    <div th:if="${param.not_found}" class="col-sm-8">
+                        <p class="alert alert-danger">Not Found </p>
+                    </div>
+
+            <div th:if="${param.expired}" class="col-sm-8">
+                <p class="alert alert-info">This verification link has already expired.</p>
+            </div>
+        </div>
+    <a href="#" th:href="@{/}">Go to home page</a>
+</div>
+
+</body>
+</html>
