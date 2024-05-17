@@ -17,8 +17,9 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
     @Query(value = "select * from get_job_by_id(?1)", nativeQuery = true)
     Job getJobById(UUID jobId);
 
-    @Procedure("create_job")
-    void createJob(String _title,
+    //@Procedure("create_job")
+    @Query(value = "select * from create_job(?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18)", nativeQuery = true)
+    Job createJob(String _title,
                    String _description, UUID _category_id,
                    UUID _subcategory_id, boolean _featured, UUID _client_id,
                    String _payment_type, String _fixed_price_range,
