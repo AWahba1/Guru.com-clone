@@ -29,11 +29,11 @@ public interface FreelancerRepository extends JpaRepository<Freelancer, UUID> {
     @Query(value = "select viewer_id from profile_views where freelancer_id=(?1) and viewer_id=(?2)", nativeQuery = true)
     List<UUID> get_profile_views(UUID freelancer_id, UUID viewer_id);
 
-    @Procedure(name = "add_to_favourites")
-    void addToFavourites(@Param("_client_id") UUID clientId, @Param("_freelancer_id") UUID freelancerId);
+    @Procedure("add_to_favourites")
+    void addToFavourites(UUID _client_id, UUID _freelancer_id);
 
-    @Procedure(name = "remove_from_favourites")
-    void removeFromFavourites(@Param("_client_id") UUID clientId, @Param("_freelancer_id") UUID freelancerId);
+    @Procedure("remove_from_favourites")
+    void removeFromFavourites(UUID _client_id, UUID _freelancer_id);
 
     @Query(value = "select * from get_client_favourites(?1)", nativeQuery = true)
     List<FreelancerProfileDto> getClientFavourites(UUID client);
