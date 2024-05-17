@@ -65,7 +65,7 @@ public class JobService {
         );
     }
 
-    public Job updateJob(UUID jobId, CreateUpdateRequest createUpdateRequest) throws Exception {
+    public void updateJob(UUID jobId, CreateUpdateRequest createUpdateRequest) throws Exception {
 
         String [] attachmentJsonArray = AttachmentsHelper.convertAttachmentsToJson(createUpdateRequest.getAttachments());
 
@@ -95,8 +95,6 @@ public class JobService {
                 createUpdateRequest.getLocations(),
                 attachmentJsonArray
         );
-
-        return jobRepository.getJobById(jobId);
     }
 
     public void deleteJobById(UUID jobId) {
