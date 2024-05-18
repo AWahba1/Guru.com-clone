@@ -18,6 +18,25 @@ services:
     restart: unless-stopped
     volumes:
       - ./postgres:/var/lib/postgresql/data
-      - ./job-service/docker/tables.sql:/docker-entrypoint-initdb.d/tables.sql  
+      - ./database/SQL/Jobs:/docker-entrypoint-initdb.d/  
+    networks:
+      - shared_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    networks:
+      - shared_network
+    
+  rabbitmq:
+    image: 'rabbitmq:3-management'
+    ports:
+      - '5672:5672'
+      - '15672:15672'
     networks:
       - shared_network
