@@ -4,7 +4,6 @@ import com.guru.jobservice.model.TeamMemberClient;
 import com.guru.jobservice.model.TeamMemberClient.TeamMemberRole;
 import com.guru.jobservice.repositories.TeamMemberClientRepository;
 import com.guru.jobservice.response.ResponseHandler;
-import com.guru.jobservice.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
