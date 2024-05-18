@@ -93,6 +93,7 @@ public class MessageService {
     }
 
 
+    //@Cacheable(value = "messages", key = "#conversation_id")
     public List<Message> findMessageByCompositeKey(UUID conversation_id) {
         try {
             return megRepository.findByCompositeKey(conversation_id);
