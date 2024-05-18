@@ -1,0 +1,9 @@
+
+k	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ô¹½ùÿÿÿÿ
+k	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ô¹½ùÿÿÿÿ
+k	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ô¹½ùÿÿÿÿ
+b	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(ÓÜ‚…
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(çò‘ûÿÿÿÿ
+i	java:S116"TRename this field "client_id" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(àŒï„
+o	java:S116"URename this field "created_at" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(„ÒÍöüÿÿÿÿ
+k	java:S116"VRename this field "feedback_id" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(”ÚÉ€

@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -14,7 +15,7 @@ import java.util.UUID;
 @Table(name = "see_conversations")
 @IdClass(See_conv_PrimaryKey.class)
 @Data
-public class See_conversations {
+public class See_conversations implements Serializable {
     @Id
     UUID user_id;
 

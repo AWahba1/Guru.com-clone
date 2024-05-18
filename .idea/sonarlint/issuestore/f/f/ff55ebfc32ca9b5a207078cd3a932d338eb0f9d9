@@ -46,7 +46,5 @@ c	java:S100n"NRename this method name to match the regular expression '^[a-z][
 c	java:S100r"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Έ“φ
 c	java:S100v"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ΠαΨϊ
 c	java:S100z"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(£πζ
-A
-java:S1128"+Remove this unused import 'lombok.Builder'.(§’Πί
 K
 java:S1128"5Remove this unused import 'lombok.NoArgsConstructor'.(Έ¨›

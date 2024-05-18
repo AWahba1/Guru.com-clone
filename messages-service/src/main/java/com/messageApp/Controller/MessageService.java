@@ -35,17 +35,17 @@ public class MessageService {
     public Message buidMessageFromSee_conversations(See_conversations seeConversations, String messageText,String messageFile) {
         LocalDateTime now = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(now);
-        return new Message(
-                seeConversations.getConversation_id(),
-                timestamp,
-                UUID.randomUUID(),
-                seeConversations.getUser_id(),
-                seeConversations.getUser_with_conversation_id(),
-                seeConversations.getUser_name(),
-                seeConversations.getUser_with_conversation_name(),
-                messageText,
-                messageFile
-        );
+        return Message.builder()
+                .conversation_id(seeConversations.getConversation_id())
+                .sent_at(timestamp)
+                .message_id(UUID.randomUUID())
+                .sender_id(seeConversations.getUser_id())
+                .receiver_id(seeConversations.getUser_with_conversation_id())
+                .sender_name(seeConversations.getUser_name())
+                .receiver_name(seeConversations.getUser_with_conversation_name())
+                .message_text(messageText)
+                .message_file(messageFile)
+                .build();
     }
 
     public ResponseEntity<?> saveMessage(MessageInputDTO messageInputDTO) {
@@ -57,6 +57,9 @@ public class MessageService {
 
         if (messageInputDTO.getMessage_file() == null && messageInputDTO.getMessage_text() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("message_text and message_file fields are both null");
+        }
+        if(conversationsData.getChat_open()==false){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("this chat is closed");
         }
 
         Message message = buidMessageFromSee_conversations(conversationsData, messageInputDTO.getMessage_text(), messageInputDTO.getMessage_file());
@@ -98,7 +101,6 @@ public class MessageService {
     }
 
 
-    @Cacheable(value = "messages", key = "#conversation_id")
     public List<Message> findMessageByCompositeKey(UUID conversation_id) {
         try {
             return megRepository.findByCompositeKey(conversation_id);

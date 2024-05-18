@@ -17,7 +17,7 @@ import java.util.UUID;
 @Table(name = "message")
 @IdClass(messagePrimaryKey.class)
 @Data
-//@Builder
+@Builder
 //@NoArgsConstructor
 public class Message implements Serializable {
 
