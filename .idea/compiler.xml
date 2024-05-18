@@ -8,19 +8,20 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="job-service" />
-        <module name="cassandraSpring (1)" />
         <module name="UserMS" />
-        <module name="cassandraSpring (2)" />
         <module name="spring-boot-demo" />
         <module name="FreelancerMS (2)" />
         <module name="PaymentMS" />
         <module name="FreelancerMS (1)" />
+        <module name="cassandraSpring" />
         <module name="MessagesMS" />
+        <module name="MessagingMS" />
         <module name="FreelancerMS" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="cassandraSpring" target="21" />
+      <module name="cassandraSpring (1)" target="21" />
+      <module name="cassandraSpring (2)" target="21" />
       <module name="notification-service" target="21" />
     </bytecodeTargetLevel>
   </component>
@@ -30,6 +31,7 @@
       <module name="FreelancerMS (1)" options="-parameters" />
       <module name="FreelancerMS (2)" options="-parameters" />
       <module name="MessagesMS" options="-parameters" />
+      <module name="MessagingMS" options="-parameters" />
       <module name="PaymentMS" options="-parameters" />
       <module name="UserMS" options="-parameters" />
       <module name="cassandraSpring" options="-parameters" />

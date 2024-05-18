@@ -4,7 +4,7 @@ services:
     container_name: my_cassandra
     ports:
       - "9042:9042"
-  redis:
-    image: 'redis:latest'
-    ports:
-      - '6379:6379'
+#  redis:
+#    image: 'redis:latest'
+#    ports:
+#      - '6379:6379'

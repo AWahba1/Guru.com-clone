@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>cassandraSpring</artifactId>
+	<artifactId>MessagingMS</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>cassandraSpring</name>
+	<name>MessagingMS</name>
 	<description>Cassandra integrated with java spring</description>
 	<properties>
 		<java.version>21</java.version>

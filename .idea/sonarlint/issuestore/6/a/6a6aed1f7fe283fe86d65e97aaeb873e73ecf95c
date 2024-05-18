@@ -1,0 +1,25 @@
+
+`	java:S112o"FDefine and throw a dedicated exception instead of using a generic one.(Ü¥áùÿÿÿÿ
+f	java:S117f"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ûû„Ó
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ÆÇ·ö
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+c	java:S100#"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ñ
+<
+java:S14523"&Remove usage of generic wildcard type.(Ö°‚­
+E	java:S106j"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ
+A
+java:S1168k"+Return an empty collection instead of null.(¥¹ï
+‡
+java:S1130o"lRemove the declaration of thrown exception 'java.lang.Exception', as it cannot be thrown from method's body.(Ü¥áùÿÿÿÿ
+Q	java:S125v"<This block of commented-out lines of code should be removed.(àŞÂ×
+g
+java:S1128"LRemove this unused import 'org.springframework.cache.annotation.CacheEvict'.(½Á¨ˆøÿÿÿÿ
+e
+java:S1128"JRemove this unused import 'org.springframework.cache.annotation.CachePut'.(ıâ‰ şÿÿÿÿ
+k
+java:S1128"PRemove this unused import 'org.springframework.scheduling.annotation.Scheduled'.(‚¡®Üûÿÿÿÿ
+H
+java:S1068!"2Remove this unused "cachedMessages" private field.(Ö·ıÂ
