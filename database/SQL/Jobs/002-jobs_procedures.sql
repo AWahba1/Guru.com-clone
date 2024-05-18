@@ -696,3 +696,72 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- CALL view_job('11111111-1111-1111-1111-111111111111', '66666666-6666-6666-6666-666666666666');
+
+DROP PROCEDURE IF EXISTS add_team_member_client;
+
+CREATE OR REPLACE PROCEDURE add_team_member_client(
+    _owner_id UUID,
+    _team_member_id UUID,
+    _role team_member_role,
+    _email VARCHAR
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Insert the team member into the owner's team if not already present
+    IF NOT EXISTS (SELECT 1 FROM team_members_client WHERE owner_id = _owner_id AND team_member_id = _team_member_id) THEN
+        INSERT INTO team_members_client (owner_id, team_member_id, role, email)
+        VALUES (_owner_id, _team_member_id, _role, _email);
+    END IF;
+END;
+$$;
+
+DROP PROCEDURE IF EXISTS remove_team_member_client;
+
+CREATE OR REPLACE PROCEDURE remove_team_member_client(
+    _owner_id UUID,
+    _team_member_id UUID
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Delete the team member from the owner's team if present
+    IF EXISTS (SELECT 1 FROM team_members_client WHERE owner_id = _owner_id AND team_member_id = _team_member_id) THEN
+        DELETE FROM team_members_client WHERE owner_id = _owner_id AND team_member_id = _team_member_id;
+    END IF;
+END;
+$$;
+
+DROP PROCEDURE IF EXISTS edit_team_member_role_client;
+
+CREATE OR REPLACE PROCEDURE edit_team_member_role_client(
+    _owner_id UUID,
+    _team_member_id UUID,
+    _new_role team_member_role
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM team_members_client WHERE owner_id = _owner_id AND team_member_id = _team_member_id) THEN
+        UPDATE team_members_client
+        SET role = _new_role
+        WHERE owner_id = _owner_id AND team_member_id = _team_member_id;
+    END IF;
+END;
+$$;
+
+DROP PROCEDURE IF EXISTS view_team_members_client;
+
+CREATE OR REPLACE PROCEDURE view_team_members_client(
+    _owner_id UUID
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT tm.team_member_id, tm.role, tm.email, u.id AS user_id, u.name AS user_name
+    FROM team_members_client tm
+    JOIN users u ON tm.team_member_id = u.id
+    WHERE tm.owner_id = _owner_id;
+END;
+$$;
