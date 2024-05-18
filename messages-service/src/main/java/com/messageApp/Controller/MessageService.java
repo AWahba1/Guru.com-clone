@@ -8,13 +8,17 @@ import com.messageApp.Models.See_conversations;
 
 import com.messageApp.Models.messagePrimaryKey;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +30,7 @@ public class MessageService {
     @Autowired
     private See_conversationsRepository seeRepository;
 
+    private List<Message> cachedMessages = new ArrayList<>();
 
     public Message buidMessageFromSee_conversations(See_conversations seeConversations, String messageText,String messageFile) {
         LocalDateTime now = LocalDateTime.now();
@@ -93,7 +98,7 @@ public class MessageService {
     }
 
 
-    //@Cacheable(value = "messages", key = "#conversation_id")
+    @Cacheable(value = "messages", key = "#conversation_id")
     public List<Message> findMessageByCompositeKey(UUID conversation_id) {
         try {
             return megRepository.findByCompositeKey(conversation_id);
@@ -106,6 +111,40 @@ public class MessageService {
     public void deleteMessage(messagePrimaryKey mp) throws Exception {
         megRepository.deleteByCompositeKey(mp.getConversation_id(), mp.getSent_at(), mp.getMessage_id());
     }
+
+
+
+//    @Cacheable(value = "messages", key = "#conversationId")
+//    public List<Message> getCachedMessages(UUID conversationId) {
+//        return cachedMessages;
+//    }
+//
+//    @CacheEvict(value = "messages", key = "#conversationId")
+//    public void clearCache(UUID conversationId) {
+//        // This method will clear the cache for the specified conversationId
+//        cachedMessages.clear();
+//    }
+//
+//    @CachePut(value = "messages", key = "#conversationId")
+//    public List<Message> cacheMessage(UUID conversationId, Message message) {
+//        // Add the new message to the cached messages
+//        cachedMessages.add(message);
+//        return cachedMessages;
+//    }
+//
+//    @Scheduled(fixedRate = 60000) // Run every minute
+//    public void processAndSaveMessages() {
+//        // Save messages to the database (batch insert or save)
+//        saveMessagesToDatabase(cachedMessages);
+//
+//        // Clear the cache after saving
+//        cachedMessages.clear();
+//    }
+//
+//    private void saveMessagesToDatabase(List<Message> messages) {
+//        // Perform batch insert or save operation to save messages to the database
+//        // Example: megRepository.saveAll(messages);
+//    }
 
 
 
