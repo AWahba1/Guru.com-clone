@@ -1,3 +1,10 @@
+networks:
+  shared_network:
+    external: true
+
+volumes:
+  postgres_data:
+
 services:
   postgres:
     container_name: postgres
@@ -9,14 +16,8 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: guru
     restart: unless-stopped
-
-  redis:
-    image: 'redis:latest'
-    ports:
-      - '6379:6379'
-
-  rabbitmq:
-    image: 'rabbitmq:3-management'
-    ports:
-      - '5672:5672'
-      - '15672:15672'
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+      - ./job-service/docker/tables.sql:/docker-entrypoint-initdb.d/tables.sql  
+    networks:
+      - shared_network

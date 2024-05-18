@@ -1,3 +1,7 @@
+networks:
+  shared_network:
+    external: true
+
 services:
   job-service:
     build:
@@ -10,31 +14,22 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
     depends_on:
-      - postgres
       - redis-server
       - rabbitmq
-
-  postgres:
-    container_name: postgres
-    image: postgres:latest
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: guru
-    restart: unless-stopped
-    volumes:
-      - ./postgres/data:/var/lib/postgresql/data
-      - ./docker/tables.sql:/docker-entrypoint-initdb.d/tables.sql
+    networks:
+      - shared_network
 
   redis-server:
     image: 'redis:latest'
     ports:
       - '6379:6379'
+    networks:
+      - shared_network
 
   rabbitmq:
     image: 'rabbitmq:3-management'
     ports:
       - '5672:5672'
       - '15672:15672'
+    networks:
+      - shared_network
