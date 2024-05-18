@@ -24,6 +24,6 @@ public class Notifications {
     private UUID user_id;
     private String message;
     private Timestamp created_at;
-
+    private boolean is_read;
 
 }

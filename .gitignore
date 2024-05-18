@@ -1,0 +1,7 @@
+# Docker volume
+/postgres/
+
+#Logs
+JobAppLogs.txt
+FreelancerAppLogs.txt
+logs.txt
