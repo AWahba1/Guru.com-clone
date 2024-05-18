@@ -15,10 +15,10 @@ import java.util.Map;
 
 @SpringBootApplication
 @EnableCaching
-public class CassandraSpringApplication {
+public class MessagingMS {
 
     public static void main(String[] args) {
-        SpringApplication.run(CassandraSpringApplication.class, args);
+        SpringApplication.run(MessagingMS.class, args);
     }
 
     @RestControllerAdvice

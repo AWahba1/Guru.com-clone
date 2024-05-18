@@ -20,6 +20,5 @@ services:
       - '15672:15672'
   my_cassandra:
     image: cassandra
-    container_name: my_cassandra
     ports:
       - "9042:9042"
