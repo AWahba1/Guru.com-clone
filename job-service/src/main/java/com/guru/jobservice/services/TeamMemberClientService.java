@@ -4,6 +4,7 @@ import com.guru.jobservice.model.TeamMemberClient;
 import com.guru.jobservice.model.TeamMemberClient.TeamMemberRole;
 import com.guru.jobservice.repositories.TeamMemberClientRepository;
 import com.guru.jobservice.response.ResponseHandler;
+import com.guru.jobservice.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +17,18 @@ import java.util.UUID;
 public class TeamMemberClientService {
 
     private final TeamMemberClientRepository teamMemberClientRepository;
+    private final EmailService emailService;
 
     @Autowired
-    public TeamMemberClientService(TeamMemberClientRepository teamMemberClientRepository) {
+    public TeamMemberClientService(TeamMemberClientRepository teamMemberClientRepository, EmailService emailService) {
         this.teamMemberClientRepository = teamMemberClientRepository;
+        this.emailService = emailService;
     }
 
     public ResponseEntity<Object> addTeamMemberClient(UUID ownerId, UUID teamMemberId, TeamMemberRole role, String email) {
         try {
             teamMemberClientRepository.addTeamMemberClient(ownerId, teamMemberId, role, email);
+            emailService.sendEmail(email, "Team Invitation", "You have been invited to work with owner ID: " + ownerId);
             return ResponseHandler.generateGeneralResponse("Team member added successfully", HttpStatus.OK);
         } catch (Exception e) {
             return ResponseHandler.generateErrorResponse("Error adding team member: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

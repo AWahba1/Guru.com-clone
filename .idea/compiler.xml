@@ -9,14 +9,14 @@
         <outputRelativeToContentRoot value="true" />
         <module name="job-service" />
         <module name="UserMS" />
-        <module name="MessagesMS" />
         <module name="FreelancerMS (2)" />
         <module name="PaymentMS" />
+        <module name="FreelancerMS (1)" />
+        <module name="MessagesMS" />
         <module name="FreelancerMS" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="FreelancerMS (1)" target="21" />
       <module name="notification-service" target="21" />
     </bytecodeTargetLevel>
   </component>
