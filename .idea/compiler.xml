@@ -10,7 +10,7 @@
         <module name="job-service" />
         <module name="UserMS" />
         <module name="MessagesMS" />
-        <module name="FreelancerMS (2)" />
+        <module name="NotificationMS" />
         <module name="PaymentMS" />
         <module name="FreelancerMS" />
       </profile>
@@ -24,8 +24,8 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="FreelancerMS" options="-parameters" />
       <module name="FreelancerMS (1)" options="-parameters" />
-      <module name="FreelancerMS (2)" options="-parameters" />
       <module name="MessagesMS" options="-parameters" />
+      <module name="NotificationMS" options="-parameters" />
       <module name="PaymentMS" options="-parameters" />
       <module name="UserMS" options="-parameters" />
       <module name="job-service" options="-parameters" />

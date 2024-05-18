@@ -3,7 +3,7 @@ networks:
     external: true
 
 services:
-  job-service:
+  freelancer-service:
     build:
       context: .
       dockerfile: Dockerfile

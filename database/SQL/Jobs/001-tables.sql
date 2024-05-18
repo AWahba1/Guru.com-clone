@@ -264,11 +264,33 @@ INSERT INTO users (id, is_verified, amount_spent) VALUES
     ('22222222-2222-2222-2222-222222222222', false, 500.55),
     ('33333333-3333-3333-3333-333333333333', false, 4000);
 
--- Freelancers
-INSERT INTO freelancers (id) VALUES
-    ('44444444-4444-4444-4444-444444444444'),
-    ('55555555-5555-5555-5555-555555555555'),
-    ('66666666-6666-6666-6666-666666666666');
+INSERT INTO freelancers (
+    id,
+    freelancer_name,
+    image_url,
+    visibility,
+    profile_views,
+    job_invitations_num,
+    available_bids,
+    all_time_earnings,
+    employers_num,
+    highest_paid,
+    membership_date,
+    tagline,
+    bio,
+    work_terms,
+    attachments,
+    user_type,
+    website_link,
+    facebook_link,
+    linkedin_link,
+    professional_video_link,
+    company_history,
+    operating_since
+) VALUES
+    ('44444444-4444-4444-4444-444444444444', 'freelancer2', 'image_url2', true, 200, 20, 30, 2000, 10, 30000, '2021-01-01 00:00:00', 'tagline2', 'bio2', 'work_terms2', ARRAY['attachment2'], 'INDIVIDUAL', 'website_link2', 'facebook_link2', 'linkedin_link2', 'professional_video_link2', 'company_history2', '2021-01-01 00:00:00'),
+    ('55555555-5555-5555-5555-555555555555', 'freelancer3', 'image_url3', true, 300, 30, 40, 3000, 20, 40000, '2021-01-01 00:00:00', 'tagline3', 'bio3', 'work_terms3', ARRAY['attachment3'], 'COMPANY', 'website_link3', 'facebook_link3', 'linkedin_link3', 'professional_video_link3', 'company_history3', '2021-01-01 00:00:00'),
+    ('66666666-6666-6666-6666-666666666666', 'freelancer4', 'image_url4', true, 400, 40, 50, 4000, 30, 50000, '2021-01-01 00:00:00', 'tagline4', 'bio4', 'work_terms4', ARRAY['attachment4'], 'INDIVIDUAL', 'website_link4', 'facebook_link4', 'linkedin_link4', 'professional_video_link4', 'company_history4', '2021-01-01 00:00:00');
 
 -- Categories
 INSERT INTO categories (id, name) VALUES

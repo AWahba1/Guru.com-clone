@@ -18,7 +18,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./postgres:/var/lib/postgresql/data
-      - ./database/SQL/Jobs:/docker-entrypoint-initdb.d/  
+      - ./database/SQL/Jobs:/docker-entrypoint-initdb.d/
     networks:
       - shared_network
 
@@ -35,6 +35,7 @@ services:
     
   rabbitmq:
     image: 'rabbitmq:3-management'
+    container_name: rabbitmq
     ports:
       - '5672:5672'
       - '15672:15672'
