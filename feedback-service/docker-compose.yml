@@ -1,4 +1,8 @@
 version: '4.0.7'
+networks:
+  shared_network:
+    external: true
+
 services:
   feedback-service:
     build:
@@ -10,8 +14,8 @@ services:
 #      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/guru
 #      SPRING_DATASOURCE_USERNAME: postgres
 #      SPRING_DATASOURCE_PASSWORD: postgres
-#    depends_on:
-#      - my_cassandra
+    depends_on:
+      - my_cassandra
     networks:
       - shared_network
 
