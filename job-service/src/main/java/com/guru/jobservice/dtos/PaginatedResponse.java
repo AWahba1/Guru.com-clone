@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaginatedResponse<T> {
+public class PaginatedResponse<T>  {
     private List<T> data;
     private int page;
     private int totalRecords;
