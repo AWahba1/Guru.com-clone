@@ -25,3 +25,7 @@ n
 >messages-service/src/main/java/com/messageApp/MessagingMS.java,5\2\5241adfcb9fa4f92d726c5bd46398c463e509144
 d
 4feedback-service/src/main/resources/application.yaml,c\e\cee14482bb9b2c7237e408121870378e57f0d85b
+I
+feedback-service/mvnw.cmd,8\5\85cdf21325320a8240ab3c883ba8fc5ff348318e
+H
+feedback-service/pom.xml,6\8\684d61e97e4d6fd7f4cbbbf2c57c484162eaaf56
