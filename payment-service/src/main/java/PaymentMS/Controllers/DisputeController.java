@@ -15,13 +15,13 @@ public class DisputeController {
     @Autowired
     private DisputeService disputeService;
 
-    @PostMapping("/{transactionId}/initiate")
+    @PostMapping("/initiate/{transactionId}")
     public ResponseEntity<Dispute> initiateDispute(@PathVariable Long transactionId, @RequestBody DisputeRequest request) {
         Dispute dispute = disputeService.createDispute(transactionId, request.getInitiatorId(), request.getReason());
         return new ResponseEntity<>(dispute, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{disputeId}/updateStatus")
+    @PutMapping("/updateStatus/{disputeId}")
     public ResponseEntity<Dispute> updateDisputeStatus(@PathVariable Long disputeId, @RequestParam String status) {
         Dispute dispute = disputeService.updateDisputeStatus(disputeId, status);
         return new ResponseEntity<>(dispute, HttpStatus.OK);
