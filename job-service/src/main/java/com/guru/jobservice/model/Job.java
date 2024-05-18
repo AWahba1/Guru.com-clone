@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.io.Serializable;
 import java.util.*;
 
 
@@ -23,7 +24,7 @@ import java.util.*;
 
 @Entity
 @Table(name = "jobs")
-public class Job {
+public class Job  {
 
     @Id
     public UUID id;

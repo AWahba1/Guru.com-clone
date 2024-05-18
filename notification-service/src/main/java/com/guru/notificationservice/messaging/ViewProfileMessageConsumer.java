@@ -18,6 +18,6 @@ private final NotificationsRepository notificationsRepository;
 
     @RabbitListener(queues = "view_profile_queue")
     public void consumeMessage(ViewProfileMessageDto message) {
-        notificationsRepository.save(new Notifications(message.getUserId(), message.getViewerId(), message.getViewerName()+" has viewed your profile",  new Timestamp(System.currentTimeMillis())));
+        notificationsRepository.save(new Notifications(message.getUserId(), message.getViewerId(), message.getViewerName()+" has viewed your profile",  new Timestamp(System.currentTimeMillis()), false));
     }
 }

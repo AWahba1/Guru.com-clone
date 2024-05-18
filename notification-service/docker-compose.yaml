@@ -1,0 +1,26 @@
+networks:
+  shared_network:
+    external: true
+
+services:
+  notification-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9069:8089"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/guru
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+#    depends_on:
+#      - redis-server
+    networks:
+      - shared_network
+
+#  redis-server:
+#    image: 'redis:latest'
+#    ports:
+#      - '6379:6379'
+#    networks:
+#      - shared_network
