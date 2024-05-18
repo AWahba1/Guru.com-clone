@@ -597,6 +597,18 @@ BEGIN
 END;
 $$;
 
+DROP PROCEDURE IF EXISTS mark_as_read;
+CREATE OR REPLACE PROCEDURE mark_as_read(
+    _notification_id UUID
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE notifications
+    SET is_read = TRUE
+    WHERE id = _notification_id;
+END;
+
 
 -- CREATE OR REPLACE PROCEDURE increment_portfolio_views (IN _portfolio_id uuid, IN _viewer_id uuid)
 -- LANGUAGE plpgsql
