@@ -9,14 +9,17 @@
         <outputRelativeToContentRoot value="true" />
         <module name="job-service" />
         <module name="UserMS" />
-        <module name="MessagesMS" />
+        <module name="spring-boot-demo" />
         <module name="NotificationMS" />
+        <module name="FreelancerMS (2)" />
         <module name="PaymentMS" />
+        <module name="FreelancerMS (1)" />
+        <module name="cassandraSpring" />
+        <module name="MessagesMS" />
         <module name="FreelancerMS" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="FreelancerMS (1)" target="21" />
       <module name="notification-service" target="21" />
     </bytecodeTargetLevel>
   </component>
@@ -24,12 +27,15 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="FreelancerMS" options="-parameters" />
       <module name="FreelancerMS (1)" options="-parameters" />
+      <module name="FreelancerMS (2)" options="-parameters" />
       <module name="MessagesMS" options="-parameters" />
       <module name="NotificationMS" options="-parameters" />
-      <module name="PaymentMS" options="-parameters" />
+      <module name="PaymentMS" options="" />
       <module name="UserMS" options="-parameters" />
+      <module name="cassandraSpring" options="-parameters" />
       <module name="job-service" options="-parameters" />
       <module name="notification-service" options="-parameters" />
+      <module name="spring-boot-demo" options="-parameters" />
     </option>
   </component>
 </project>
