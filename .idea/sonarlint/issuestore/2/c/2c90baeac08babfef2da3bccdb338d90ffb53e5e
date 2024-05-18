@@ -1,0 +1,70 @@
+
+w
+java:S1192Õ"[Define a constant instead of duplicating this literal "Report edited successfully" 3 times.(‘®ÕÆùÿÿÿÿ
+‡
+java:S1192»"pDefine a constant instead of duplicating this literal "An error occurred while saving the reportsByJob" 3 times.(Ëô‰š
+f	java:S117_"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ù­ˆ
+f	java:S117l"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Òã¡À
+k	java:S117{"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(û„û§ıÿÿÿÿ
+g	java:S117‡"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¾ÀÖĞ
+g	java:S117£"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Àñéà
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(•Íìï
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813 "BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813#"BRemove this field injection and use constructor injection instead.(êæÄŞ
+h	java:S100'"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Åğİ×øÿÿÿÿ
+A
+java:S1452'"&Remove usage of generic wildcard type.(Åğİ×øÿÿÿÿ
+h	java:S100:"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(èíı³şÿÿÿÿ
+A
+java:S1452:"&Remove usage of generic wildcard type.(èíı³şÿÿÿÿ
+@	java:S106@"+Replace this use of System.out by a logger.(¿Ëõ¤
+E	java:S106A"+Replace this use of System.out by a logger.(»ÈõÅÿÿÿÿÿ
+E	java:S106B"+Replace this use of System.out by a logger.(ùœÊîúÿÿÿÿ
+V	java:S125K"<This block of commented-out lines of code should be removed.(ÅœØùûÿÿÿÿ
+h	java:S100Q"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(…°¸¡øÿÿÿÿ
+A
+java:S1452Q"&Remove usage of generic wildcard type.(…°¸¡øÿÿÿÿ
+A
+java:S1168e"+Return an empty collection instead of null.(¥¹ï
+V	java:S125d"<This block of commented-out lines of code should be removed.(ÅœØùûÿÿÿÿ
+A
+java:S1168r"+Return an empty collection instead of null.(¥¹ï
+V	java:S125q"<This block of commented-out lines of code should be removed.(ÅœØùûÿÿÿÿ
+B
+java:S1168"+Return an empty collection instead of null.(¥¹ï
+W	java:S125€"<This block of commented-out lines of code should be removed.(ÅœØùûÿÿÿÿ
+B
+java:S1168"+Return an empty collection instead of null.(¥¹ï
+W	java:S125Œ"<This block of commented-out lines of code should be removed.(ÅœØùûÿÿÿÿ
+i	java:S100“"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¾§íÀûÿÿÿÿ
+B
+java:S1452“"&Remove usage of generic wildcard type.(¾§íÀûÿÿÿÿ
+F	java:S106–"+Replace this use of System.out by a logger.(Ü™Ö¤ıÿÿÿÿ
+F	java:S106œ"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ
+B
+java:S1168©"+Return an empty collection instead of null.(¥¹ï
+W	java:S125¨"<This block of commented-out lines of code should be removed.(ÅœØùûÿÿÿÿ
+i	java:S100¯"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ê·ù›ÿÿÿÿÿ
+\
+java:S4684¯"@Replace this persistent entity with a simple POJO or DTO object.(Ê·ù›ÿÿÿÿÿ
+B
+java:S1452¯"&Remove usage of generic wildcard type.(Ê·ù›ÿÿÿÿÿ
+F	java:S106º"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ
+d	java:S100À"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ğ›¾Ê
+=
+java:S1452À"&Remove usage of generic wildcard type.(Ğ›¾Ê
+F	java:S106Æ"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ
+i	java:S100Ì"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¢µÜøÿÿÿÿ
+B
+java:S1452Ì"&Remove usage of generic wildcard type.(¢µÜøÿÿÿÿ
+F	java:S106ß"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ
