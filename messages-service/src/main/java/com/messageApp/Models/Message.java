@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ import java.util.UUID;
 @Data
 //@Builder
 //@NoArgsConstructor
-public class Message {
+public class Message implements Serializable {
 
    @Id
     UUID conversation_id;

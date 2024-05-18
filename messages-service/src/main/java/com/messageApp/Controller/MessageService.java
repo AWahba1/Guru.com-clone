@@ -6,7 +6,9 @@ import com.messageApp.DTO.UpdateDTO;
 import com.messageApp.Models.Message;
 import com.messageApp.Models.See_conversations;
 
+import com.messageApp.Models.messagePrimaryKey;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,12 +22,10 @@ import java.util.UUID;
 public class MessageService {
 
     @Autowired
-    private MessagesRepository MegRepository;
+    private MessagesRepository megRepository;
     @Autowired
-    private See_conversationsRepository SeeRepository;
+    private See_conversationsRepository seeRepository;
 
-    @Autowired
-    private MessageService messageService;
 
     public Message buidMessageFromSee_conversations(See_conversations seeConversations, String messageText,String messageFile) {
         LocalDateTime now = LocalDateTime.now();
@@ -44,7 +44,7 @@ public class MessageService {
     }
 
     public ResponseEntity<?> saveMessage(MessageInputDTO messageInputDTO) {
-        List<See_conversations> s1 = SeeRepository.findConversationProperty(messageInputDTO.getSender_id(), messageInputDTO.getConversation_id());
+        List<See_conversations> s1 = seeRepository.findConversationProperty(messageInputDTO.getSender_id(), messageInputDTO.getConversation_id());
         if (s1.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid sender_id or conversation_id");
         }
@@ -57,7 +57,7 @@ public class MessageService {
         Message message = buidMessageFromSee_conversations(conversationsData, messageInputDTO.getMessage_text(), messageInputDTO.getMessage_file());
 
         try {
-            MegRepository.save(message);
+            megRepository.save(message);
             return ResponseEntity.status(HttpStatus.CREATED).body(message);
 
         } catch (Exception e) {
@@ -75,16 +75,35 @@ public class MessageService {
         }
         try {
             if (dto.getMessage_text() == null) {
-                MegRepository.updateMessageFile(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_file());
+                megRepository.updateMessageFile(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_file());
             } else if (dto.getMessage_file() == null) {
-                MegRepository.updateMessageText(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_text());
+                megRepository.updateMessageText(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_text());
             } else {
-                MegRepository.updateMessageBoth(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_text(), dto.getMessage_file());
+                megRepository.updateMessageBoth(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_text(), dto.getMessage_file());
             }
             return ResponseEntity.ok("Message updated successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update message");
         }
+    }
+
+    @Cacheable(value = "messages", key = "'allMessages'")
+    public List<Message> getAllMessages() {
+        return megRepository.findAll();
+    }
+
+
+    public List<Message> findMessageByCompositeKey(UUID conversation_id) {
+        try {
+            return megRepository.findByCompositeKey(conversation_id);
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public void deleteMessage(messagePrimaryKey mp) throws Exception {
+        megRepository.deleteByCompositeKey(mp.getConversation_id(), mp.getSent_at(), mp.getMessage_id());
     }
 
 

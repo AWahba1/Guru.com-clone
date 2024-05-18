@@ -24,11 +24,6 @@ import java.util.*;
 @RequestMapping("/message")
 public class MessageController {
     @Autowired
-    private MessagesRepository MegRepository;
-    @Autowired
-    private See_conversationsRepository SeeRepository;
-
-    @Autowired
     private MessageService messageService;
 
     @PostMapping
@@ -38,19 +33,12 @@ public class MessageController {
 
     @GetMapping("/lists")
     public List<Message> getMessageAll() {
-        return MegRepository.findAll();
+        return messageService.getAllMessages();
     }
 
     @GetMapping("/chatMessages")
     public List<Message> findMessageByCompositeKey(@RequestParam UUID conversation_id) {
-        try {
-            return MegRepository.findByCompositeKey(conversation_id);
-        }
-        catch (Exception e){
-            System.out.println(e);
-            return null;
-        }
-
+        return messageService.findMessageByCompositeKey(conversation_id);
     }
 
     @PutMapping("/update")
@@ -62,7 +50,7 @@ public class MessageController {
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteMessage(@RequestBody messagePrimaryKey mp) {
         try {
-            MegRepository.deleteByCompositeKey(mp.getConversation_id(), mp.getSent_at(), mp.getMessage_id());
+            messageService.deleteMessage(mp);
             return ResponseEntity.ok("Message deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete message");
