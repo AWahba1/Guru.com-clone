@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS freelancers CASCADE;
+-- DROP TABLE IF EXISTS freelancers CASCADE;
 DROP TABLE IF EXISTS profile_views CASCADE;
 DROP TABLE IF EXISTS featured_team_member CASCADE;
 DROP TABLE IF EXISTS portfolios CASCADE;
@@ -33,30 +33,6 @@ CREATE TYPE team_member_role AS ENUM ('CONSULTANT', 'MANAGER');
 --		job_id uuid PRIMARY KEY
 --);
 
-CREATE TABLE freelancers (
-    id UUID PRIMARY KEY,
-    freelancer_name VARCHAR(50),
-    image_url VARCHAR(255),
-    visibility BOOLEAN,
-    profile_views INT DEFAULT 0,
-    job_invitations_num INT,
-    available_bids INT,
-    all_time_earnings DECIMAL,
-    employers_num INT,
-    highest_paid DECIMAL,
-    membership_date TIMESTAMP,
-    tagline VARCHAR(190),
-    bio VARCHAR(3000),
-    work_terms VARCHAR(2000),
-    attachments VARCHAR(255) ARRAY,
-    user_type varchar(255) CHECK (user_type IN ('INDIVIDUAL','COMPANY')),
-    website_link VARCHAR(255),
-    facebook_link VARCHAR(255),
-    linkedin_link VARCHAR(255),
-    professional_video_link VARCHAR(255),
-    company_history VARCHAR(3000),
-    operating_since TIMESTAMP
-);
 
 CREATE TABLE profile_views(
     freelancer_id UUID,

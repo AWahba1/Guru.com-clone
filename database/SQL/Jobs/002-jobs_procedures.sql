@@ -66,6 +66,66 @@
 -- END;
 -- $$;
 
+DROP FUNCTION IF EXISTS get_job_by_id;
+CREATE OR REPLACE FUNCTION get_job_by_id(
+    _job_id UUID
+)
+RETURNS TABLE (
+    id UUID,
+    title VARCHAR(255),
+    description TEXT,
+    category_id UUID,
+    category_name VARCHAR(100),
+    subcategory_id UUID,
+    subcategory_name VARCHAR(100),
+    featured BOOLEAN,
+    client_id UUID,
+    created_at TIMESTAMP,
+    payment_type payment_type,
+    fixed_price_range price_range,
+    duration job_duration,
+    hours_per_week hours_per_week,
+    min_hourly_rate DECIMAL(10, 2),
+    max_hourly_rate DECIMAL(10, 2),
+    get_quotes_until DATE,
+    visibility job_visibility,
+    status job_status,
+    skills JSON,
+    locations JSON,
+    timezones JSON ,
+	attachments JSON
+)
+AS $$
+BEGIN
+    RETURN QUERY 
+        SELECT j.id, j.title, j.description, j.category_id, c.name AS category_name, 
+               j.subcategory_id, s.name AS subcategory_name, j.featured, 
+               j.client_id, j.created_at, j.payment_type, j.fixed_price_range, 
+               j.duration, j.hours_per_week, j.min_hourly_rate, j.max_hourly_rate, 
+               j.get_quotes_until, j.visibility, j.status,
+               (SELECT JSON_AGG(json_build_object('id', sk.id, 'name', sk.name)) 
+                   FROM jobs_skills js 
+                   INNER JOIN skills sk ON js.skill_id = sk.id 
+                   WHERE js.job_id = j.id) AS skills,
+               (SELECT JSON_AGG(json_build_object('id', loc.id, 'name', loc.name)) 
+                   FROM jobs_locations jl 
+                   INNER JOIN locations loc ON jl.location_id = loc.id 
+                   WHERE jl.job_id = j.id) AS locations,
+               (SELECT JSON_AGG(json_build_object('id', tz.id, 'name', tz.name)) 
+                   FROM jobs_timezones jt 
+                   INNER JOIN timezones tz ON jt.timezone_id = tz.id 
+                   WHERE jt.job_id = j.id) AS timezones,
+				(SELECT JSON_AGG(json_build_object('url', ja.url, 'filename', ja.filename)) 
+                   FROM jobs_attachments ja 
+                   WHERE ja.job_id = j.id) AS attachments
+        FROM jobs j
+        INNER JOIN categories c ON j.category_id = c.id
+        INNER JOIN subcategories s ON j.subcategory_id = s.id
+        WHERE j.id = _job_id;
+END;
+$$ LANGUAGE plpgsql;
+select * from get_job_by_id('11111111-1111-1111-1111-111111111111');
+
 DROP FUNCTION IF EXISTS create_job;
 CREATE OR REPLACE FUNCTION create_job(
     _title VARCHAR(255),
@@ -222,7 +282,7 @@ select * from create_job(
 -- END;
 -- $$;
 
-CALL drop_procedure('update_job');
+-- CALL drop_procedure('update_job');
 CREATE OR REPLACE PROCEDURE update_job(
     _job_id UUID,
     _title VARCHAR(255) DEFAULT NULL,
@@ -369,68 +429,6 @@ CALL update_job(
 -- 	ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc']
 -- );
 
-
-DROP FUNCTION IF EXISTS get_job_by_id;
-CREATE OR REPLACE FUNCTION get_job_by_id(
-    _job_id UUID
-)
-RETURNS TABLE (
-    id UUID,
-    title VARCHAR(255),
-    description TEXT,
-    category_id UUID,
-    category_name VARCHAR(100),
-    subcategory_id UUID,
-    subcategory_name VARCHAR(100),
-    featured BOOLEAN,
-    client_id UUID,
-    created_at TIMESTAMP,
-    payment_type payment_type,
-    fixed_price_range price_range,
-    duration job_duration,
-    hours_per_week hours_per_week,
-    min_hourly_rate DECIMAL(10, 2),
-    max_hourly_rate DECIMAL(10, 2),
-    get_quotes_until DATE,
-    visibility job_visibility,
-    status job_status,
-    skills JSON,
-    locations JSON,
-    timezones JSON ,
-	attachments JSON
-)
-AS $$
-BEGIN
-    RETURN QUERY 
-        SELECT j.id, j.title, j.description, j.category_id, c.name AS category_name, 
-               j.subcategory_id, s.name AS subcategory_name, j.featured, 
-               j.client_id, j.created_at, j.payment_type, j.fixed_price_range, 
-               j.duration, j.hours_per_week, j.min_hourly_rate, j.max_hourly_rate, 
-               j.get_quotes_until, j.visibility, j.status,
-               (SELECT JSON_AGG(json_build_object('id', sk.id, 'name', sk.name)) 
-                   FROM jobs_skills js 
-                   INNER JOIN skills sk ON js.skill_id = sk.id 
-                   WHERE js.job_id = j.id) AS skills,
-               (SELECT JSON_AGG(json_build_object('id', loc.id, 'name', loc.name)) 
-                   FROM jobs_locations jl 
-                   INNER JOIN locations loc ON jl.location_id = loc.id 
-                   WHERE jl.job_id = j.id) AS locations,
-               (SELECT JSON_AGG(json_build_object('id', tz.id, 'name', tz.name)) 
-                   FROM jobs_timezones jt 
-                   INNER JOIN timezones tz ON jt.timezone_id = tz.id 
-                   WHERE jt.job_id = j.id) AS timezones,
-				(SELECT JSON_AGG(json_build_object('url', ja.url, 'filename', ja.filename)) 
-                   FROM jobs_attachments ja 
-                   WHERE ja.job_id = j.id) AS attachments
-        FROM jobs j
-        INNER JOIN categories c ON j.category_id = c.id
-        INNER JOIN subcategories s ON j.subcategory_id = s.id
-        WHERE j.id = _job_id;
-END;
-$$ LANGUAGE plpgsql;
-select * from get_job_by_id('11111111-1111-1111-1111-111111111111');
-
--- call create_dummy_job
  
 
 DROP FUNCTION IF EXISTS get_all_jobs;
@@ -609,7 +607,7 @@ $$ LANGUAGE plpgsql;
 -- );
 
 
-CALL drop_procedure('delete_job_by_id');
+-- CALL drop_procedure('delete_job_by_id');
 CREATE OR REPLACE PROCEDURE delete_job_by_id(
     _job_id UUID
 )
@@ -680,7 +678,7 @@ $$ LANGUAGE plpgsql;
 
 
 -- Mark Job as viewed by Freelancer
-CALL drop_procedure('view_job');
+-- CALL drop_procedure('view_job');
 CREATE OR REPLACE PROCEDURE view_job(
     _job_id UUID,
     _freelancer_id UUID
