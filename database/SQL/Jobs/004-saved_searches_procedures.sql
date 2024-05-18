@@ -1,4 +1,4 @@
-CALL drop_procedure('create_saved_search');
+-- CALL drop_procedure('create_saved_search');
 CREATE OR REPLACE PROCEDURE create_saved_search(
 	_name VARCHAR(255),
 	_freelancer_id UUID, 
@@ -171,7 +171,7 @@ $$ LANGUAGE plpgsql;
 
 SELECT * FROM get_freelancer_saved_searches('44444444-4444-4444-4444-444444444444');
 
-CALL drop_procedure('update_saved_search');
+-- CALL drop_procedure('update_saved_search');
 CREATE OR REPLACE PROCEDURE update_saved_search(
     _id UUID,
     _name VARCHAR(255),
@@ -200,7 +200,7 @@ BEGIN
         subcategory_id = _subcategory_id,
         skill_id = _skill_id,
         featured_only = _featured_only,
-        payment_terms = _payment_terms,
+        payment_terms = _payment_terms::payment_type,
         location_ids = _location_ids,
         sort_order = _sort_order,
         status_list = _status_list,
@@ -234,7 +234,7 @@ CALL update_saved_search(
 );
 
 
-CALL drop_procedure('delete_saved_search');
+-- CALL drop_procedure('delete_saved_search');
 CREATE OR REPLACE PROCEDURE delete_saved_search(
     _search_id UUID
 )

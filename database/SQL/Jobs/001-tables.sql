@@ -13,9 +13,30 @@ END $$;
 		amount_spent DECIMAL(10,2)
 	);
 
-	CREATE TABLE freelancers (
-		id uuid PRIMARY KEY
-	);
+CREATE TABLE freelancers (
+    id UUID PRIMARY KEY,
+    freelancer_name VARCHAR(50),
+    image_url VARCHAR(255),
+    visibility BOOLEAN,
+    profile_views INT DEFAULT 0,
+    job_invitations_num INT,
+    available_bids INT,
+    all_time_earnings DECIMAL,
+    employers_num INT,
+    highest_paid DECIMAL,
+    membership_date TIMESTAMP,
+    tagline VARCHAR(190),
+    bio VARCHAR(3000),
+    work_terms VARCHAR(2000),
+    attachments VARCHAR(255) ARRAY,
+    user_type varchar(255) CHECK (user_type IN ('INDIVIDUAL','COMPANY')),
+    website_link VARCHAR(255),
+    facebook_link VARCHAR(255),
+    linkedin_link VARCHAR(255),
+    professional_video_link VARCHAR(255),
+    company_history VARCHAR(3000),
+    operating_since TIMESTAMP
+);
 
 	-- Payment Type Enum
 	DO $$BEGIN

@@ -14,7 +14,7 @@ BEGIN
         INSERT INTO quotes (id, freelancer_id, job_id, proposal, bids_used, bid_date)
         VALUES (gen_random_uuid(), _freelancer_id, job_id, proposal, bids_used, bid_date);
 
-        UPDATE freelancers F SET F.available_bids = available_bids - bids_used WHERE F.freelancer_id = _freelancer_id;
+        UPDATE freelancers SET available_bids = available_bids - bids_used WHERE id = _freelancer_id;
 
     EXCEPTION
         WHEN others THEN
@@ -193,7 +193,7 @@ BEGIN
 END;
 $$;
 
-CALL invite_to_job('d433a93f-9a0f-4a55-9a72-65e19c2da25a'::uuid, '11111111-1111-1111-1111-111111111111'::uuid,'11111111-1111-1111-1111-111111111111'::uuid, '2024-05-07 18:07:53.868213'::timestamp);
+-- CALL invite_to_job('d433a93f-9a0f-4a55-9a72-65e19c2da25a'::uuid, '11111111-1111-1111-1111-111111111111'::uuid,'11111111-1111-1111-1111-111111111111'::uuid, '2024-05-07 18:07:53.868213'::timestamp);
 
 DROP FUNCTION IF EXISTS get_freelancer_quotes;
 CREATE OR REPLACE FUNCTION get_freelancer_quotes (_freelancer_id uuid, _quote_status varchar(255))
