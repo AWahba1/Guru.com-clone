@@ -61,7 +61,7 @@ public class TeamMemberClient {
         @Column(name = "is_verified")
         private Boolean isVerified;
 
-        @Column(name = "amount_spent", precision = 10, scale = 2)
+        @Column(name = "amount_spent")
         private Double amountSpent;
 
         @Column(name = "name", length = 255)
