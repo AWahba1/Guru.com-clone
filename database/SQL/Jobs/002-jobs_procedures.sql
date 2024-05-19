@@ -702,7 +702,7 @@ DROP PROCEDURE IF EXISTS add_team_member_client;
 CREATE OR REPLACE PROCEDURE add_team_member_client(
     _owner_id UUID,
     _team_member_id UUID,
-    _role team_member_role,
+    _role team_member_role_client,
     _email VARCHAR
 )
 LANGUAGE plpgsql
@@ -737,7 +737,7 @@ DROP PROCEDURE IF EXISTS edit_team_member_role_client;
 CREATE OR REPLACE PROCEDURE edit_team_member_role_client(
     _owner_id UUID,
     _team_member_id UUID,
-    _new_role team_member_role
+    _new_role team_member_role_client
 )
 LANGUAGE plpgsql
 AS $$
@@ -750,10 +750,17 @@ BEGIN
 END;
 $$;
 
-DROP PROCEDURE IF EXISTS view_team_members_client;
+DROP FUNCTION IF EXISTS view_team_members_client;
 
-CREATE OR REPLACE PROCEDURE view_team_members_client(
+CREATE OR REPLACE FUNCTION view_team_members_client(
     _owner_id UUID
+)
+RETURNS TABLE (
+    team_member_id UUID,
+    role team_member_role_client,
+    email VARCHAR,
+    user_id UUID,
+    user_name VARCHAR
 )
 LANGUAGE plpgsql
 AS $$

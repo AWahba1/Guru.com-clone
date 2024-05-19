@@ -1,5 +1,6 @@
 package com.guru.jobservice.services;
 
+import com.guru.jobservice.dtos.TeamMemberClientView;
 import com.guru.jobservice.model.TeamMemberClient;
 import com.guru.jobservice.model.TeamMemberClient.TeamMemberRole;
 import com.guru.jobservice.repositories.TeamMemberClientRepository;
@@ -54,7 +55,7 @@ public class TeamMemberClientService {
 
     public ResponseEntity<Object> viewTeamMembersClient(UUID ownerId) {
         try {
-            List<TeamMemberClient> teamMembers = teamMemberClientRepository.viewTeamMembersClient(ownerId);
+            List<TeamMemberClientView> teamMembers = teamMemberClientRepository.viewTeamMembersClient(ownerId);
             return ResponseHandler.generateGetResponse("Team members retrieved successfully", HttpStatus.OK, teamMembers, teamMembers.size());
         } catch (Exception e) {
             return ResponseHandler.generateErrorResponse("Error retrieving team members: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
