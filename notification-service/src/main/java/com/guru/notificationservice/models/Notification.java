@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "notifications")
-public class Notifications {
+public class Notification {
     @Id
     @GeneratedValue(
             strategy = GenerationType.UUID
@@ -25,5 +25,16 @@ public class Notifications {
     private String message;
     private Timestamp created_at;
     private boolean is_read;
+
+    public Notification(UUID user_id, String message, Timestamp created_at, boolean is_read) {
+        this.user_id = user_id;
+        this.message = message;
+        this.created_at = created_at;
+        this.is_read = is_read;
+    }
+//    public Notification(UUID user_id, String message) {
+//        this.user_id = user_id;
+//        this.message = message;
+//    }
 
 }
