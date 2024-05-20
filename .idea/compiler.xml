@@ -8,30 +8,28 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="job-service" />
-        <module name="UserMS" />
-        <module name="NotificationMS" />
+        <module name="spring-boot-demo" />
         <module name="PaymentMS" />
-        <module name="MessagesMS" />
+        <module name="cassandraSpring" />
+        <module name="MessagingMS" />
         <module name="FreelancerMS" />
         <module name="Notification" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="FreelancerMS (1)" target="21" />
-      <module name="notification-service" target="21" />
+      <module name="FreelancerMS (2)" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="FreelancerMS" options="-parameters" />
-      <module name="FreelancerMS (1)" options="-parameters" />
-      <module name="MessagesMS" options="-parameters" />
+      <module name="MessagingMS" options="-parameters" />
       <module name="Notification" options="-parameters" />
-      <module name="NotificationMS" options="-parameters" />
       <module name="PaymentMS" options="-parameters" />
-      <module name="UserMS" options="-parameters" />
+      <module name="cassandraSpring" options="-parameters" />
       <module name="job-service" options="-parameters" />
-      <module name="notification-service" options="-parameters" />
+      <module name="spring-boot-demo" options="-parameters" />
     </option>
   </component>
 </project>

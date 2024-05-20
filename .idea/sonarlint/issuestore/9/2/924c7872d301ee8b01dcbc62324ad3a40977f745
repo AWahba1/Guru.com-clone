@@ -1,0 +1,21 @@
+
+k	java:S117("QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ûô¤¢ÿÿÿÿÿ
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ÆÇ·ö
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄÞ
+<
+java:S1452"&Remove usage of generic wildcard type.(¡°Žæ
+H
+java:S1128"2Remove this unused import 'com.messageApp.Models'.(Çã‡»
+Z
+java:S1128"DRemove this unused import 'com.messageApp.DTO.See_conversationsDTO'.(öƒ¨À
+Z
+java:S1128"DRemove this unused import 'com.messageApp.Models.See_conversations'.(õõ±È
+b
+java:S1128"GRemove this unused import 'org.springframework.boot.SpringApplication'.(¯ìÙÿÿÿÿÿ
+o
+java:S1128"YRemove this unused import 'org.springframework.boot.autoconfigure.SpringBootApplication'.(Ë”ÖÏ
+D
+java:S1128"/Remove this unused import 'java.sql.Timestamp'.(èò½+
+O
+java:S1128"4Remove this unused import 'java.time.LocalDateTime'.(æÃ§ƒüÿÿÿÿ

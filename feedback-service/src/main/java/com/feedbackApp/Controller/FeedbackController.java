@@ -7,6 +7,7 @@ import com.feedbackApp.DTO.TestimonialByFreelancerDTO;
 import com.feedbackApp.Models.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -92,8 +93,10 @@ public class FeedbackController {
     }
 
     @GetMapping("/FreelancerFeedback/view")
+    @Cacheable(value = "feedback",key = "#freelancer_id")
     public List<Feedback_By_Freelancer> findFreelancerFeedback(@RequestParam UUID freelancer_id) {
         try {
+            System.out.println("get data from db");
             return feedbackByFreelancerRepository.findByCompositeKey(freelancer_id);
         }
         catch (Exception e){
@@ -105,8 +108,10 @@ public class FeedbackController {
 
 
     @GetMapping("/ClientFeedback/view")
+    @Cacheable(value = "feedback",key = "#client_id")
     public List<Feedback_By_Client> findClientFeedback(@RequestParam UUID client_id) {
         try {
+            System.out.println("get data from db");
             return feedbackByClientRepository.findByCompositeKey(client_id);
         }
         catch (Exception e){

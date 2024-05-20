@@ -4,4 +4,4 @@ spring:
       port: 9042
       contact-points: my_cassandra
       keyspace-name: my_keyspace
-      entity-base-package: com.example.cassandra.springbootcassandrademo.model
+#      entity-base-package: com.example.cassandra.springbootcassandrademo.model

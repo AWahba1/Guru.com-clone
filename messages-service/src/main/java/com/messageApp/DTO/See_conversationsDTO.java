@@ -15,7 +15,9 @@ public class See_conversationsDTO {
     private String user_with_conversation_name;
     private Boolean chat_open;
 
-    public See_conversationsDTO(UUID user_id, Timestamp lastEdited, UUID conversation_id, UUID user_with_conversation_id, String user_name, String user_with_conversation_name, Boolean chat_open) {
+    private String user_role;
+
+    public See_conversationsDTO(UUID user_id, Timestamp lastEdited, UUID conversation_id, UUID user_with_conversation_id, String user_name, String user_with_conversation_name, Boolean chat_open,String user_role) {
         this.user_id = user_id;
         this.lastEdited = lastEdited;
         this.conversation_id = conversation_id;
@@ -23,6 +25,7 @@ public class See_conversationsDTO {
         this.user_name = user_name;
         this.user_with_conversation_name = user_with_conversation_name;
         this.chat_open = chat_open;
+        this.user_role = user_role;
     }
 
     public UUID getUser_id() {
@@ -81,6 +84,15 @@ public class See_conversationsDTO {
         this.chat_open = chat_open;
     }
 
+
+    public String getUser_role() {
+        return user_role;
+    }
+
+    public void setUser_role(String user_role) {
+        this.user_role = user_role;
+    }
+
     public static See_conversations buildSee_converstions(See_conversationsDTO seeConversationsDTO){
         See_conversations seeConversations = new See_conversations(
                 seeConversationsDTO.getUser_id(),
@@ -89,7 +101,8 @@ public class See_conversationsDTO {
                 seeConversationsDTO.getUser_with_conversation_id(),
                 seeConversationsDTO.getUser_name(),
                 seeConversationsDTO.getUser_with_conversation_name(),
-                seeConversationsDTO.chat_open
+                seeConversationsDTO.chat_open,
+                seeConversationsDTO.getUser_role()
         );
         return seeConversations;
 
