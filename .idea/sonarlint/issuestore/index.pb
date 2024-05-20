@@ -128,3 +128,17 @@ Nmessages-service/src/main/java/com/messageApp/messaging/NewMessageSentDTO.java
 _notification-service/src/main/java/com/guru/notificationservice/messages/NewMessageSentDTO.java,d\5\d53490b2fef5d261af8772b683c841195ec6b88a
 P
  database/SQL/Jobs/005-Tables.sql,b\9\b91bca9e03ec5312996d63a688c7a72cc2384635
+s
+Cmessages-service/src/main/java/com/messageApp/logger/AppLogger.java,a\4\a4b04b8b5176229e46b2e627bdfc6b9c1ce5e6c6
+Å
+Qfreelancer-service/src/main/java/com/guru/freelancerservice/logger/AppLogger.java,4\1\4111794ad4c456f66d181f70a86c66ff0b43f8ff
+K
+messages-service/.gitignore,2\2\22a582febdbbba3c5d88685af730794b9b384f9e
+O
+messages-service/.gitattributes,8\5\8515b3019831df6ff2091c1078eff3eab7b56986
+B
+MessageAppLogs.txt,9\3\937691c13d3db7f2c347f993bd72ae1e36035e0b
+t
+Dfeedback-service/src/main/java/com/feedbackApp/logger/AppLogger.java,e\5\e5c683d2f5eb83f630519aa4d0f68dc6a9ab48ab
+C
+feedbackAppLogs.txt,d\6\d6823ee59adf3fbe3ff58a7afbf19ffc651169bb
