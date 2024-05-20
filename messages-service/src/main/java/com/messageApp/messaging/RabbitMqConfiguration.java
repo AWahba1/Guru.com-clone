@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMqConfiguration {
 
     @Bean
-    public Queue viewProfile() {
-        return new Queue("view_profile_queue");}
+    public Queue messageSent() {
+        return new Queue("new_message_sent");}
 
     @Bean
     public MessageConverter jsonMessageConverter() {

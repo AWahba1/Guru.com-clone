@@ -7,18 +7,16 @@ import com.messageApp.Models.Message;
 import com.messageApp.Models.See_conversations;
 
 import com.messageApp.Models.messagePrimaryKey;
+import com.messageApp.messaging.NewMessageSentDTO;
+import com.messageApp.messaging.ViewProfileMessageProducer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,7 +28,15 @@ public class MessageService {
     @Autowired
     private See_conversationsRepository seeRepository;
 
-    private List<Message> cachedMessages = new ArrayList<>();
+    @Autowired
+    private final ViewProfileMessageProducer viewProfileMessageProducer;
+
+    public MessageService(ViewProfileMessageProducer viewProfileMessageProducer) {
+        this.viewProfileMessageProducer = viewProfileMessageProducer;
+    }
+
+//    private List<Message> cachedMessages = new ArrayList<>();
+
 
     public Message buidMessageFromSee_conversations(See_conversations seeConversations, String messageText,String messageFile) {
         LocalDateTime now = LocalDateTime.now();
@@ -65,10 +71,12 @@ public class MessageService {
         Message message = buidMessageFromSee_conversations(conversationsData, messageInputDTO.getMessage_text(), messageInputDTO.getMessage_file());
 
         try {
+            viewProfileMessageProducer.sendMessage(new NewMessageSentDTO(message.getReceiver_id(), message.getSender_id(),message.getSender_name()));
             megRepository.save(message);
             return ResponseEntity.status(HttpStatus.CREATED).body(message);
 
         } catch (Exception e) {
+            System.out.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while saving the message");
         }
     }

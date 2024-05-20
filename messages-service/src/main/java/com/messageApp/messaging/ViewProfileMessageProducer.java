@@ -10,7 +10,7 @@ public class ViewProfileMessageProducer {
     public ViewProfileMessageProducer(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
-//    public void sendMessage(ViewProfileMessageDto message) {
-//        rabbitTemplate.convertAndSend("view_profile_queue", message);
-//    }
+    public void sendMessage(NewMessageSentDTO message) {
+        rabbitTemplate.convertAndSend("new_message_sent", message);
+    }
 }
