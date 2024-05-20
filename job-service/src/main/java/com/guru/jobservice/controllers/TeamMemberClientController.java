@@ -1,6 +1,6 @@
 package com.guru.jobservice.controllers;
 
-import com.guru.jobservice.model.TeamMemberClient.TeamMemberRole;
+import com.guru.jobservice.dtos.TeamMemberRequest;
 import com.guru.jobservice.services.TeamMemberClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,32 +19,26 @@ public class TeamMemberClientController {
         this.teamMemberClientService = teamMemberClientService;
     }
 
-    @PostMapping("/add/{ownerId}/{teamMemberId}/{role}/{email}")
+    @PostMapping("/{id}")
     public ResponseEntity<Object> addTeamMember(
-            @PathVariable UUID ownerId,
-            @PathVariable UUID teamMemberId,
-            @PathVariable TeamMemberRole role,
-            @PathVariable String email) {
-        return teamMemberClientService.addTeamMemberClient(ownerId, teamMemberId, role, email);
+            @PathVariable UUID id, @RequestBody TeamMemberRequest teamMemberRequest) {
+        return teamMemberClientService.addTeamMemberClient(id, teamMemberRequest);
     }
 
-    @DeleteMapping("/remove/{ownerId}/{teamMemberId}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Object> removeTeamMember(
-            @PathVariable UUID ownerId,
-            @PathVariable UUID teamMemberId) {
-        return teamMemberClientService.removeTeamMemberClient(ownerId, teamMemberId);
+            @PathVariable UUID id, @RequestBody TeamMemberRequest teamMemberRequest) {
+        return teamMemberClientService.removeTeamMemberClient(id, teamMemberRequest);
     }
 
-    @PutMapping("/edit-role/{ownerId}/{teamMemberId}/{newRole}")
+    @PutMapping("/update-role/{id}")
     public ResponseEntity<Object> editTeamMemberRole(
-            @PathVariable UUID ownerId,
-            @PathVariable UUID teamMemberId,
-            @PathVariable TeamMemberRole newRole) {
-        return teamMemberClientService.editTeamMemberRoleClient(ownerId, teamMemberId, newRole);
+            @PathVariable UUID id, @RequestBody TeamMemberRequest teamMemberRequest) {
+        return teamMemberClientService.editTeamMemberRoleClient(id, teamMemberRequest);
     }
 
-    @GetMapping("/view/{ownerId}")
-    public ResponseEntity<Object> viewTeamMembers(@PathVariable UUID ownerId) {
-        return teamMemberClientService.viewTeamMembersClient(ownerId);
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> viewTeamMembers(@PathVariable UUID id) {
+        return teamMemberClientService.viewTeamMembersClient(id);
     }
 }

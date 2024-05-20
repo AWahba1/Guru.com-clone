@@ -256,12 +256,10 @@ CREATE TABLE saved_searches (
     not_applied BOOLEAN DEFAULT NULL
 );
 
-CREATE TYPE team_member_role_client AS ENUM ('ADMINISTRATOR', 'MANAGER', 'COORDINATOR');
-
 CREATE TABLE team_members_client (
     owner_id UUID REFERENCES users(id) ON DELETE CASCADE,
     team_member_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    role team_member_role_client NOT NULL,
+    role VARCHAR(20) NOT NULL,
     email VARCHAR(255) NOT NULL,
     PRIMARY KEY (owner_id, team_member_id)
 );

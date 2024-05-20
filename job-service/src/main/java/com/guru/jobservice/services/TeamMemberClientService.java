@@ -1,14 +1,14 @@
 package com.guru.jobservice.services;
 
 import com.guru.jobservice.dtos.TeamMemberClientView;
-import com.guru.jobservice.model.TeamMemberClient;
-import com.guru.jobservice.model.TeamMemberClient.TeamMemberRole;
+import com.guru.jobservice.dtos.TeamMemberRequest;
 import com.guru.jobservice.repositories.TeamMemberClientRepository;
 import com.guru.jobservice.response.ResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 import java.util.UUID;
@@ -25,28 +25,42 @@ public class TeamMemberClientService {
         this.emailService = emailService;
     }
 
-    public ResponseEntity<Object> addTeamMemberClient(UUID ownerId, UUID teamMemberId, TeamMemberRole role, String email) {
+    public ResponseEntity<Object> addTeamMemberClient(UUID ownerId, TeamMemberRequest teamMemberRequest) {
         try {
-            teamMemberClientRepository.addTeamMemberClient(ownerId, teamMemberId, role, email);
-            emailService.sendEmail(email, "Team Invitation", "You have been invited to work with owner ID: " + ownerId);
+            if (!teamMemberRequest.getRole().equals("ADMINISTRATOR") &&
+                    !teamMemberRequest.getRole().equals("MANAGER") &&
+                    !teamMemberRequest.getRole().equals("COORDINATOR")) {
+                return ResponseHandler.generateErrorResponse("Role must be ADMINISTRATOR or MANAGER or COORDINATOR", HttpStatus.NOT_ACCEPTABLE);
+            }
+        teamMemberClientRepository.addTeamMemberClient(
+                ownerId,
+                teamMemberRequest.getMemberId(),
+                teamMemberRequest.getRole(),
+                teamMemberRequest.getEmail()
+        );
             return ResponseHandler.generateGeneralResponse("Team member added successfully", HttpStatus.OK);
         } catch (Exception e) {
             return ResponseHandler.generateErrorResponse("Error adding team member: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    public ResponseEntity<Object> removeTeamMemberClient(UUID ownerId, UUID teamMemberId) {
+    public ResponseEntity<Object> removeTeamMemberClient(UUID ownerId, TeamMemberRequest teamMemberRequest) {
         try {
-            teamMemberClientRepository.removeTeamMemberClient(ownerId, teamMemberId);
+            teamMemberClientRepository.removeTeamMemberClient(ownerId, teamMemberRequest.getMemberId());
             return ResponseHandler.generateGeneralResponse("Team member removed successfully", HttpStatus.OK);
         } catch (Exception e) {
             return ResponseHandler.generateErrorResponse("Error removing team member: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    public ResponseEntity<Object> editTeamMemberRoleClient(UUID ownerId, UUID teamMemberId, TeamMemberRole newRole) {
+    public ResponseEntity<Object> editTeamMemberRoleClient(UUID ownerId, TeamMemberRequest teamMemberRequest) {
         try {
-            teamMemberClientRepository.editTeamMemberRoleClient(ownerId, teamMemberId, newRole);
+            if (!teamMemberRequest.getRole().equals("ADMINISTRATOR") &&
+                    !teamMemberRequest.getRole().equals("MANAGER") &&
+                    !teamMemberRequest.getRole().equals("COORDINATOR")) {
+                return ResponseHandler.generateErrorResponse("Role must be ADMINISTRATOR or MANAGER or COORDINATOR", HttpStatus.NOT_ACCEPTABLE);
+            }
+            teamMemberClientRepository.editTeamMemberRoleClient(ownerId, teamMemberRequest.getMemberId(), teamMemberRequest.getRole());
             return ResponseHandler.generateGeneralResponse("Team member role updated successfully", HttpStatus.OK);
         } catch (Exception e) {
             return ResponseHandler.generateErrorResponse("Error updating team member role: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

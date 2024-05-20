@@ -28,9 +28,8 @@ public class TeamMemberClient {
     @JoinColumn(name = "team_member_id", referencedColumnName = "id", nullable = false)
     private User teamMember;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-    private TeamMemberRole role;
+    private String role;
 
     @Column(name = "email", nullable = false)
     private String email;
@@ -41,12 +40,6 @@ public class TeamMemberClient {
     public static class TeamMemberClientId implements Serializable {
         private UUID owner;
         private UUID teamMember;
-    }
-
-    public enum TeamMemberRole {
-        ADMINISTRATOR,
-        MANAGER,
-        COORDINATOR
     }
 
     @Data
