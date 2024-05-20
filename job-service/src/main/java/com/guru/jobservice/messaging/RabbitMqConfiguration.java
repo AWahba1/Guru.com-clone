@@ -1,4 +1,4 @@
-package com.guru.notificationservice.messaging;
+package com.guru.jobservice.messaging;
 
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -11,11 +11,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMqConfiguration {
-
-    @Bean
-    public Queue viewProfile() {
-        return new Queue("view_profile_queue");
-    }
 
     @Bean
     public Queue jobInvitation() {
