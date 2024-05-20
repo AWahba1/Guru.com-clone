@@ -19,10 +19,10 @@ private final NotificationsRepository notificationsRepository;
 
     @RabbitListener(queues = "new_message_sent")
     public void consumeMessage(NewMessageSentDTO message) {
-        notificationsRepository.save(new Notifications(message.getUserId(), message.getSenderId(), message.getSenderName()+" has sent a message.",  new Timestamp(System.currentTimeMillis()), false));
+        notificationsRepository.save(new Notification(message.getUserId(), message.getSenderId(), message.getSenderName()+" has sent a message.",  new Timestamp(System.currentTimeMillis()), false));
+    }
     @RabbitListener(queues = "view_profile_queue")
     public void consumeMessage(ViewProfileMessageDto message) {
         notificationsRepository.save(new Notification( message.getUserId() , message.getViewerName()+" has viewed your profile", new Timestamp(System.currentTimeMillis()), false));
-    }
     }
 }
