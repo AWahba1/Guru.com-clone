@@ -33,24 +33,23 @@ spec:
               value: postgres
             - name: POSTGRES_USER
               value: postgres
-          image: postgres:latest
+          image: minamo0o2/scalabol:custom-postgres
           name: postgres
           ports:
             - containerPort: 5432
               hostPort: 5432
               protocol: TCP
           resources: {}
-          volumeMounts:
-            - mountPath: ./postgres:/var/lib/postgresql/data
-              name: postgres-claim0
-            - mountPath: ./database/SQL/Jobs:/docker-entrypoint-initdb.d/
-              name: postgres-claim1
+#          volumeMounts:
+#            - mountPath: /var/lib/postgresql/data
+#              name: postgres-claim0
+#            - mountPath: /docker-entrypoint-initdb.d/
+#              name: postgres-claim1
       restartPolicy: Always
-      volumes:
-        - name: postgres-claim0
-          persistentVolumeClaim:
-            claimName: postgres-claim0
-        - name: postgres-claim1
-          persistentVolumeClaim:
-            claimName: postgres-claim1
-status: {}
+#      volumes:
+#        - name: postgres-claim0
+#          persistentVolumeClaim:
+#            claimName: postgres-claim0
+#        - name: postgres-claim1
+#          persistentVolumeClaim:
+#            claimName: postgres-claim1

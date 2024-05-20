@@ -36,4 +36,3 @@ spec:
               protocol: TCP
           resources: {}
       restartPolicy: Always
-status: {}

@@ -16,10 +16,8 @@ spec:
     - name: "15672"
       port: 15672
       targetPort: 15672
-  type: NodePort
+#  type: NodePort
 
   selector:
     io.kompose.service: rabbitmq
     app: rabbitmq
-status:
-  loadBalancer: {}

@@ -4,7 +4,6 @@ metadata:
   annotations:
     kompose.cmd: C:\Users\minam\AppData\Local\Microsoft\WinGet\Packages\Kubernetes.kompose_Microsoft.Winget.Source_8wekyb3d8bbwe\kompose.exe convert -f docker-compose.yaml
     kompose.version: 1.31.2 (a92241f79)
-  creationTimestamp: null
   labels:
     io.kompose.service: pgadmin
   name: pgadmin
@@ -13,13 +12,11 @@ spec:
   selector:
     matchLabels:
       io.kompose.service: pgadmin
-  strategy: {}
   template:
     metadata:
       annotations:
         kompose.cmd: C:\Users\minam\AppData\Local\Microsoft\WinGet\Packages\Kubernetes.kompose_Microsoft.Winget.Source_8wekyb3d8bbwe\kompose.exe convert -f docker-compose.yaml
         kompose.version: 1.31.2 (a92241f79)
-      creationTimestamp: null
       labels:
         io.kompose.network/shared-network: "true"
         io.kompose.service: pgadmin
@@ -34,8 +31,6 @@ spec:
           name: pgadmin
           ports:
             - containerPort: 80
-              hostPort: 8080
               protocol: TCP
           resources: {}
       restartPolicy: Always
-status: {}
