@@ -759,7 +759,7 @@ RETURNS TABLE (
     team_member_id UUID,
     role VARCHAR(20),
     email VARCHAR,
-    user_id UUID,
+    user_id UUID
 )
 LANGUAGE plpgsql
 AS $$
