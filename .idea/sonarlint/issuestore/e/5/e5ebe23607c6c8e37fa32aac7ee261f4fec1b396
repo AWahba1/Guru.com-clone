@@ -1,0 +1,9 @@
+
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(‘‰‚£
+Q	java:S125"<This block of commented-out lines of code should be removed.(–˜µî
+o	java:S115
+"ZRename this constant name to match the regular expression '^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$'.(•¿Ž¸
+Q	java:S125"<This block of commented-out lines of code should be removed.(Â‡Ë½
+J
+java:S1068
+"4Remove this unused "serialversionUID" private field.(•¿Ž¸

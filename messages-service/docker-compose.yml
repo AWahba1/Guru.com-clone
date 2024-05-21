@@ -1,16 +1,37 @@
+networks:
+  shared_network:
+    driver: bridge
 services:
+  messsaging-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9001:8082"
+    depends_on:
+      - redis-server
+      - my_cassandra
+    networks:
+      - shared_network
+
   my_cassandra:
     image: cassandra
     container_name: my_cassandra
     ports:
       - "9042:9042"
-  redis:
+    networks:
+      - shared_network
+  redis-server:
     image: 'redis:latest'
     ports:
       - '6379:6379'
+    networks:
+      - shared_network
   rabbitmq:
     image: 'rabbitmq:3-management'
     container_name: rabbitmq
     ports:
       - '5672:5672'
       - '15672:15672'
+    networks:
+      - shared_network

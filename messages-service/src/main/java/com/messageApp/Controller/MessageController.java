@@ -23,8 +23,12 @@ import java.util.*;
 @RestController
 @RequestMapping("/message")
 public class MessageController {
-    @Autowired
+
     private MessageService messageService;
+    @Autowired
+    public MessageController(MessageService messageService) {
+        this.messageService = messageService;
+    }
 
     @PostMapping
     public ResponseEntity<?> saveMessage(@Valid @RequestBody MessageInputDTO messageInputDTO) {

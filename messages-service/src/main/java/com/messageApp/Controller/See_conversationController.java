@@ -17,8 +17,12 @@ import java.util.*;
 @RestController
 @RequestMapping("/conversation")
 public class See_conversationController {
-    @Autowired
+
     private See_conversationService seeConversationService;
+    @Autowired
+    public See_conversationController(See_conversationService seeConversationService) {
+        this.seeConversationService = seeConversationService;
+    }
 
     @PostMapping("/AddConversation")
     public ResponseEntity<?> saveConversation(@RequestBody See_conversationsDTO see_conversationsDTO) {

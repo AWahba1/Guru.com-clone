@@ -1,0 +1,42 @@
+
+f	java:S117!"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Å€¶Ş
+f	java:S117!"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Å€¶Ş
+f	java:S117!"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Å€¶Ş
+f	java:S117!"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Å€¶Ş
+f	java:S117!"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Å€¶Ş
+f	java:S117!"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Å€¶Ş
+f	java:S117!"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Å€¶Ş
+k	java:S1170"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(œ’øşÿÿÿÿ
+k	java:S1178"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ü…¶›ûÿÿÿÿ
+f	java:S117@"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(½¡Ö…
+f	java:S117H"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(½ñé†
+f	java:S117P"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ïÎÁæ
+f	java:S117X"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÏïÿÃ
+f	java:S117`"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(›ÑÓĞ
+b	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(ƒÚ•ó
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(çò‘ûÿÿÿÿ
+k	java:S116"QRename this field "job_id" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÑŞæ£ÿÿÿÿÿ
+o	java:S116"URename this field "created_at" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(„ÒÍöüÿÿÿÿ
+k	java:S116"VRename this field "feedback_id" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(”ÚÉ€
+n	java:S116"TRename this field "client_id" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(øÈŞ©øÿÿÿÿ
+l	java:S116"XRename this field "freelancer_id" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÜŠ”5
+k	java:S116"VRename this field "client_name" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(”ß€Ä
+n	java:S116"TRename this field "job_title" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ÿ¥ùíûÿÿÿÿ
+V	java:S107!"AConstructor has 8 parameters, which is greater than 7 authorized.(Å€¶Ş
+h	java:S100,"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(‰š¬…ıÿÿÿÿ
+h	java:S1000"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(œ’øşÿÿÿÿ
+c	java:S1004"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(æ¯ñ
+h	java:S1008"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ü…¶›ûÿÿÿÿ
+c	java:S100<"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(³£ˆÌ
+c	java:S100@"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(½¡Ö…
+c	java:S100D"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ü¯ÕÇ
+c	java:S100H"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(½ñé†
+c	java:S100L"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ù’£
+c	java:S100P"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ïÎÁæ
+c	java:S100T"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(àçŸ¹
+c	java:S100X"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÏïÿÃ
+h	java:S100\"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ïâñ˜úÿÿÿÿ
+c	java:S100`"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(›ÑÓĞ
+S
+java:S1128
+"1Remove this unused import 'java.io.Serializable'.(èãîÂÿÿÿÿÿ8Â“æù1

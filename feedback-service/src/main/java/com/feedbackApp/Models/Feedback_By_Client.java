@@ -1,5 +1,6 @@
 package com.feedbackApp.Models;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -15,7 +16,8 @@ import java.util.UUID;
 @Table(name = "Feedback_By_Client")
 @IdClass(Feedback_By_Client_Pkey.class)
 @Data
-public class Feedback_By_Client implements Serializable {
+@Builder
+public class Feedback_By_Client  {
     @Id
     UUID client_id;
 

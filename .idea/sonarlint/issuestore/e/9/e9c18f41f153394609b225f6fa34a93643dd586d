@@ -1,0 +1,10 @@
+
+t
+java:S2293<"YReplace the type specification in this constructor call with the diamond operator ("<>").(ÒÓ¾âüÿÿÿÿ
+o	java:S115"ZRename this constant name to match the regular expression '^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$'.(¯ÉÏü
+Q	java:S125 "<This block of commented-out lines of code should be removed.(âİ€ş
+V	java:S125%"<This block of commented-out lines of code should be removed.(ñ±©¥øÿÿÿÿ
+h	java:S100,"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ûúÚÅúÿÿÿÿ
+V	java:S125@"<This block of commented-out lines of code should be removed.(ƒ¿§‚øÿÿÿÿ
+9
+java:S1128	"Remove this duplicated import.(Éñ³Şøÿÿÿÿ

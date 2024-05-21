@@ -5,10 +5,12 @@ import com.messageApp.Models.See_conv_PrimaryKey;
 import com.messageApp.Models.See_conversations;
 import org.springframework.data.cassandra.repository.CassandraRepository;
 import org.springframework.data.cassandra.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
 
+@Repository
 public interface See_conversationsRepository extends CassandraRepository<See_conversations, See_conv_PrimaryKey> {
     @Query("SELECT * FROM see_conversations WHERE user_id = ?0")
     List<See_conversations> findByCompositeKey(UUID user_id);

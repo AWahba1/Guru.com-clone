@@ -6,12 +6,13 @@ import com.messageApp.Models.Message;
 import com.messageApp.Models.messagePrimaryKey;
 import org.springframework.data.cassandra.repository.CassandraRepository;
 import org.springframework.data.cassandra.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
-
+@Repository
 public interface MessagesRepository extends CassandraRepository<Message, messagePrimaryKey> {
     @Query("SELECT * FROM message WHERE conversation_id = ?0 ORDER BY sent_at DESC")
     List<Message> findByCompositeKey(UUID conversationId);

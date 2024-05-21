@@ -40,9 +40,11 @@ public class FeedbackController {
     public ResponseEntity<?> CreateFeedback(@Valid @RequestBody FeedbackDTO feedbackDTO)
     {
         UUID feedback =UUID.randomUUID();
-        Feedback_By_Freelancer feedbackByFreelancer =feedbackService.fromDTOFreelancer(feedbackDTO,feedback);
-        Feedback_By_Client feedbackByClient = feedbackService.fromDTOClient(feedbackDTO,feedback);
-        Feedback_By_Project feedbackByProject = feedbackService.fromDTOProject(feedbackDTO,feedback);
+        LocalDateTime now = LocalDateTime.now();
+        Timestamp timestamp = Timestamp.valueOf(now);
+        Feedback_By_Freelancer feedbackByFreelancer =feedbackService.fromDTOFreelancer(feedbackDTO,feedback,timestamp);
+        Feedback_By_Client feedbackByClient = feedbackService.fromDTOClient(feedbackDTO,feedback,timestamp);
+        Feedback_By_Project feedbackByProject = feedbackService.fromDTOProject(feedbackDTO,feedback,timestamp);
 
         try {
             feedbackByFreelancerRepository.save(feedbackByFreelancer);
@@ -88,6 +90,7 @@ public class FeedbackController {
             feedbackByProjectRepository.deleteFeedbackProject(feedbackEditDTO.getJob_id(),feedbackEditDTO.getCreated_at(),feedbackEditDTO.getFeedback_id());
             return ResponseEntity.status(HttpStatus.CREATED).body("Feedback Deleted");
         } catch (Exception e){
+            System.out.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the feedback");
         }
     }
