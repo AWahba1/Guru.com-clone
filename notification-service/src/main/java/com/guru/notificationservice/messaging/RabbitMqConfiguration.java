@@ -26,6 +26,7 @@ public class RabbitMqConfiguration {
     public Queue bidPlacement() {
         return new Queue("bid_placement_queue");
     }
+    @Bean
     public Queue messageSent() {return new Queue("new_message_sent");}
 
     @Bean

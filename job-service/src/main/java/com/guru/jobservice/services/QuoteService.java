@@ -40,8 +40,8 @@ public class QuoteService {
 
     public void addQuote(QuoteRequest quoteRequest) {
         Job job = jobRepository.getJobById(quoteRequest.getJob_id());
-        bidPlacementMessageProducer.sendMessage(new BidPlacementDto(job.getClientId(), quoteRequest.getFreelancer_id(), quoteRequest.getJob_id(),
-                job.getTitle(), quoteRequest.getProposal(), quoteRequest.getBids_used(), quoteRequest.getBid_date()));
+//        bidPlacementMessageProducer.sendMessage(new BidPlacementDto(job.getClientId(), quoteRequest.getFreelancer_id(), quoteRequest.getJob_id(),
+//                job.getTitle(), quoteRequest.getProposal(), quoteRequest.getBids_used(), quoteRequest.getBid_date()));
         quoteRepository.addQuote(
                 quoteRequest.getFreelancer_id(),
                 quoteRequest.getJob_id(),
