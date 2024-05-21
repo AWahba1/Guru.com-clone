@@ -750,7 +750,7 @@ BEGIN
 END;
 $$;
 
-DROP FUNCTION IF EXISTS view_team_members_client;
+-- DROP FUNCTION IF EXISTS view_team_members_client;
 
 CREATE OR REPLACE FUNCTION view_team_members_client(
     _owner_id UUID
