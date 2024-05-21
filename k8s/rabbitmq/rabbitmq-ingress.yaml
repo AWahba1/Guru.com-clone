@@ -1,19 +1,19 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: pgadmin-ingress
+  name: rabbitmq-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
-    - host: example.local
+    - host: scalabol.rabbitmq
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: pgadmin
+                name: rabbitmq
                 port:
-                  number: 80
+                  number: 15672

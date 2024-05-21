@@ -1,9 +1,9 @@
-CREATE OR REPLACE PROCEDURE toggle_profile_visibility (IN freelancer_id uuid)
+CREATE OR REPLACE PROCEDURE toggle_profile_visibility (IN _freelancer_id uuid)
 LANGUAGE plpgsql
 AS $$
 BEGIN
     BEGIN
-        UPDATE freelancers SET visibility = NOT visibility WHERE freelancer_id = freelancer_id;
+        UPDATE freelancers SET visibility = NOT visibility WHERE id = _freelancer_id;
     EXCEPTION
         WHEN OTHERS THEN
             ROLLBACK;
@@ -33,55 +33,55 @@ AS $$
 BEGIN
     BEGIN
         IF new_freelancer_name IS NOT NULL THEN
-            UPDATE freelancers SET freelancer_name = new_freelancer_name WHERE freelancer_id = _freelancer_id;
+            UPDATE freelancers SET freelancer_name = new_freelancer_name WHERE id = _freelancer_id;
         END IF;
 
         IF new_image_url IS NOT NULL THEN
-            UPDATE freelancers SET image_url = new_image_url WHERE freelancer_id = _freelancer_id;
+            UPDATE freelancers SET image_url = new_image_url WHERE id = _freelancer_id;
         END IF;
 
         IF new_tagline IS NOT NULL THEN
-            UPDATE freelancers SET tagline = new_tagline WHERE freelancer_id = _freelancer_id;
+            UPDATE freelancers SET tagline = new_tagline WHERE id = _freelancer_id;
         END IF;
 
         IF new_bio IS NOT NULL THEN
-            UPDATE freelancers SET bio = new_bio WHERE freelancer_id = _freelancer_id;
+            UPDATE freelancers SET bio = new_bio WHERE id = _freelancer_id;
         END IF;
 
         IF new_work_terms IS NOT NULL THEN
-            UPDATE freelancers SET work_terms = new_work_terms WHERE freelancer_id = _freelancer_id;
+            UPDATE freelancers SET work_terms = new_work_terms WHERE id = _freelancer_id;
         END IF;
 
         IF new_attachments IS NOT NULL THEN
-            UPDATE freelancers SET attachments = new_attachments WHERE freelancer_id = _freelancer_id;
+            UPDATE freelancers SET attachments = new_attachments WHERE id = _freelancer_id;
         END IF;
 
         IF new_user_type IS NOT NULL THEN
-            UPDATE freelancers SET user_type = new_user_type WHERE freelancer_id = _freelancer_id;
+            UPDATE freelancers SET user_type = new_user_type WHERE id = _freelancer_id;
         END IF;
 
         IF new_website_link IS NOT NULL THEN
-            UPDATE freelancers SET website_link = new_website_link WHERE freelancer_id = _freelancer_id;
+            UPDATE freelancers SET website_link = new_website_link WHERE id = _freelancer_id;
         END IF;
 
         IF new_facebook_link IS NOT NULL THEN
-            UPDATE freelancers SET facebook_link = new_facebook_link WHERE freelancer_id = _freelancer_id;
+            UPDATE freelancers SET facebook_link = new_facebook_link WHERE id = _freelancer_id;
         END IF;
 
         IF new_linkedin_link IS NOT NULL THEN
-            UPDATE freelancers SET linkedin_link = new_linkedin_link WHERE freelancer_id = _freelancer_id;
+            UPDATE freelancers SET linkedin_link = new_linkedin_link WHERE id = _freelancer_id;
         END IF;
 
         IF new_professional_video_link IS NOT NULL THEN
-            UPDATE freelancers SET professional_video_link = new_professional_video_link WHERE freelancer_id = _freelancer_id;
+            UPDATE freelancers SET professional_video_link = new_professional_video_link WHERE id = _freelancer_id;
         END IF;
 
         IF new_company_history IS NOT NULL THEN
-            UPDATE freelancers SET company_history = new_company_history WHERE freelancer_id = _freelancer_id;
+            UPDATE freelancers SET company_history = new_company_history WHERE id = _freelancer_id;
         END IF;
 
         IF new_operating_since IS NOT NULL THEN
-            UPDATE freelancers SET operating_since = new_operating_since WHERE freelancer_id = _freelancer_id;
+            UPDATE freelancers SET operating_since = new_operating_since WHERE id = _freelancer_id;
         END IF;
     EXCEPTION
         WHEN others THEN

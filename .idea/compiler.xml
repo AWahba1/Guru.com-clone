@@ -12,6 +12,7 @@
         <module name="PaymentMS" />
         <module name="cassandraSpring" />
         <module name="MessagingMS" />
+        <module name="MessagesMS" />
         <module name="FreelancerMS" />
         <module name="Notification" />
       </profile>
@@ -24,9 +25,12 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="FreelancerMS" options="-parameters" />
+      <module name="MessagesMS" options="-parameters" />
       <module name="MessagingMS" options="-parameters" />
       <module name="Notification" options="-parameters" />
+      <module name="NotificationMS" options="-parameters" />
       <module name="PaymentMS" options="-parameters" />
+      <module name="UserMS" options="-parameters" />
       <module name="cassandraSpring" options="-parameters" />
       <module name="job-service" options="-parameters" />
       <module name="spring-boot-demo" options="-parameters" />

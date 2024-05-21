@@ -4,7 +4,6 @@ metadata:
   annotations:
     kompose.cmd: C:\Users\minam\AppData\Local\Microsoft\WinGet\Packages\Kubernetes.kompose_Microsoft.Winget.Source_8wekyb3d8bbwe\kompose.exe convert -f docker-compose.yaml
     kompose.version: 1.31.2 (a92241f79)
-  creationTimestamp: null
   labels:
     io.kompose.service: rabbitmq
   name: rabbitmq
@@ -13,11 +12,8 @@ spec:
     - name: "5672"
       port: 5672
       targetPort: 5672
-    - name: "15672"
+    - name: "http"
       port: 15672
       targetPort: 15672
-#  type: NodePort
-
   selector:
     io.kompose.service: rabbitmq
-    app: rabbitmq
