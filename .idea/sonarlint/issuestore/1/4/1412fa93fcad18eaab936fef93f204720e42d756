@@ -1,0 +1,32 @@
+
+l
+java:S11928"VDefine a constant instead of duplicating this literal "Freelancer not found" 10 times.(ê¦ß®
+j
+java:S1192Â"SDefine a constant instead of duplicating this literal "Resource not found" 5 times.(Áö¦¦
+i
+java:S1192ò"RDefine a constant instead of duplicating this literal "Service not found" 5 times.( ‚¾ù
+˜
+java:S1192ß"€Define a constant instead of duplicating this literal "Some or all of these portfolios don't belong to this freelancer" 3 times.(³œ±õ
+k	java:S1175"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(í¹¾€şÿÿÿÿ
+k	java:S1175"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(í¹¾€şÿÿÿÿ
+l	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¯ÒûÎùÿÿÿÿ
+g	java:S117©"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(£²şË
+g	java:S117³"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ê¬œœ
+g	java:S117¾"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ØÉş¤
+g	java:S117ï"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(é¹ÚÊ
+l	java:S117ù"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(êİ²Óüÿÿÿÿ
+g	java:S117ƒ"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Åã¤Å
+f	java:S117¿"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÚôıG
+l	java:S117É"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¡è×ˆùÿÿÿÿ
+l	java:S117Ó"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¨İÃıÿÿÿÿ
+l	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¿Ì³üÿÿÿÿ
+l	java:S117˜"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ÿ¾¢Åÿÿÿÿÿ
+l	java:S117¢"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(—ã¡£ùÿÿÿÿ
+l	java:S117Ç"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(àöîúıÿÿÿÿ
+l	java:S117Ñ"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ºˆ¡úùÿÿÿÿ
+g	java:S117ö"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¶Ô¿Â
+l	java:S117‘"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ªÿ¢ûÿÿÿÿ
+g	java:S117›"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ë¨ËŞ
+W	java:S125ü"<This block of commented-out lines of code should be removed.(¡ıĞÉşÿÿÿÿ
+N
+java:S1068%"3Remove this unused "quoteRepository" private field.(¥ÒµÚıÿÿÿÿ

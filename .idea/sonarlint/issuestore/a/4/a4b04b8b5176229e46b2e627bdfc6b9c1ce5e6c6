@@ -1,0 +1,12 @@
+
+?
+java:S26295"$Invoke method(s) only conditionally.(˜çÈ«şÿÿÿÿ
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(÷õøÁûÿÿÿÿ
+B
+java:S2885"'Make "dateFormat" an instance variable.(¹¹€’ûÿÿÿÿ
+]	java:S125"<This block of commented-out lines of code should be removed.(”àµòşÿÿÿÿ8©¢¯³ù1
+]	java:S125""<This block of commented-out lines of code should be removed.(’ÜŠ¹şÿÿÿÿ8î¹¯³ù1
+n
+java:S21397"XEither log this exception and handle it, or rethrow it with some contextual information.(”ı¾
+l
+java:S3457A"Q%n should be used in place of \n to produce the platform-specific line separator.(é¬À„ûÿÿÿÿ

@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -14,7 +15,7 @@ import java.util.UUID;
 @Table(name = "Feedback_By_Client")
 @IdClass(Feedback_By_Client_Pkey.class)
 @Data
-public class Feedback_By_Client {
+public class Feedback_By_Client implements Serializable {
     @Id
     UUID client_id;
 

@@ -2,17 +2,6 @@ CREATE KEYSPACE my_keyspace WITH replication = {'class': 'SimpleStrategy', 'repl
 
 USE my_keyspace;
 
-CREATE TABLE search_conversation (
-    user_id UUID,
-    conversation_id UUID,
-    user_with_conversation_id UUID,
-    user_name TEXT,
-    user_with_conversation_name TEXT,
-    lastEdited TIMESTAMP,
-    chat_open BOOLEAN,
-    PRIMARY KEY (user_id, user_with_conversation_name, lastEdited, conversation_id)
-) WITH CLUSTERING ORDER BY (user_with_conversation_name ASC, lastEdited DESC);
-
 
 CREATE TABLE message (
     conversation_id UUID,
@@ -23,6 +12,7 @@ CREATE TABLE message (
     receiver_name TEXT,
     sent_at TIMESTAMP,
     message_text TEXT,
+    message_file TEXT,
     PRIMARY KEY (conversation_id, sent_at, message_id)
 ) WITH CLUSTERING ORDER BY (sent_at DESC);
 
@@ -34,6 +24,7 @@ CREATE TABLE see_conversations (
     user_with_conversation_name TEXT,
     lastEdited TIMESTAMP,
     chat_open BOOLEAN,
+    user_role Text,
     PRIMARY KEY (user_id, conversation_id)
 );
 

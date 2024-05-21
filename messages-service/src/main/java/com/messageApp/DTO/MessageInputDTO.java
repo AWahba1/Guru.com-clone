@@ -14,13 +14,23 @@ public class MessageInputDTO {
     private UUID conversation_id;
 
 
+    private String message_file;
     private String message_text;
 
 
-    public MessageInputDTO(UUID sender_id, UUID conversation_id, String message_text) {
+    public MessageInputDTO(UUID sender_id, UUID conversation_id, String message_text,String message_file) {
         this.sender_id = sender_id;
         this.conversation_id = conversation_id;
+        this.message_file = message_file;
         this.message_text = message_text;
+    }
+
+    public String getMessage_file() {
+        return message_file;
+    }
+
+    public void setMessage_file(String message_file) {
+        this.message_file = message_file;
     }
 
     public String getMessage_text() {
