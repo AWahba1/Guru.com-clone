@@ -752,22 +752,22 @@ $$;
 
 -- DROP FUNCTION IF EXISTS view_team_members_client;
 
--- CREATE OR REPLACE FUNCTION view_team_members_client(
---     _owner_id UUID
--- )
--- RETURNS TABLE (
---     team_member_id UUID,
---     role VARCHAR(20),
---     email VARCHAR,
---     user_id UUID,
--- )
--- LANGUAGE plpgsql
--- AS $$
--- BEGIN
---     RETURN QUERY
---     SELECT tm.team_member_id, tm.role, tm.email, u.id AS user_id
---     FROM team_members_client tm
---     JOIN users u ON tm.team_member_id = u.id
---     WHERE tm.owner_id = _owner_id;
--- END;
--- $$;
+CREATE OR REPLACE FUNCTION view_team_members_client(
+    _owner_id UUID
+)
+RETURNS TABLE (
+    team_member_id UUID,
+    role VARCHAR(20),
+    email VARCHAR,
+    user_id UUID
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT tm.team_member_id, tm.role, tm.email, u.id AS user_id
+    FROM team_members_client tm
+    JOIN users u ON tm.team_member_id = u.id
+    WHERE tm.owner_id = _owner_id;
+END;
+$$;

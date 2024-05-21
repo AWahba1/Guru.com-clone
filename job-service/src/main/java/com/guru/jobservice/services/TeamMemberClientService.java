@@ -17,12 +17,10 @@ import java.util.UUID;
 public class TeamMemberClientService {
 
     private final TeamMemberClientRepository teamMemberClientRepository;
-    private final EmailService emailService;
 
     @Autowired
-    public TeamMemberClientService(TeamMemberClientRepository teamMemberClientRepository, EmailService emailService) {
+    public TeamMemberClientService(TeamMemberClientRepository teamMemberClientRepository) {
         this.teamMemberClientRepository = teamMemberClientRepository;
-        this.emailService = emailService;
     }
 
     public ResponseEntity<Object> addTeamMemberClient(UUID ownerId, TeamMemberRequest teamMemberRequest) {
