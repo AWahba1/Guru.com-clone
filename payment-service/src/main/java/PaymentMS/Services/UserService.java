@@ -4,6 +4,7 @@ import PaymentMS.Models.User;
 import PaymentMS.Repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -14,6 +15,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Cacheable(value = "userCache", key = "#user.id")
     public User createUser(User user) {
         if (user.getName() == null || user.getName().isEmpty()) {
             throw new IllegalArgumentException("Name is required.");
@@ -33,6 +35,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
+
+    @Cacheable(value = "userCache", key = "#userId")
     public User deposit(Long userId, BigDecimal amount) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -41,6 +45,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
+
+    @Cacheable(value = "userCache", key = "#userId")
     public User withdraw(Long userId, BigDecimal amount) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -57,6 +63,8 @@ public class UserService {
 //        return userRepository.findById(userId);
 //    }
 
+
+    @Cacheable(value = "userCache", key = "#userId")
     public BigDecimal getUserBalance(Long userId) {
         System.out.println("Searching for User");
         Optional<User> user = userRepository.findById(userId);
