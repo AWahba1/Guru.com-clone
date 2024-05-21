@@ -1,0 +1,20 @@
+
+\
+java:S2789"FEnsure this "Optional" could never be null and remove this null-check.(ºá
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(¼—€Ôúÿÿÿÿ
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+U
+java:S6213":Rename this variable to not match a restricted identifier.(¨œ…®ùÿÿÿÿ
+@	java:S106&"+Replace this use of System.out by a logger.(Ÿ°êÈ
+V	java:S125%"<This block of commented-out lines of code should be removed.(Ú¦Ùôüÿÿÿÿ
+V	java:S125("<This block of commented-out lines of code should be removed.(§Õ´Ùüÿÿÿÿ
+?	java:S106."+Replace this use of System.out by a logger.(‹•õ2
+E	java:S1062"+Replace this use of System.out by a logger.(œ¬‚¤şÿÿÿÿ
+Q	java:S1255"<This block of commented-out lines of code should be removed.(ïØà 
+I
+java:S18748"3Remove this use of "newInstance"; it is deprecated.(«ä›Å

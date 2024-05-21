@@ -1,10 +1,8 @@
 
-k	java:S117("QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ûô¤¢ÿÿÿÿÿ
+k	java:S117,"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ûô¤¢ÿÿÿÿÿ
 o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ÆÇ·ö
-X
-java:S6813"BRemove this field injection and use constructor injection instead.(êæÄÞ
 <
-java:S1452"&Remove usage of generic wildcard type.(¡°Žæ
+java:S1452""&Remove usage of generic wildcard type.(¡°Žæ
 H
 java:S1128"2Remove this unused import 'com.messageApp.Models'.(Çã‡»
 Z

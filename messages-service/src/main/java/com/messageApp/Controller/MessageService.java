@@ -23,17 +23,21 @@ import java.util.UUID;
 @Service
 public class MessageService {
 
-    @Autowired
+
     private MessagesRepository megRepository;
-    @Autowired
+
     private See_conversationsRepository seeRepository;
 
-    @Autowired
+
     private final ViewProfileMessageProducer viewProfileMessageProducer;
 
-    public MessageService(ViewProfileMessageProducer viewProfileMessageProducer) {
+    @Autowired
+    public MessageService(MessagesRepository megRepository, See_conversationsRepository seeRepository, ViewProfileMessageProducer viewProfileMessageProducer) {
+        this.megRepository = megRepository;
+        this.seeRepository = seeRepository;
         this.viewProfileMessageProducer = viewProfileMessageProducer;
     }
+
 
 //    private List<Message> cachedMessages = new ArrayList<>();
 

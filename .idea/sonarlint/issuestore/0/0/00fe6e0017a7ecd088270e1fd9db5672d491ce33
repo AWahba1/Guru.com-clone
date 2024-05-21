@@ -1,0 +1,34 @@
+
+a	java:S112¶"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ
+Q
+java:S1141¯"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ
+l	java:S117«"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(‘ßßÏùÿÿÿÿ
+l	java:S117Ë"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(§¢Œúÿÿÿÿ
+g	java:S117Ğ"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ù‚‚À
+X
+java:S6813)"BRemove this field injection and use constructor injection instead.(êæÄŞ
+S
+java:S18545"8Remove this useless assignment to local variable "user".(³Úß¶øÿÿÿÿ
+D
+java:S14815")Remove this unused "user" local variable.(³Úß¶øÿÿÿÿ
+E	java:S106L"+Replace this use of System.out by a logger.(ÑİÑµşÿÿÿÿ
+H
+java:S1481M"-Remove this unused "redirect" local variable.(ËŠ‚Øıÿÿÿÿ
+@	java:S106P"+Replace this use of System.out by a logger.(Ì¶¶±
+E	java:S106Q"+Replace this use of System.out by a logger.(ƒÄÑ¨øÿÿÿÿ
+E	java:S106V"+Replace this use of System.out by a logger.(£Øô°şÿÿÿÿ
+?	java:S106Z"+Replace this use of System.out by a logger.(ã»Ø>
+V	java:S125c"<This block of commented-out lines of code should be removed.(†Ñœşÿÿÿÿ
+E	java:S106g"+Replace this use of System.out by a logger.(óåèğÿÿÿÿÿ
+V	java:S125n"<This block of commented-out lines of code should be removed.(ñ¥ùšøÿÿÿÿ
+W	java:S125‡"<This block of commented-out lines of code should be removed.(ü¤Ä²úÿÿÿÿ
+W	java:S125‹"<This block of commented-out lines of code should be removed.(ƒ½…ºøÿÿÿÿ
+W	java:S125‘"<This block of commented-out lines of code should be removed.(·„Âáùÿÿÿÿ
+A	java:S106¨"+Replace this use of System.out by a logger.(œÔÏã
+A	java:S106°"+Replace this use of System.out by a logger.(ÇÊÁ—
+R	java:S125³"<This block of commented-out lines of code should be removed.(Çõ“
+W	java:S125¸"<This block of commented-out lines of code should be removed.(¨Ş®Ğşÿÿÿÿ
+W	java:S125Í"<This block of commented-out lines of code should be removed.(ôÁ‚±øÿÿÿÿ
+W	java:S125Ó"<This block of commented-out lines of code should be removed.(âÄ¨ùÿÿÿÿÿ
+R	java:S125Ø"<This block of commented-out lines of code should be removed.(ğ€Ğü
+W	java:S125Ş"<This block of commented-out lines of code should be removed.(ö¾õÇüÿÿÿÿ

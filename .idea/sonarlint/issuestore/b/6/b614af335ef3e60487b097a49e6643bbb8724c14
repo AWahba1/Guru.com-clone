@@ -1,0 +1,24 @@
+
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(‘‰‚£
+V	java:S125"<This block of commented-out lines of code should be removed.(¶öªÚþÿÿÿÿ
+@	java:S1067"+Replace this use of System.out by a logger.(ÆÀûý
+‚
+java:S1128"lRemove this unused import 'org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer'.(¤§°ù
+t
+java:S1128"YRemove this unused import 'org.springframework.data.redis.cache.RedisCacheConfiguration'.(ÏÀÉ®ûÿÿÿÿ
+x
+java:S1128"]Remove this unused import 'org.springframework.data.redis.connection.RedisConnectionFactory'.(¬ÜôÍúÿÿÿÿ
+y
+java:S1128"cRemove this unused import 'org.springframework.data.redis.connection.RedisStandaloneConfiguration'.(¾Ãå
+~
+java:S1128	"cRemove this unused import 'org.springframework.data.redis.connection.jedis.JedisConnectionFactory'.(¨ážøþÿÿÿÿ
+k
+java:S1128"URemove this unused import 'org.springframework.data.redis.core.RedisKeyValueAdapter'.(ÓþÕ‚
+‚
+java:S1128"lRemove this unused import 'org.springframework.data.redis.repository.configuration.EnableRedisRepositories'.(Þä‡
+„
+java:S1128"iRemove this unused import 'org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer'.(ˆƒ’Îþÿÿÿÿ
+v
+java:S1128"`Remove this unused import 'org.springframework.data.redis.serializer.RedisSerializationContext'.(¨ˆì
+J
+java:S1128"/Remove this unused import 'java.time.Duration'.(ëá¯‰üÿÿÿÿ

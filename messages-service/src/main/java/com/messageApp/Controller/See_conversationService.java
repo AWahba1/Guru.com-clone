@@ -16,9 +16,12 @@ import java.time.LocalDateTime;
 import java.util.*;
 @Service
 public class See_conversationService {
-    @Autowired
     private See_conversationsRepository SeeRepository;
 
+    @Autowired
+    public See_conversationService(See_conversationsRepository seeRepository) {
+        SeeRepository = seeRepository;
+    }
 
     public ResponseEntity<?> saveConversation(See_conversationsDTO see_conversationsDTO) {
         if (see_conversationsDTO.getUser_role() == null) {
