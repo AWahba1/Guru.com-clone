@@ -3,12 +3,13 @@ package PaymentMS.Services;
 import PaymentMS.DTOs.PaymentRequest;
 import PaymentMS.Models.Transaction;
 import PaymentMS.Models.User;
-import PaymentMS.RabbitMQ.PaymentProducer;
+//import PaymentMS.RabbitMQ.PaymentProducer;
 import PaymentMS.Repositories.TransactionRepository;
 import PaymentMS.Repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,8 +22,8 @@ public class TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    @Autowired
-    private PaymentProducer paymentProducer;
+//    @Autowired
+//    private PaymentProducer paymentProducer;
 
 //    @Transactional
 //    public Transaction processPayment(Long senderId, Long receiverId, BigDecimal amount) {
@@ -56,6 +57,7 @@ public class TransactionService {
 //    }
 
     @Transactional
+    @Cacheable(value = "transactionCache", key = "#transaction.id")
     public Transaction processPayment(PaymentRequest paymentRequest) {
         Long senderId = paymentRequest.getSenderId();
         Long receiverId = paymentRequest.getReceiverId();
@@ -89,6 +91,8 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
+
+    @Cacheable(value = "transactionCache", key = "#userId")
     public List<Transaction> getTransactionsByUserId(Long userId) {
         return transactionRepository.findBySenderIdOrReceiverId(userId, userId);
     }
