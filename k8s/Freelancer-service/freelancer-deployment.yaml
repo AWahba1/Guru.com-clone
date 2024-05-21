@@ -12,15 +12,20 @@ spec:
       labels:
         app: freelancer
     spec:
-      initContainers:
-        - name: init-delay
-          image: busybox
-          command: ['sh', '-c', 'sleep 30']
       containers:
         - name: freelancer
           image: minamo0o2/scalabol:freelancer-service
           ports:
             - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /actuator/health  # Ensure this endpoint exists and responds 200 OK when ready
+              port: 8080
+            initialDelaySeconds: 30  # Wait 30 seconds before starting the first readiness check
+            periodSeconds: 10  # Check readiness every 10 seconds
+            timeoutSeconds: 5  # Timeout for each check
+            successThreshold: 1  # One successful check to mark the pod as ready
+            failureThreshold: 3
           env:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/guru
