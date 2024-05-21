@@ -10,6 +10,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 
 import java.math.BigDecimal;
 
@@ -24,6 +26,7 @@ public class CreditCardService {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Cacheable(value = "cardCache", key = "#userId")
     public CreditCard addCard(Long userId, CreditCard card) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -32,6 +35,7 @@ public class CreditCardService {
         return creditCardRepository.save(card);
     }
 
+    @CacheEvict(value = "cardCache", key = "#userId")
     public void deleteCard(Long userId, Long cardId) {
         CreditCard card = creditCardRepository.findById(cardId)
                 .orElseThrow(() -> new EntityNotFoundException("Credit card not found"));
@@ -43,6 +47,8 @@ public class CreditCardService {
         creditCardRepository.delete(card);
     }
 
+
+    @Cacheable(value = "cardCache", key = "#userId")
     public List<CreditCard> getCardsByUserId(Long userId) {
         return creditCardRepository.findByUserId(userId);
     }
