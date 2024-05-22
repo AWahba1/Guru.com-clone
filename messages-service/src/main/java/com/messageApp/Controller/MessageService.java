@@ -37,94 +37,102 @@ public class MessageService {
         this.seeRepository = seeRepository;
         this.viewProfileMessageProducer = viewProfileMessageProducer;
     }
-
-
-//    private List<Message> cachedMessages = new ArrayList<>();
-
-
-    public Message buidMessageFromSee_conversations(See_conversations seeConversations, String messageText,String messageFile) {
-        LocalDateTime now = LocalDateTime.now();
-        Timestamp timestamp = Timestamp.valueOf(now);
-        return Message.builder()
-                .conversation_id(seeConversations.getConversation_id())
-                .sent_at(timestamp)
-                .message_id(UUID.randomUUID())
-                .sender_id(seeConversations.getUser_id())
-                .receiver_id(seeConversations.getUser_with_conversation_id())
-                .sender_name(seeConversations.getUser_name())
-                .receiver_name(seeConversations.getUser_with_conversation_name())
-                .message_text(messageText)
-                .message_file(messageFile)
-                .build();
+    public MessagesRepository getMegRepository(){
+        return this.megRepository;
+    }
+    public See_conversationsRepository getSeeRepository(){
+        return this.seeRepository;
     }
 
-    public ResponseEntity<?> saveMessage(MessageInputDTO messageInputDTO) {
-        List<See_conversations> s1 = seeRepository.findConversationProperty(messageInputDTO.getSender_id(), messageInputDTO.getConversation_id());
-        if (s1.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid sender_id or conversation_id");
-        }
-        See_conversations conversationsData = s1.get(0);
-
-        if (messageInputDTO.getMessage_file() == null && messageInputDTO.getMessage_text() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("message_text and message_file fields are both null");
-        }
-        if(conversationsData.getChat_open()==false){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("this chat is closed");
-        }
-
-        Message message = buidMessageFromSee_conversations(conversationsData, messageInputDTO.getMessage_text(), messageInputDTO.getMessage_file());
-
-        try {
-            viewProfileMessageProducer.sendMessage(new NewMessageSentDTO(message.getReceiver_id(), message.getSender_id(),message.getSender_name()));
-            megRepository.save(message);
-            return ResponseEntity.status(HttpStatus.CREATED).body(message);
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while saving the message");
-        }
+    public ViewProfileMessageProducer getViewProfileMessageProducer() {
+        return viewProfileMessageProducer;
     }
+    //    private List<Message> cachedMessages = new ArrayList<>();
 
 
-    public ResponseEntity<String> updateMessage(UpdateDTO dto) {
-        if (dto.getMessage_text() == null && dto.getMessage_file() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("message_text and message_file fields are both null");
-        }
-        if (dto.getMessage_text().isEmpty() && dto.getMessage_file().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("message_text and message_file fields are both empty");
-        }
-        try {
-            if (dto.getMessage_text() == null) {
-                megRepository.updateMessageFile(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_file());
-            } else if (dto.getMessage_file() == null) {
-                megRepository.updateMessageText(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_text());
-            } else {
-                megRepository.updateMessageBoth(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_text(), dto.getMessage_file());
-            }
-            return ResponseEntity.ok("Message updated successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update message");
-        }
-    }
+//    public Message buidMessageFromSee_conversations(See_conversations seeConversations, String messageText,String messageFile) {
+//        LocalDateTime now = LocalDateTime.now();
+//        Timestamp timestamp = Timestamp.valueOf(now);
+//        return Message.builder()
+//                .conversation_id(seeConversations.getConversation_id())
+//                .sent_at(timestamp)
+//                .message_id(UUID.randomUUID())
+//                .sender_id(seeConversations.getUser_id())
+//                .receiver_id(seeConversations.getUser_with_conversation_id())
+//                .sender_name(seeConversations.getUser_name())
+//                .receiver_name(seeConversations.getUser_with_conversation_name())
+//                .message_text(messageText)
+//                .message_file(messageFile)
+//                .build();
+//    }
 
-    @Cacheable(value = "messages", key = "'allMessages'")
-    public List<Message> getAllMessages() {
-        return megRepository.findAll();
-    }
+//    public ResponseEntity<?> saveMessage(MessageInputDTO messageInputDTO) {
+//        List<See_conversations> s1 = seeRepository.findConversationProperty(messageInputDTO.getSender_id(), messageInputDTO.getConversation_id());
+//        if (s1.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid sender_id or conversation_id");
+//        }
+//        See_conversations conversationsData = s1.get(0);
+//
+//        if (messageInputDTO.getMessage_file() == null && messageInputDTO.getMessage_text() == null) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("message_text and message_file fields are both null");
+//        }
+//        if(conversationsData.getChat_open()==false){
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("this chat is closed");
+//        }
+//
+//        Message message = buidMessageFromSee_conversations(conversationsData, messageInputDTO.getMessage_text(), messageInputDTO.getMessage_file());
+//
+//        try {
+//            viewProfileMessageProducer.sendMessage(new NewMessageSentDTO(message.getReceiver_id(), message.getSender_id(),message.getSender_name()));
+//            megRepository.save(message);
+//            return ResponseEntity.status(HttpStatus.CREATED).body(message);
+//
+//        } catch (Exception e) {
+//            System.out.println(e);
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while saving the message");
+//        }
+//    }
 
 
-    public List<Message> findMessageByCompositeKey(UUID conversation_id) {
-        try {
-            return megRepository.findByCompositeKey(conversation_id);
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
-    }
+//    public ResponseEntity<String> updateMessage(UpdateDTO dto) {
+//        if (dto.getMessage_text() == null && dto.getMessage_file() == null) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("message_text and message_file fields are both null");
+//        }
+//        if (dto.getMessage_text().isEmpty() && dto.getMessage_file().isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("message_text and message_file fields are both empty");
+//        }
+//        try {
+//            if (dto.getMessage_text() == null) {
+//                megRepository.updateMessageFile(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_file());
+//            } else if (dto.getMessage_file() == null) {
+//                megRepository.updateMessageText(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_text());
+//            } else {
+//                megRepository.updateMessageBoth(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_text(), dto.getMessage_file());
+//            }
+//            return ResponseEntity.ok("Message updated successfully");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update message");
+//        }
+//    }
 
-    public void deleteMessage(messagePrimaryKey mp) throws Exception {
-        megRepository.deleteByCompositeKey(mp.getConversation_id(), mp.getSent_at(), mp.getMessage_id());
-    }
+//    @Cacheable(value = "messages", key = "'allMessages'")
+//    public List<Message> getAllMessages() {
+//        return megRepository.findAll();
+//    }
+
+
+//    public List<Message> findMessageByCompositeKey(UUID conversation_id) {
+//        try {
+//            return megRepository.findByCompositeKey(conversation_id);
+//        } catch (Exception e) {
+//            System.out.println(e);
+//            return null;
+//        }
+//    }
+//
+//    public void deleteMessage(messagePrimaryKey mp) throws Exception {
+//        megRepository.deleteByCompositeKey(mp.getConversation_id(), mp.getSent_at(), mp.getMessage_id());
+//    }
 
 
 

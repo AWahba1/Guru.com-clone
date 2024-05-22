@@ -25,40 +25,69 @@ import java.util.*;
 public class MessageController {
 
     private MessageService messageService;
-    @Autowired
+
+
     public MessageController(MessageService messageService) {
         this.messageService = messageService;
+
+
     }
 
     @PostMapping
     public ResponseEntity<?> saveMessage(@Valid @RequestBody MessageInputDTO messageInputDTO) {
-        return messageService.saveMessage(messageInputDTO);
+        Command command = new SaveMessageCommand(
+                messageService.getMegRepository(),
+                messageService.getSeeRepository(),
+                messageService.getViewProfileMessageProducer(),
+                messageInputDTO
+        );
+        return command.execute();
     }
+//    public ResponseEntity<?> saveMessage(@Valid @RequestBody MessageInputDTO messageInputDTO) {
+//        return messageService.saveMessage(messageInputDTO);
+//    }
+
 
     @GetMapping("/lists")
-    public List<Message> getMessageAll() {
-        return messageService.getAllMessages();
+    public ResponseEntity<?> getMessageAll() {
+        Command command = new GetAllMessagesCommand();
+        return command.execute();
     }
+//    public List<Message> getMessageAll() {
+//        return messageService.getAllMessages();
+//    }
 
     @GetMapping("/chatMessages")
-    public List<Message> findMessageByCompositeKey(@RequestParam UUID conversation_id) {
-        return messageService.findMessageByCompositeKey(conversation_id);
+    public ResponseEntity<?> findMessageByCompositeKey(@RequestParam UUID conversation_id) {
+        Command command = new FindMessageByCompositeKeyCommand(messageService.getMegRepository(), conversation_id);
+        return command.execute();
     }
+//    public List<Message> findMessageByCompositeKey(@RequestParam UUID conversation_id) {
+//        return messageService.findMessageByCompositeKey(conversation_id);
+//    }
 
     @PutMapping("/update")
-    public ResponseEntity<String> updateMessage(@Valid @RequestBody UpdateDTO dto) {
-        return messageService.updateMessage(dto);
+    public ResponseEntity<?> updateMessage(@Valid @RequestBody UpdateDTO dto) {
+        Command command = new UpdateMessageCommand(messageService.getMegRepository(), dto);
+        return command.execute();
     }
+//    public ResponseEntity<String> updateMessage(@Valid @RequestBody UpdateDTO dto) {
+//        return messageService.updateMessage(dto);
+//    }
 
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteMessage(@RequestBody messagePrimaryKey mp) {
-        try {
-            messageService.deleteMessage(mp);
-            return ResponseEntity.ok("Message deleted successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete message");
-        }
+    public ResponseEntity<?> deleteMessage(@RequestBody messagePrimaryKey mp) {
+        Command command = new DeleteMessageCommand(messageService.getMegRepository(), mp);
+        return command.execute();
     }
+//    public ResponseEntity<String> deleteMessage(@RequestBody messagePrimaryKey mp) {
+//        try {
+//            messageService.deleteMessage(mp);
+//            return ResponseEntity.ok("Message deleted successfully");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete message");
+//        }
+//    }
 
 }
