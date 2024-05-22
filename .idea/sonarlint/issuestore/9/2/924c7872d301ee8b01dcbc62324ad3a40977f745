@@ -1,19 +1,16 @@
 
-k	java:S117,"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ûô¤¢ÿÿÿÿÿ
-o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ÆÇ·ö
-<
-java:S1452""&Remove usage of generic wildcard type.(¡°Žæ
+l	java:S1175"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÃÀß8Ò‚…ú1
+v	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ÆÇ·ö8ŽÒ‚…ú1
+C
+java:S1452&"&Remove usage of generic wildcard type.(¡°Žæ8“Ò‚…ú1
+]	java:S125#"<This block of commented-out lines of code should be removed.(Üô¹Êøÿÿÿÿ8”Ò‚…ú1
+B
+java:S1452/"&Remove usage of generic wildcard type.(£ØT8–Ò‚…ú1
+B
+java:S14525"&Remove usage of generic wildcard type.(ÃÀß8ÑØ›…ú1
 H
-java:S1128"2Remove this unused import 'com.messageApp.Models'.(Çã‡»
-Z
-java:S1128"DRemove this unused import 'com.messageApp.DTO.See_conversationsDTO'.(öƒ¨À
-Z
-java:S1128"DRemove this unused import 'com.messageApp.Models.See_conversations'.(õõ±È
-b
-java:S1128"GRemove this unused import 'org.springframework.boot.SpringApplication'.(¯ìÙÿÿÿÿÿ
-o
-java:S1128"YRemove this unused import 'org.springframework.boot.autoconfigure.SpringBootApplication'.(Ë”ÖÏ
-D
-java:S1128"/Remove this unused import 'java.sql.Timestamp'.(èò½+
-O
-java:S1128"4Remove this unused import 'java.time.LocalDateTime'.(æÃ§ƒüÿÿÿÿ
+java:S1452>"&Remove usage of generic wildcard type.(—íºÇøÿÿÿÿ8„þ®…ú1
+]	java:S125?"<This block of commented-out lines of code should be removed.(‡âÚÅýÿÿÿÿ8¹Æƒ…ú1
+H
+java:S1452I"&Remove usage of generic wildcard type.(Þ–ÄÒøÿÿÿÿ8©±…ú1
+]	java:S125J"<This block of commented-out lines of code should be removed.(ÅÒŒ¿þÿÿÿÿ8Ì‡ƒ…ú1

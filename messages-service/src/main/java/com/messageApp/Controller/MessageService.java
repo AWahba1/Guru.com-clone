@@ -75,7 +75,7 @@ public class MessageService {
         Message message = buidMessageFromSee_conversations(conversationsData, messageInputDTO.getMessage_text(), messageInputDTO.getMessage_file());
 
         try {
-            viewProfileMessageProducer.sendMessage(new NewMessageSentDTO(message.getReceiver_id(), message.getSender_id(),message.getSender_name()));
+            //viewProfileMessageProducer.sendMessage(new NewMessageSentDTO(message.getReceiver_id(), message.getSender_id(),message.getSender_name()));
             megRepository.save(message);
             return ResponseEntity.status(HttpStatus.CREATED).body(message);
 
@@ -107,7 +107,7 @@ public class MessageService {
         }
     }
 
-    @Cacheable(value = "messages", key = "'allMessages'")
+//    @Cacheable(value = "messages", key = "'allMessages'")
     public List<Message> getAllMessages() {
         return megRepository.findAll();
     }
@@ -122,43 +122,17 @@ public class MessageService {
         }
     }
 
-    public void deleteMessage(messagePrimaryKey mp) throws Exception {
-        megRepository.deleteByCompositeKey(mp.getConversation_id(), mp.getSent_at(), mp.getMessage_id());
+    public ResponseEntity deleteMessage(messagePrimaryKey mp) {
+        try {
+            megRepository.deleteByCompositeKey(mp.getConversation_id(), mp.getSent_at(), mp.getMessage_id());
+            return ResponseEntity.ok("Message deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete message");
+        }
     }
 
 
 
-//    @Cacheable(value = "messages", key = "#conversationId")
-//    public List<Message> getCachedMessages(UUID conversationId) {
-//        return cachedMessages;
-//    }
-//
-//    @CacheEvict(value = "messages", key = "#conversationId")
-//    public void clearCache(UUID conversationId) {
-//        // This method will clear the cache for the specified conversationId
-//        cachedMessages.clear();
-//    }
-//
-//    @CachePut(value = "messages", key = "#conversationId")
-//    public List<Message> cacheMessage(UUID conversationId, Message message) {
-//        // Add the new message to the cached messages
-//        cachedMessages.add(message);
-//        return cachedMessages;
-//    }
-//
-//    @Scheduled(fixedRate = 60000) // Run every minute
-//    public void processAndSaveMessages() {
-//        // Save messages to the database (batch insert or save)
-//        saveMessagesToDatabase(cachedMessages);
-//
-//        // Clear the cache after saving
-//        cachedMessages.clear();
-//    }
-//
-//    private void saveMessagesToDatabase(List<Message> messages) {
-//        // Perform batch insert or save operation to save messages to the database
-//        // Example: megRepository.saveAll(messages);
-//    }
 
 
 

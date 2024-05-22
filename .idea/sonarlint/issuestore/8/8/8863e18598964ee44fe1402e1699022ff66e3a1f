@@ -1,0 +1,6 @@
+
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(†ôô
+B
+java:S1452"&Remove usage of generic wildcard type.(ßšØ8¬­¹„ú1
+W
+java:S1128":Remove this unused import 'com.messageApp.Models.Message'.(ö¶¡ƒ8ú¿‹…ú1

@@ -7,6 +7,7 @@ import com.messageApp.DTO.UpdateDTO;
 import com.messageApp.Models.Message;
 import com.messageApp.Models.See_conversations;
 import com.messageApp.Models.messagePrimaryKey;
+import com.messageApp.command.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -31,34 +32,53 @@ public class MessageController {
     }
 
     @PostMapping
+//    public ResponseEntity<?> saveMessage(@Valid @RequestBody MessageInputDTO messageInputDTO) {
+//        return messageService.saveMessage(messageInputDTO);
+//    }
     public ResponseEntity<?> saveMessage(@Valid @RequestBody MessageInputDTO messageInputDTO) {
-        return messageService.saveMessage(messageInputDTO);
+        Command saveMessageCommand = new SaveMessageCommand(messageService, messageInputDTO);
+        CommandInvoker invoker = new CommandInvoker();
+        invoker.setCommand(saveMessageCommand);
+        invoker.executeCommand();
+        return invoker.getResponse();
     }
 
     @GetMapping("/lists")
-    public List<Message> getMessageAll() {
-        return messageService.getAllMessages();
+    public ResponseEntity<?> getMessageAll() {
+        List<Message> messages = messageService.getAllMessages();
+        return ResponseEntity.ok(messages);
     }
 
     @GetMapping("/chatMessages")
-    public List<Message> findMessageByCompositeKey(@RequestParam UUID conversation_id) {
-        return messageService.findMessageByCompositeKey(conversation_id);
+    public ResponseEntity<?> findMessageByCompositeKey(@RequestParam UUID conversation_id) {
+        Command findMessageByCompositeKeyCommand = new FindMessageByCompositeKeyCommand(messageService, conversation_id);
+        CommandInvoker invoker = new CommandInvoker();
+        invoker.setCommand(findMessageByCompositeKeyCommand);
+        invoker.executeCommand();
+        return invoker.getResponse();
     }
 
     @PutMapping("/update")
-    public ResponseEntity<String> updateMessage(@Valid @RequestBody UpdateDTO dto) {
-        return messageService.updateMessage(dto);
+    public ResponseEntity<?> updateMessage(@Valid @RequestBody UpdateDTO dto) {
+       // return messageService.updateMessage(dto);
+        Command updateMessageCommand = new UpdateMessageCommand(messageService, dto);
+        CommandInvoker invoker = new CommandInvoker();
+        invoker.setCommand(updateMessageCommand);
+        invoker.executeCommand();
+        return invoker.getResponse();
     }
 
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteMessage(@RequestBody messagePrimaryKey mp) {
-        try {
-            messageService.deleteMessage(mp);
-            return ResponseEntity.ok("Message deleted successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete message");
-        }
+    public ResponseEntity<?> deleteMessage(@RequestBody messagePrimaryKey mp) {
+//            return messageService.deleteMessage(mp);
+        Command deleteMessageCommand = new DeleteMessageCommand(messageService, mp);
+        CommandInvoker invoker = new CommandInvoker();
+        invoker.setCommand(deleteMessageCommand);
+        invoker.executeCommand();
+        return invoker.getResponse();
     }
+
+
 
 }
