@@ -3,6 +3,9 @@ import com.messageApp.Models.*;
 import com.messageApp.DTO.*;
 import com.messageApp.DTO.See_conversationsDTO;
 import com.messageApp.Models.See_conversations;
+import com.messageApp.command.Command;
+import com.messageApp.command.CommandInvoker;
+import com.messageApp.command.SaveConversationCommand;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -26,7 +29,11 @@ public class See_conversationController {
 
     @PostMapping("/AddConversation")
     public ResponseEntity<?> saveConversation(@RequestBody See_conversationsDTO see_conversationsDTO) {
-        return seeConversationService.saveConversation(see_conversationsDTO);
+        Command saveConversationCommand = new SaveConversationCommand(seeConversationService, see_conversationsDTO);
+        CommandInvoker invoker = new CommandInvoker();
+        invoker.setCommand(saveConversationCommand);
+        invoker.executeCommand();
+        return invoker.getResponse();
     }
 
     @GetMapping("/AllConversations")

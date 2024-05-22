@@ -286,3 +286,5 @@ Omessages-service/src/main/java/com/messageApp/command/UpdateMessageCommand.java
 Omessages-service/src/main/java/com/messageApp/command/DeleteMessageCommand.java,8\9\89b98d58f9f841976473424e91852eeeeb2b4694
 ‹
 [messages-service/src/main/java/com/messageApp/command/FindMessageByCompositeKeyCommand.java,7\6\76a354ef58da3352dd786e29803e53d5e342b406
+‚
+Rmessages-service/src/main/java/com/messageApp/command/SaveConversationCommand.java,a\8\a816e26e1aae8ae554d313fcbcffd1c42ef13337

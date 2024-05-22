@@ -1,25 +1,19 @@
 
 Q
 java:S3740}"/Provide the parametrized type for this generic.(«µØÍùÿÿÿÿ8¦öô„ú1
-m	java:S117t"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ûû„Ó8§öô„ú1
+m	java:S117t"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ûû„Ó8¯ó×…ú1
 J
-java:S5411G"(Use a primitive boolean expression here.(¡®»£ÿÿÿÿÿ8§öô„ú1
+java:S5411G"(Use a primitive boolean expression here.(¡®»£ÿÿÿÿÿ8°ó×…ú1
 v	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ÆÇ·ö8¨öô„ú1
-j	java:S100-"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ñ8Ôöô„ú1
-]	java:S125*"<This block of commented-out lines of code should be removed.(¬È¬Ÿÿÿÿÿÿ8Õöô„ú1
+j	java:S100-"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ñ8Éó×…ú1
+]	java:S125*"<This block of commented-out lines of code should be removed.(¬È¬Ÿÿÿÿÿÿ8Éó×…ú1
 C
-java:S1452="&Remove usage of generic wildcard type.(Ö°‚­8Ööô„ú1
+java:S1452="&Remove usage of generic wildcard type.(Ö°‚­8Ëó×…ú1
 I
-java:S1125G"'Remove the unnecessary boolean literal.(¡®»£ÿÿÿÿÿ8Øöô„ú1
-X	java:S125N"<This block of commented-out lines of code should be removed.(¬øèú8Ùöô„ú1
-L	java:S106S"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ8Ùöô„ú1
-L	java:S106x"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ8İöô„ú1
+java:S1125G"'Remove the unnecessary boolean literal.(¡®»£ÿÿÿÿÿ8Ìó×…ú1
+L	java:S106S"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ8Íó×…ú1
+L	java:S106x"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ8Ğó×…ú1
 H
-java:S1168y"+Return an empty collection instead of null.(¥¹ï8Şöô„ú1
-c
-java:S1128
-"GRemove this unused import 'com.messageApp.messaging.NewMessageSentDTO'.(½ÅA8ßöô„ú1
+java:S1168y"+Return an empty collection instead of null.(¥¹ï8Ğó×…ú1
 h
-java:S1128"KRemove this unused import 'org.springframework.cache.annotation.Cacheable'.(İºØ“8ƒÇ®…ú1
-[
-java:S1068 ">Remove this unused "viewProfileMessageProducer" private field.(öé—÷8ßöô„ú1
+java:S1128"KRemove this unused import 'org.springframework.cache.annotation.Cacheable'.(İºØ“8øÒ…ú1

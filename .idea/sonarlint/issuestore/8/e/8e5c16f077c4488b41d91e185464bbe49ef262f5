@@ -1,18 +1,8 @@
 
-r	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(šÊÌÇýÿÿÿÿ8Ô‘‡ðø1
-r	java:S117&"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(‚…åêÿÿÿÿÿ8Ô‘‡ðø1
-r	java:S117+"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ž¸Ì§ùÿÿÿÿ8Ô‘‡ðø1
-i	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(½ÙÄŒ8Ô‘‡ðø1
+r	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(šÊÌÇýÿÿÿÿ8Ô‘‡ðø1
+r	java:S117-"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(‚…åêÿÿÿÿÿ8Ô‘‡ðø1
+r	java:S1172"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ž¸Ì§ùÿÿÿÿ8Ô‘‡ðø1
+i	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(½ÙÄŒ8Ô‘‡ðø1
 v	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ÆÇ·ö8Õ‘‡ðø1
 H
-java:S1452"&Remove usage of generic wildcard type.(šÊÌÇýÿÿÿÿ8Ø‘‡ðø1
-O
-java:S1128"2Remove this unused import 'com.messageApp.Models'.(Çã‡»8†¡¦ðø1
-h
-java:S1128"KRemove this unused import 'org.springframework.cache.annotation.Cacheable'.(ÝºØ“8†¡¦ðø1
-b
-java:S1128	"@Remove this unused import 'org.springframework.http.HttpStatus'.(íŸ¤Šúÿÿÿÿ8†¡¦ðø1
-K
-java:S1128"/Remove this unused import 'java.sql.Timestamp'.(èò½+8†¡¦ðø1
-V
-java:S1128"4Remove this unused import 'java.time.LocalDateTime'.(æÃ§ƒüÿÿÿÿ8†¡¦ðø1
+java:S1452"&Remove usage of generic wildcard type.(šÊÌÇýÿÿÿÿ8Ø‘‡ðø1

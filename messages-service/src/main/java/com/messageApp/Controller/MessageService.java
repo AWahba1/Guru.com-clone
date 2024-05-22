@@ -75,7 +75,7 @@ public class MessageService {
         Message message = buidMessageFromSee_conversations(conversationsData, messageInputDTO.getMessage_text(), messageInputDTO.getMessage_file());
 
         try {
-            //viewProfileMessageProducer.sendMessage(new NewMessageSentDTO(message.getReceiver_id(), message.getSender_id(),message.getSender_name()));
+            viewProfileMessageProducer.sendMessage(new NewMessageSentDTO(message.getReceiver_id(), message.getSender_id(),message.getSender_name()));
             megRepository.save(message);
             return ResponseEntity.status(HttpStatus.CREATED).body(message);
 
