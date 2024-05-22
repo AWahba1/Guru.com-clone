@@ -1,0 +1,8 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus-admin
+rules:
+  - apiGroups: [""]
+    resources: ["services", "endpoints", "pods", "nodes"]
+    verbs: ["get", "list", "watch"]

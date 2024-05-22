@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: freelancer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: freelancer
+  template:
+    metadata:
+      labels:
+        app: freelancer
+    spec:
+      containers:
+        - name: freelancer
+          image: minamo0o2/scalabol:freelancer-service2
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /actuator/health  # Ensure this endpoint exists and responds 200 OK when ready
+              port: 8080
+            initialDelaySeconds: 30  # Wait 30 seconds before starting the first readiness check
+            periodSeconds: 10  # Check readiness every 10 seconds
+            timeoutSeconds: 5  # Timeout for each check
+            successThreshold: 1  # One successful check to mark the pod as ready
+            failureThreshold: 3
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/guru
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: postgres
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+            - name: RABBITMQ_PORT
+              value: "5672"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "750m"
