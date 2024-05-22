@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: freelancer
-          image: minamo0o2/scalabol:freelancer-service
+          image: minamo0o2/scalabol:freelancer-service2
           ports:
             - containerPort: 8080
           readinessProbe:

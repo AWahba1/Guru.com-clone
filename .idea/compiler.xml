@@ -8,7 +8,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="job-service" />
+        <module name="UserMS" />
         <module name="spring-boot-demo" />
+        <module name="NotificationMS" />
         <module name="PaymentMS" />
         <module name="cassandraSpring" />
         <module name="MessagingMS" />
