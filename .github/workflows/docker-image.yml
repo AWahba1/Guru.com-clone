@@ -25,7 +25,7 @@ jobs:
 
       - name: Build and push images
         run: |
-          IMAGE_NAMES=("testGitHubActions")
+          IMAGE_NAMES=("custom-postgress2")
           DOCKERFILES=("Dockerfile")
 
           for i in ${!IMAGE_NAMES[@]}; do
