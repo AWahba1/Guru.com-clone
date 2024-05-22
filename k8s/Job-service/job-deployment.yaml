@@ -15,16 +15,16 @@ spec:
       containers:
         - name: job
           # Change this image to your own image
-          image: minamo0o2/scalabol:freelancer-service2
+          image: minamo0o2/scalabol:job-service
           ports:
             # Change this port to your own port
-            - containerPort: 8080
+            - containerPort: 8081
           readinessProbe:
             httpGet:
               # make sure to put actuator in ur pom file
               path: /actuator/health # Ensure this endpoint exists and responds 200 OK when ready
               # Change this port to your own port
-              port: 8080
+              port: 8081
             initialDelaySeconds: 30  # Wait 30 seconds before starting the first readiness check
             periodSeconds: 10  # Check readiness every 10 seconds
             timeoutSeconds: 5  # Timeout for each check

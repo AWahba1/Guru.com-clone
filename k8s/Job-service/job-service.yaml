@@ -5,13 +5,12 @@ metadata:
   annotations:
     prometheus.io/scrape: "true"
     prometheus.io/path: /actuator/prometheus
-    prometheus.io/port: "8080"
+    prometheus.io/port: "8081"
 spec:
   selector:
     app: job
   ports:
     - protocol: TCP
-      #same port as in ingress and deployment
-      port: 8080
-      targetPort: 8080
+      port: 8081
+      targetPort: 8081
 

@@ -17,4 +17,4 @@ spec:
                 name: job
                 port:
                   # The port number of the service to route traffic to (same as in deployment.yaml)
-                  number: 8080
+                  number: 8081
