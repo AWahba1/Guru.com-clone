@@ -31,7 +31,8 @@ jobs:
           for i in ${!IMAGE_NAMES[@]}; do
             IMAGE_NAME=${IMAGE_NAMES[$i]}
             DOCKERFILE=${DOCKERFILES[$i]}
-            TAG="minamo0o2/$IMAGE_NAME:$(date +%Y%m%d%H%M%S)"
-            docker build -f $DOCKERFILE -t $TAG .
+            TAG="minamo0o2/scalabol:$IMAGE_NAME"
+            docker build . -t $IMAGE_NAME -f $DOCKERFILE
+            docker tag $IMAGE_NAME $TAG
             docker push $TAG
           done
