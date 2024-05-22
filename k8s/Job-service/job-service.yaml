@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: job
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /actuator/prometheus
+    prometheus.io/port: "8080"
+spec:
+  selector:
+    app: job
+  ports:
+    - protocol: TCP
+      #same port as in ingress and deployment
+      port: 8080
+      targetPort: 8080
+
