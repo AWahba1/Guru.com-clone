@@ -39,4 +39,4 @@ h	java:S100\"NRename this method name to match the regular expression '^[a-z][
 c	java:S100`"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(›ÑÓĞ
 S
 java:S1128
-"1Remove this unused import 'java.io.Serializable'.(èãîÂÿÿÿÿÿ8ÂÜœæù1
+"1Remove this unused import 'java.io.Serializable'.(èãîÂÿÿÿÿÿ8 ñ‰ú1

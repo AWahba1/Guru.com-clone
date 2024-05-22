@@ -1,7 +1,28 @@
 
-m	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(­Ã8Ø°§æù1
-m	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ğ¨ÈÀ8Ù°§æù1
-r	java:S117-"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(÷¯åñøÿÿÿÿ8Ù°§æù1
-v	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(•Íìï8Ù°§æù1
-V
-java:S1128"4Remove this unused import 'java.time.LocalDateTime'.(æÃ§ƒüÿÿÿÿ8¬‚¨æù1
+m	java:S117("QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(­Ã8’Ëı‹ú1
+m	java:S1175"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ğ¨ÈÀ8’Ëı‹ú1
+r	java:S117C"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(÷¯åñøÿÿÿÿ8’Ëı‹ú1
+n	java:S117ˆ"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(àÚË8’Ëı‹ú1
+n	java:S117’"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ì‚Ó8’Ëı‹ú1
+s	java:S117œ"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Åš‚ëøÿÿÿÿ8’Ëı‹ú1
+v	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(•Íìï8ğš¹‹ú1
+_
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8Ëı‹ú1
+_
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8Ëı‹ú1
+_
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8Ëı‹ú1
+B
+java:S1452Z"&Remove usage of generic wildcard type.(©ıè<8¢Ëı‹ú1
+C
+java:S1452n"&Remove usage of generic wildcard type.(ú£8£Ëı‹ú1
+C
+java:S1452}"&Remove usage of generic wildcard type.(òçÚŸ8£Ëı‹ú1
+D
+java:S1452ˆ"&Remove usage of generic wildcard type.(àÚË8¤Ëı‹ú1
+M	java:S106”"+Replace this use of System.out by a logger.(”´Òìÿÿÿÿÿ8¤Ëı‹ú1
+I
+java:S1168˜"+Return an empty collection instead of null.(¥¹ï8¤Ëı‹ú1
+M	java:S106"+Replace this use of System.out by a logger.(”´Òìÿÿÿÿÿ8¥Ëı‹ú1
+I
+java:S1168¢"+Return an empty collection instead of null.(¥¹ï8¥Ëı‹ú1

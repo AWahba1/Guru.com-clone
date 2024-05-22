@@ -1,5 +1,6 @@
 package com.feedbackApp.Controller;
 
+import com.feedbackApp.Command.*;
 import com.feedbackApp.DTO.FeedbackDTO;
 import com.feedbackApp.DTO.FeedbackEditDTO;
 import com.feedbackApp.DTO.Reports_By_JobDTO;
@@ -20,13 +21,13 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/feedback")
 public class FeedbackController {
-    @Autowired
-    private Feedback_By_FreelancerRepository feedbackByFreelancerRepository;
-    @Autowired
-    private Feedback_By_ClientRepository feedbackByClientRepository;
-
-    @Autowired
-    private  Feedback_By_ProjectRepository feedbackByProjectRepository;
+//    @Autowired
+//    private Feedback_By_FreelancerRepository feedbackByFreelancerRepository;
+//    @Autowired
+//    private Feedback_By_ClientRepository feedbackByClientRepository;
+//
+//    @Autowired
+//    private  Feedback_By_ProjectRepository feedbackByProjectRepository;
 
     @Autowired
     private FeedbackService feedbackService;
@@ -37,107 +38,64 @@ public class FeedbackController {
     private Reports_By_JobRepository reportsByJobRepository;
 
     @PostMapping("/Add")
-    public ResponseEntity<?> CreateFeedback(@Valid @RequestBody FeedbackDTO feedbackDTO)
-    {
-        UUID feedback =UUID.randomUUID();
-        LocalDateTime now = LocalDateTime.now();
-        Timestamp timestamp = Timestamp.valueOf(now);
-        Feedback_By_Freelancer feedbackByFreelancer =feedbackService.fromDTOFreelancer(feedbackDTO,feedback,timestamp);
-        Feedback_By_Client feedbackByClient = feedbackService.fromDTOClient(feedbackDTO,feedback,timestamp);
-        Feedback_By_Project feedbackByProject = feedbackService.fromDTOProject(feedbackDTO,feedback,timestamp);
+    public ResponseEntity<?> createFeedback(@Valid @RequestBody FeedbackDTO feedbackDTO) {
+        //return feedbackService.createFeedback(feedbackDTO);
+        Command createFeedbackCommand = new CreateFeedbackCommand(feedbackService, feedbackDTO);
+        CommandInvoker invoker = new CommandInvoker();
+        invoker.setCommand(createFeedbackCommand);
 
-        try {
-            feedbackByFreelancerRepository.save(feedbackByFreelancer);
-            feedbackByClientRepository.save(feedbackByClient);
-            feedbackByProjectRepository.save(feedbackByProject);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Feedback added");
-
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while saving the feedback");
-        }
+        invoker.executeCommand();
+        return invoker.getResponse();
     }
 
     @PutMapping("/Edit")
-    public ResponseEntity<?> EditFeedback(@Valid @RequestBody FeedbackEditDTO feedbackEditDTO)
-    {
-        if(feedbackEditDTO.getSatisfied()==null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("NO satisfied input is given");
-        }
-
-        System.out.println(feedbackEditDTO.getFreelancer_id());
-        System.out.println(feedbackEditDTO.getClient_id());
-        System.out.println(feedbackEditDTO.getJob_id());
-
-        try {
-            feedbackByFreelancerRepository.updateFeedbackFreelancer(feedbackEditDTO.getFreelancer_id(),feedbackEditDTO.getCreated_at(),feedbackEditDTO.getFeedback_id(),feedbackEditDTO.getSatisfied());
-            feedbackByClientRepository.updatefeedbackClient(feedbackEditDTO.getClient_id(),feedbackEditDTO.getCreated_at(),feedbackEditDTO.getFeedback_id(),feedbackEditDTO.getSatisfied());
-            feedbackByProjectRepository.updateFeedbackProject(feedbackEditDTO.getJob_id(),feedbackEditDTO.getCreated_at(),feedbackEditDTO.getFeedback_id(),feedbackEditDTO.getSatisfied());
-            return ResponseEntity.status(HttpStatus.CREATED).body("Feedback updated");
-
-        } catch (Exception e){
-            //System.out.println(e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while updating the feedback");
-        }
+    public ResponseEntity<?> editFeedback(@Valid @RequestBody FeedbackEditDTO feedbackEditDTO) {
+        // Instantiate the command with the necessary dependencies
+        Command editFeedbackCommand = new EditFeedbackCommand(feedbackService, feedbackEditDTO);
+        CommandInvoker invoker = new CommandInvoker();
+        invoker.setCommand(editFeedbackCommand);
+        invoker.executeCommand();
+        return invoker.getResponse();
     }
 
     @DeleteMapping("/Delete")
-    public ResponseEntity<?> DeleteFeedback(@Valid @RequestBody FeedbackEditDTO feedbackEditDTO)
-    {
-
-        try {
-            feedbackByFreelancerRepository.deleteFeedbackFreelancer(feedbackEditDTO.getFreelancer_id(),feedbackEditDTO.getCreated_at(),feedbackEditDTO.getFeedback_id());
-            feedbackByClientRepository.deletefeedbackClient(feedbackEditDTO.getClient_id(),feedbackEditDTO.getCreated_at(),feedbackEditDTO.getFeedback_id());
-            feedbackByProjectRepository.deleteFeedbackProject(feedbackEditDTO.getJob_id(),feedbackEditDTO.getCreated_at(),feedbackEditDTO.getFeedback_id());
-            return ResponseEntity.status(HttpStatus.CREATED).body("Feedback Deleted");
-        } catch (Exception e){
-            System.out.println(e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the feedback");
-        }
+    public ResponseEntity<?> deleteFeedback(@Valid @RequestBody FeedbackEditDTO feedbackEditDTO) {
+        Command deleteFeedbackCommand = new DeleteFeedbackCommand(feedbackService, feedbackEditDTO);
+        CommandInvoker invoker = new CommandInvoker();
+        invoker.setCommand(deleteFeedbackCommand);
+        invoker.executeCommand();
+        return invoker.getResponse();
     }
 
     @GetMapping("/FreelancerFeedback/view")
-    @Cacheable(value = "feedback",key = "#freelancer_id")
-    public List<Feedback_By_Freelancer> findFreelancerFeedback(@RequestParam UUID freelancer_id) {
-        try {
-            System.out.println("get data from db");
-            return feedbackByFreelancerRepository.findByCompositeKey(freelancer_id);
+    public ResponseEntity<List<Feedback_By_Freelancer>> findFreelancerFeedback(@RequestParam UUID freelancer_id) {
+        List<Feedback_By_Freelancer> feedbackList = feedbackService.findFreelancerFeedback(freelancer_id);
+        if (feedbackList != null) {
+            return ResponseEntity.ok(feedbackList);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-        catch (Exception e){
-            //System.out.println(e);
-            return null;
-        }
-
     }
 
-
     @GetMapping("/ClientFeedback/view")
-    @Cacheable(value = "feedback",key = "#client_id")
-    public List<Feedback_By_Client> findClientFeedback(@RequestParam UUID client_id) {
-        try {
-            System.out.println("get data from db");
-            return feedbackByClientRepository.findByCompositeKey(client_id);
+    public ResponseEntity<List<Feedback_By_Client>> findClientFeedback(@RequestParam UUID client_id) {
+        List<Feedback_By_Client> feedbackList = feedbackService.findClientFeedback(client_id);
+        if (feedbackList != null) {
+            return ResponseEntity.ok(feedbackList);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-        catch (Exception e){
-            //System.out.println(e);
-            return null;
-        }
-
     }
 
 
 
 
     @GetMapping("/ProjectFeedback/view")
-    public List<Feedback_By_Project> findMessageByCompositeKey(@RequestParam UUID job_id) {
-        try {
-            return feedbackByProjectRepository.findByCompositeKey(job_id);
-        }
-        catch (Exception e){
-            //System.out.println(e);
-            return null;
-        }
-
+    public ResponseEntity<?> findFeedbackByJobId(@RequestParam UUID job_id) {
+        return feedbackService.findFeedbackByJobId(job_id);
     }
+
+
 
     @GetMapping("/Testomonial/view")
     public List<Testomonial_By_Freelancer> findTestomonial(@RequestParam UUID freelancer_id) {
