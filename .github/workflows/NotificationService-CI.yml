@@ -2,13 +2,13 @@ name: Notification CI with Maven and Docker
 
 on:
   push:
-    branches: [ "TempBranch" ]
+    branches: [ "master" ]
     paths:
       - 'notification-service/**'
-#  pull_request:
-#    branches: [ "TempBranch" ]
-#    paths:
-#      - 'notification-service/*'
+  pull_request:
+    branches: [ "master" ]
+    paths:
+      - 'notification-service/**'
 
 jobs:
   build-and-deploy:
@@ -39,7 +39,6 @@ jobs:
           password: Za+8612085
 
       - name: Build Docker image and push to Docker Hub
-        #        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: |
           cd notification-service
           IMAGE_NAME="notification-service-ci"
@@ -48,4 +47,3 @@ jobs:
           docker build . -t $IMAGE_NAME -f $DOCKERFILE
           docker tag $IMAGE_NAME $TAG
           docker push $TAG
-#          DOCKERFILE="notification-service/Dockerfile"

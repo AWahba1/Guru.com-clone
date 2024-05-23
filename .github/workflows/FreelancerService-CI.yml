@@ -2,13 +2,13 @@ name: Freelancer CI with Maven and Docker
 
 on:
   push:
-    branches: [ "TempBranch" ]
+    branches: [ "master" ]
     paths:
-      - 'freelancer-service/*'
-#  pull_request:
-#    branches: [ "TempBranch" ]
-#    paths:
-#      - 'freelancer-service/*'
+      - 'freelancer-service/**'
+  pull_request:
+    branches: [ "master" ]
+    paths:
+      - 'freelancer-service/**'
 
 jobs:
   build-and-deploy:
@@ -39,7 +39,6 @@ jobs:
           password: Za+8612085
 
       - name: Build Docker image and push to Docker Hub
-#        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: |
           cd freelancer-service
           IMAGE_NAME="freelancer-service-ci"
