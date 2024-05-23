@@ -41,7 +41,7 @@ jobs:
       - name: Build Docker image and push to Docker Hub
         #        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: |
-          IMAGE_NAME="job-service-CI"
+          IMAGE_NAME="job-service-ci"
           TAG="minamo0o2/$IMAGE_NAME"
           DOCKERFILE="job-service/Dockerfile"
           docker build . -t $IMAGE_NAME -f $DOCKERFILE
