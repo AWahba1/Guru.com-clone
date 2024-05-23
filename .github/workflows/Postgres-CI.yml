@@ -29,7 +29,7 @@ jobs:
 
       - name: Build and push image
         run: |
-          IMAGE_NAME="custom-postgres-CI"
+          IMAGE_NAME="custom-postgres-ci"
           DOCKERFILE="Dockerfile"
           TAG="minamo0o2/scalabol:$IMAGE_NAME"
           docker build . -t $IMAGE_NAME -f $DOCKERFILE

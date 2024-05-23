@@ -44,8 +44,8 @@ jobs:
           cd notification-service
           IMAGE_NAME="notification-service-ci"
           TAG="minamo0o2/$IMAGE_NAME"
-#          DOCKERFILE="notification-service/Dockerfile"
           DOCKERFILE="Dockerfile"
           docker build . -t $IMAGE_NAME -f $DOCKERFILE
           docker tag $IMAGE_NAME $TAG
           docker push $TAG
+#          DOCKERFILE="notification-service/Dockerfile"
