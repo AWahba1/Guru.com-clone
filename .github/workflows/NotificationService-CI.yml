@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "TempBranch" ]
     paths:
-      - 'notification-service/*'
+      - 'notification-service/**'
 #  pull_request:
 #    branches: [ "TempBranch" ]
 #    paths:
