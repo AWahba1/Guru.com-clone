@@ -17,7 +17,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
      <module name="FreelancerMS (1)" target="21" />
-      <module name="notification-service" target="21" />
+      <module name="FreelancerMS (2)" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
