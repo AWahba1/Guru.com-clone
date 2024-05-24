@@ -300,6 +300,33 @@ INSERT INTO freelancers (
     ('55555555-5555-5555-5555-555555555555', 'freelancer3', 'image_url3', true, 300, 30, 40, 3000, 20, 40000, '2021-01-01 00:00:00', 'tagline3', 'bio3', 'work_terms3', ARRAY['attachment3'], 'COMPANY', 'website_link3', 'facebook_link3', 'linkedin_link3', 'professional_video_link3', 'company_history3', '2021-01-01 00:00:00'),
     ('66666666-6666-6666-6666-666666666666', 'freelancer4', 'image_url4', true, 400, 40, 50, 4000, 30, 50000, '2021-01-01 00:00:00', 'tagline4', 'bio4', 'work_terms4', ARRAY['attachment4'], 'INDIVIDUAL', 'website_link4', 'facebook_link4', 'linkedin_link4', 'professional_video_link4', 'company_history4', '2021-01-01 00:00:00');
 
+INSERT INTO freelancers (
+    id,
+    freelancer_name,
+    image_url,
+    visibility,
+    profile_views,
+    job_invitations_num,
+    available_bids,
+    all_time_earnings,
+    employers_num,
+    highest_paid,
+    membership_date,
+    tagline,
+    bio,
+    work_terms,
+    attachments,
+    user_type,
+    website_link,
+    facebook_link,
+    linkedin_link,
+    professional_video_link,
+    company_history,
+    operating_since
+) VALUES
+    ('6a5cf83d-ae15-4d6b-8a4c-9c3081c77eac', 'freelancer6', 'image_url6', true, 600, 60, 70, 6000, 50, 70000, '2021-01-01 00:00:00', 'tagline6', 'bio6', 'work_terms6', ARRAY['attachment6'], 'COMPANY', 'website_link6', 'facebook_link6', 'linkedin_link6', 'professional_video_link6', 'company_history6', '2021-01-01 00:00:00'),
+    ('a4d3b216-3a55-4fa2-b582-5e442534e987', 'freelancer7', 'image_url7', true, 700, 70, 80, 7000, 60, 80000, '2021-01-01 00:00:00', 'tagline7', 'bio7', 'work_terms7', ARRAY['attachment7'], 'INDIVIDUAL', 'website_link7', 'facebook_link7', 'linkedin_link7', 'professional_video_link7', 'company_history7', '2021-01-01 00:00:00'),
+    ('1f9c7d0f-3189-4f26-b1d6-87f2f7257c1a', 'freelancer8', 'image_url8', true, 800, 80, 90, 8000, 70, 90000, '2021-01-01 00:00:00', 'tagline8', 'bio8', 'work_terms8', ARRAY['attachment8'], 'COMPANY', 'website_link8', 'facebook_link8', 'linkedin_link8', 'professional_video_link8', 'company_history8', '2021-01-01 00:00:00');
 -- Categories
 INSERT INTO categories (id, name) VALUES
     ('77777777-7777-7777-7777-777777777777', 'Software Development'),

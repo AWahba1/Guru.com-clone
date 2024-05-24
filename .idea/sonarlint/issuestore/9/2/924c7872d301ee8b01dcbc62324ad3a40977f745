@@ -1,5 +1,19 @@
 
+l	java:S1175"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÃÀß8÷šèÙú1
 v	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ÆÇ·ö8Ò‚…ú1
+C
+java:S1452&"&Remove usage of generic wildcard type.(¡°æ8›èÙú1
+]	java:S125#"<This block of commented-out lines of code should be removed.(Üô¹Êøÿÿÿÿ8›èÙú1
+B
+java:S1452/"&Remove usage of generic wildcard type.(£ØT8”›èÙú1
+B
+java:S14525"&Remove usage of generic wildcard type.(ÃÀß8—›èÙú1
+H
+java:S1452>"&Remove usage of generic wildcard type.(—íºÇøÿÿÿÿ8™›èÙú1
+]	java:S125?"<This block of commented-out lines of code should be removed.(‡âÚÅıÿÿÿÿ8™›èÙú1
+H
+java:S1452I"&Remove usage of generic wildcard type.(Ş–ÄÒøÿÿÿÿ8››èÙú1
+]	java:S125J"<This block of commented-out lines of code should be removed.(ÅÒŒ¿şÿÿÿÿ8œ›èÙú1
 O
 java:S1128"2Remove this unused import 'com.messageApp.Models'.(Çã‡»8ÕÎÉ…ú1
 a

@@ -81,7 +81,7 @@ public class See_conversationService {
 
     public List<See_conversations> searchConversations(UUID user_id, String search) {
         try {
-            search = "%" + search + "$";
+            search = "%" + search + "%";
             return SeeRepository.searchConversations(user_id, search);
         } catch (Exception e) {
             System.out.println(e);

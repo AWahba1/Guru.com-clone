@@ -1,0 +1,10 @@
+
+k	java:S117."QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(œîñ´ıÿÿÿÿ
+k	java:S117G"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¤Ï–óıÿÿÿÿ
+}
+java:S1488K"bImmediately return this expression instead of assigning it to the temporary variable "attachment".(ƒìÃıÿÿÿÿ
+}
+java:S40876"bRemove this "close" call; closing the resource is handled automatically by the try-with-resources.(æŒÕ®ùÿÿÿÿ
+U	java:S899H";Do something with the "boolean" value returned by "delete".(²Œ­ûÿÿÿÿ
+i
+java:S4042H"NUse "java.nio.file.Files#delete" here for better messages on error conditions.(²Œ­ûÿÿÿÿ

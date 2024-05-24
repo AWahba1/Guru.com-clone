@@ -1,22 +1,22 @@
 
 d
-java:S1192"GDefine a constant instead of duplicating this literal "client" 3 times.(ñø‰Ó8ïı€ğø1
+java:S1192"GDefine a constant instead of duplicating this literal "client" 3 times.(ñø‰Ó8ï•¼İú1
 h
-java:S1192"KDefine a constant instead of duplicating this literal "freelancer" 3 times.(ñø‰Ó8ğı€ğø1
-r	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ò³«Úıÿÿÿÿ8ğı€ğø1
-r	java:S117H"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ËêŞÿûÿÿÿÿ8ğı€ğø1
-l	java:S117R"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(çÆğm8ğı€ğø1
+java:S1192"KDefine a constant instead of duplicating this literal "freelancer" 3 times.(ñø‰Ó8ğ•¼İú1
+r	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ò³«Úıÿÿÿÿ8ğ•¼İú1
+r	java:S117H"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ËêŞÿûÿÿÿÿ8ğ•¼İú1
+l	java:S117R"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(çÆğm8ğ•¼İú1
 n	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(¹Ê´àøÿÿÿÿ8ğı€ğø1
 o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ÆÇ·ö
-t	java:S116"XRename this field "SeeRepository" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(‚ôŸ¼8ş€ğø1
+t	java:S116"XRename this field "SeeRepository" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(‚ôŸ¼8–¼İú1
 H
-java:S1452"&Remove usage of generic wildcard type.(Ò³«Úıÿÿÿÿ8Îğø1
-L	java:S106L"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ8†ş€ğø1
+java:S1452"&Remove usage of generic wildcard type.(Ò³«Úıÿÿÿÿ8“–¼İú1
+L	java:S106L"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ8‡ş€ğø1
 H
-java:S1168M"+Return an empty collection instead of null.(¥¹ï8†ş€ğø1
-L	java:S106W"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ8‡ş€ğø1
+java:S1168M"+Return an empty collection instead of null.(¥¹ï8‡ş€ğø1
+L	java:S106W"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ8œ–¼İú1
 H
-java:S1168X"+Return an empty collection instead of null.(¥¹ï8‡ş€ğø1
+java:S1168X"+Return an empty collection instead of null.(¥¹ï8œ–¼İú1
 W
 java:S1128"5Remove this unused import 'jakarta.validation.Valid'.(ÀãÅ”ûÿÿÿÿ8¢™‚ğø1
 a

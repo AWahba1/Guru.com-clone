@@ -1,6 +1,19 @@
 
 Q
-java:S3740}"/Provide the parametrized type for this generic.(«µØÍùÿÿÿÿ8¦öô„ú1
+java:S3740}"/Provide the parametrized type for this generic.(«µØÍùÿÿÿÿ8£¼¼İú1
+m	java:S117t"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ûû„Ó8¦¼¼İú1
+J
+java:S5411G"(Use a primitive boolean expression here.(¡®»£ÿÿÿÿÿ8¦¼¼İú1
 v	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ÆÇ·ö8¨öô„ú1
+j	java:S100-"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ñ8Ë¼¼İú1
+]	java:S125*"<This block of commented-out lines of code should be removed.(¬È¬Ÿÿÿÿÿÿ8Ì¼¼İú1
+C
+java:S1452="&Remove usage of generic wildcard type.(Ö°‚­8Ğ¼¼İú1
+I
+java:S1125G"'Remove the unnecessary boolean literal.(¡®»£ÿÿÿÿÿ8Ò¼¼İú1
+L	java:S106S"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ8Õ¼¼İú1
+L	java:S106x"+Replace this use of System.out by a logger.(¨¶ÑÍşÿÿÿÿ8Û¼¼İú1
+H
+java:S1168y"+Return an empty collection instead of null.(¥¹ï8Ü¼¼İú1
 h
 java:S1128"KRemove this unused import 'org.springframework.cache.annotation.Cacheable'.(İºØ“8øÒ…ú1

@@ -1,0 +1,20 @@
+
+k	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ö»·„üÿÿÿÿ
+k	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ö»·„üÿÿÿÿ
+k	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ö»·„üÿÿÿÿ
+e	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Â¡ı
+f	java:S117#"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ĞåÂò
+k	java:S117+"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(±×¡Ãüÿÿÿÿ
+b	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(ÚÒÚå
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(—©à
+l	java:S116"RRename this field "user_id" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Á‰¡®úÿÿÿÿ
+t	java:S116"ZRename this field "conversation_id" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(éÛúºıÿÿÿÿ
+n	java:S116"TRename this field "chat_open" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ú—§ñûÿÿÿÿ
+h	java:S100"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.( ¦Ûüÿÿÿÿ
+b	java:S100"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Â¡ı
+h	java:S100"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(úª×úıÿÿÿÿ
+c	java:S100#"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ĞåÂò
+h	java:S100'"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¢Êú¤ûÿÿÿÿ
+h	java:S100+"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(±×¡Ãüÿÿÿÿ
+D
+java:S1128"/Remove this unused import 'java.sql.Timestamp'.(èò½+

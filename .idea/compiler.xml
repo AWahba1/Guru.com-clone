@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="job-service" />
         <module name="spring-boot-demo" />
+        <module name="mediaservice" />
         <module name="PaymentMS" />
         <module name="cassandraSpring" />
         <module name="MessagingMS" />
@@ -29,6 +30,7 @@
       <module name="PaymentMS" options="-parameters" />
       <module name="cassandraSpring" options="-parameters" />
       <module name="job-service" options="-parameters" />
+      <module name="mediaservice" options="-parameters" />
       <module name="spring-boot-demo" options="-parameters" />
     </option>
   </component>
