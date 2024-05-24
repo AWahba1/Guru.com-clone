@@ -1,32 +1,26 @@
-version: '4.0.7'
 networks:
   shared_network:
     external: true
 
 services:
-  feedback-service:
+  media-service:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "9005:8080"
+      - "9003:8082"
 #    environment:
 #      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/guru
 #      SPRING_DATASOURCE_USERNAME: postgres
 #      SPRING_DATASOURCE_PASSWORD: postgres
-    depends_on:
-      - my_cassandra
+#    depends_on:
+#      - redis-server
     networks:
       - shared_network
 
-  my_cassandra:
-    image: cassandra
-    container_name: my_cassandra
-    ports:
-      - "9042:9042"
-    networks:
-      - shared_network
-  redis:
-    image: 'redis:latest'
-    ports:
-      - '6379:6379'
+#  redis-server:
+#    image: 'redis:latest'
+#    ports:
+#      - '6379:6379'
+#    networks:
+#      - shared_network

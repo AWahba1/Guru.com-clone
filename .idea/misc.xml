@@ -7,7 +7,6 @@
         <option value="$PROJECT_DIR$/job-service/pom.xml" />
         <option value="$PROJECT_DIR$/freelancer-service/pom.xml" />
         <option value="$PROJECT_DIR$/payment-service/pom.xml" />
-        <option value="$PROJECT_DIR$/messages-service/pom.xml" />
         <option value="$PROJECT_DIR$/user-service/pom.xml" />
         <option value="$PROJECT_DIR$/notification-service/pom.xml" />
       </list>

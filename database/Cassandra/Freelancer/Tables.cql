@@ -1,5 +1,5 @@
-CREATE KEYSPACE freelancer
-WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+CREATE KEYSPACE my_keyspace WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+USE my_keyspace;
 
 CREATE TABLE Feedback_By_Freelancer (
     feedback_id UUID,
