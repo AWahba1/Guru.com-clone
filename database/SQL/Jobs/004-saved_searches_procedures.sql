@@ -169,7 +169,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT * FROM get_freelancer_saved_searches('44444444-4444-4444-4444-444444444444');
+-- SELECT * FROM get_freelancer_saved_searches('44444444-4444-4444-4444-444444444444');
 
 -- CALL drop_procedure('update_saved_search');
 CREATE OR REPLACE PROCEDURE update_saved_search(
@@ -214,24 +214,24 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CALL update_saved_search(
-	_id := '82399122-79a9-47b7-ba4a-f7c1ac76cfe4',
-	_name := 'My Updated search',
-    _search_query := 'New Search Query',
-    _category_id := '77777777-7777-7777-7777-777777777777', -- Software Development
-    _subcategory_id := '00000000-0000-0000-0000-000000000001', -- Web Development
-    _skill_id := 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', -- HTML
-    _featured_only := TRUE,
-    _payment_terms := 'fixed',
-    _location_ids := ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'], -- New York
-    _sort_order := 'newest',
-    _status_list := ARRAY['Open', 'Under Review'],
-    _verified_only := TRUE,
-    _min_employer_spend := 500,
-    _max_quotes_received := 10,
-    _not_viewed := NULL,
-    _not_applied := NULL
-);
+-- CALL update_saved_search(
+-- 	_id := '82399122-79a9-47b7-ba4a-f7c1ac76cfe4',
+-- 	_name := 'My Updated search',
+--     _search_query := 'New Search Query',
+--     _category_id := '77777777-7777-7777-7777-777777777777', -- Software Development
+--     _subcategory_id := '00000000-0000-0000-0000-000000000001', -- Web Development
+--     _skill_id := 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', -- HTML
+--     _featured_only := TRUE,
+--     _payment_terms := 'fixed',
+--     _location_ids := ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'], -- New York
+--     _sort_order := 'newest',
+--     _status_list := ARRAY['Open', 'Under Review'],
+--     _verified_only := TRUE,
+--     _min_employer_spend := 500,
+--     _max_quotes_received := 10,
+--     _not_viewed := NULL,
+--     _not_applied := NULL
+-- );
 
 
 -- CALL drop_procedure('delete_saved_search');
@@ -245,5 +245,5 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CALL delete_saved_search('11111111-1111-1111-1111-111111111111');
+-- CALL delete_saved_search('11111111-1111-1111-1111-111111111111');
 

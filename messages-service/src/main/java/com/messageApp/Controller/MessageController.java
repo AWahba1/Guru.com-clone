@@ -2,7 +2,6 @@ package com.messageApp.Controller;
 
 import com.messageApp.Models.*;
 import com.messageApp.DTO.*;
-import com.messageApp.DTO.MessageDTO;
 import com.messageApp.DTO.See_conversationsDTO;
 import com.messageApp.DTO.UpdateDTO;
 import com.messageApp.Models.Message;
@@ -25,66 +24,33 @@ import java.util.*;
 @RequestMapping("/message")
 public class MessageController {
     @Autowired
-    private MessagesRepository MegRepository;
-    @Autowired
-    private See_conversationsRepository SeeRepository;
-
-    @Autowired
     private MessageService messageService;
 
     @PostMapping
-    public ResponseEntity<?> saveMessage(@Valid @RequestBody MessageInputDTO messageInputDTO)
-    {
-
-        List<See_conversations> s1 = SeeRepository.findConversationProperty(messageInputDTO.getSender_id(),messageInputDTO.getConversation_id());
-        if(s1.isEmpty()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid sender_id or conversation_id");
-        }
-        See_conversations conversationsData =s1.get(0);
-
-        Message message = messageService.buidMessageFromSee_conversations(conversationsData,messageInputDTO.getMessage_text());
-
-        try {
-            MegRepository.save(message);
-            return ResponseEntity.status(HttpStatus.CREATED).body(message);
-
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while saving the message");
-        }
+    public ResponseEntity<?> saveMessage(@Valid @RequestBody MessageInputDTO messageInputDTO) {
+        return messageService.saveMessage(messageInputDTO);
     }
 
     @GetMapping("/lists")
     public List<Message> getMessageAll() {
-        return MegRepository.findAll();
+        return messageService.getAllMessages();
     }
 
     @GetMapping("/chatMessages")
     public List<Message> findMessageByCompositeKey(@RequestParam UUID conversation_id) {
-        try {
-            return MegRepository.findByCompositeKey(conversation_id);
-        }
-        catch (Exception e){
-            System.out.println(e);
-            return null;
-        }
-
+        return messageService.findMessageByCompositeKey(conversation_id);
     }
 
     @PutMapping("/update")
     public ResponseEntity<String> updateMessage(@Valid @RequestBody UpdateDTO dto) {
-        try {
-            MegRepository.updateMessage(dto.getConversation_id(), dto.getSent_at(), dto.getMessage_id(), dto.getMessage_text());
-            return ResponseEntity.ok("Message updated successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update message");
-        }
+        return messageService.updateMessage(dto);
     }
 
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteMessage(@RequestBody messagePrimaryKey mp) {
         try {
-            MegRepository.deleteByCompositeKey(mp.getConversation_id(), mp.getSent_at(), mp.getMessage_id());
+            messageService.deleteMessage(mp);
             return ResponseEntity.ok("Message deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete message");

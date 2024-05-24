@@ -18,6 +18,9 @@ public class RabbitMqConfiguration {
     }
 
     @Bean
+    public Queue messageSent() {return new Queue("new_message_sent");}
+
+    @Bean
     public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }

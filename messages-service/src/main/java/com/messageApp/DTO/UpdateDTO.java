@@ -18,11 +18,14 @@ public class UpdateDTO {
 
     private String message_text;
 
-    public UpdateDTO(UUID conversation_id, Timestamp sent_at, UUID message_id, String message_text) {
+    private String message_file;
+
+    public UpdateDTO(UUID conversation_id, Timestamp sent_at, UUID message_id, String message_text,String message_file) {
         this.conversation_id = conversation_id;
         this.sent_at = sent_at;
         this.message_id = message_id;
         this.message_text = message_text;
+        this.message_file = message_file;
     }
 
     public UUID getConversation_id() {
@@ -55,5 +58,13 @@ public class UpdateDTO {
 
     public void setMessage_text(String message_text) {
         this.message_text = message_text;
+    }
+
+    public String getMessage_file() {
+        return message_file;
+    }
+
+    public void setMessage_file(String message_file) {
+        this.message_file = message_file;
     }
 }

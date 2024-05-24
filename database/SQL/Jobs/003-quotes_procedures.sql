@@ -24,7 +24,7 @@ BEGIN
 END;
 $$;
 
-CALL add_quote('66666666-6666-6666-6666-666666666666'::uuid, '11111111-1111-1111-1111-111111111111'::uuid, 'werak fera5'::varchar, 47, '2024-04-30T00:20:58.390+00:00'::timestamp);
+-- CALL add_quote('66666666-6666-6666-6666-666666666666'::uuid, '11111111-1111-1111-1111-111111111111'::uuid, 'werak fera5'::varchar, 47, '2024-04-30T00:20:58.390+00:00'::timestamp);
 
 DROP PROCEDURE IF EXISTS update_quote;
 CREATE OR REPLACE PROCEDURE update_quote (
@@ -92,15 +92,15 @@ BEGIN
 END;
 $$;
 
-CALL add_quote_template(
-    '44444444-4444-4444-4444-444444444444', -- Freelancer ID
-    'Sample Template',                    -- Template Name
-    'Description for Sample Template',    -- Template Description
-    ARRAY[
-        '{"url": "https://example.com/attachment1.pdf", "filename": "attachment1.pdf"}',
-        '{"url": "https://example.com/attachment2.docx", "filename": "attachment2.docx"}'
-    ]                                     -- Attachments
-);
+-- CALL add_quote_template(
+--     '44444444-4444-4444-4444-444444444444', -- Freelancer ID
+--     'Sample Template',                    -- Template Name
+--     'Description for Sample Template',    -- Template Description
+--     ARRAY[
+--         '{"url": "https://example.com/attachment1.pdf", "filename": "attachment1.pdf"}',
+--         '{"url": "https://example.com/attachment2.docx", "filename": "attachment2.docx"}'
+--     ]                                     -- Attachments
+-- );
 
 DROP PROCEDURE IF EXISTS update_quote_template;
 CREATE OR REPLACE PROCEDURE update_quote_template (
@@ -144,15 +144,15 @@ BEGIN
 END;
 $$;
 
-CALL update_quote_template(
-    '22222222-2222-2222-2222-222222222222', -- Freelancer ID
-    'New Template',                    -- Template Name
-    'New Description',    -- Template Description
-    ARRAY[
-        '{"url": "https://example.com/attachment3.pdf", "filename": "attachment3.pdf"}',
-        '{"url": "https://example.com/attachment4.docx", "filename": "attachment4.docx"}'
-    ]                                     -- Attachments
-);
+-- CALL update_quote_template(
+--     '22222222-2222-2222-2222-222222222222', -- Freelancer ID
+--     'New Template',                    -- Template Name
+--     'New Description',    -- Template Description
+--     ARRAY[
+--         '{"url": "https://example.com/attachment3.pdf", "filename": "attachment3.pdf"}',
+--         '{"url": "https://example.com/attachment4.docx", "filename": "attachment4.docx"}'
+--     ]                                     -- Attachments
+-- );
 
 
 
@@ -259,7 +259,7 @@ END;
 $$
 LANGUAGE plpgsql;
 
-SELECT * FROM get_freelancer_quote_templates('44444444-4444-4444-4444-444444444444');
+-- SELECT * FROM get_freelancer_quote_templates('44444444-4444-4444-4444-444444444444');
 
 
 DROP FUNCTION IF EXISTS get_freelancer_job_watchlist;
@@ -302,7 +302,7 @@ END;
 $$
 LANGUAGE plpgsql;
 
-SELECT * FROM bids_usage_summary('44444444-4444-4444-4444-444444444444');
+-- SELECT * FROM bids_usage_summary('44444444-4444-4444-4444-444444444444');
 
 DROP FUNCTION IF EXISTS get_bids_usage_history;
 CREATE OR REPLACE FUNCTION get_bids_usage_history (_freelancer_id uuid)
@@ -317,7 +317,7 @@ END;
 $$
 LANGUAGE plpgsql;
 
-SELECT * FROM get_bids_usage_history('44444444-4444-4444-4444-444444444444');
+-- SELECT * FROM get_bids_usage_history('44444444-4444-4444-4444-444444444444');
 
 DROP FUNCTION IF EXISTS view_last_bids_until_threshold;
 CREATE OR REPLACE FUNCTION view_last_bids_until_threshold (_freelancer_id uuid, threshold int)
@@ -357,4 +357,4 @@ END;
 $$
 LANGUAGE plpgsql;
 
-SELECT * FROM view_last_bids_until_threshold('44444444-4444-4444-4444-444444444444', 5000);
+-- SELECT * FROM view_last_bids_until_threshold('44444444-4444-4444-4444-444444444444', 5000);

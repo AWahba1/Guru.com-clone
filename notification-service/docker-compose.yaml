@@ -4,9 +4,8 @@ networks:
 
 services:
   notification-service:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image:
+      minamo0o2/scalabol:latest
     ports:
       - "9069:8089"
     environment:

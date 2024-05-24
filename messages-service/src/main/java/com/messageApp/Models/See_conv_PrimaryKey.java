@@ -11,7 +11,7 @@ import java.util.UUID;
 //@AllArgsConstructor
 //@NoArgsConstructor
 @EqualsAndHashCode
-public class See_conv_PrimaryKey {
+public class See_conv_PrimaryKey implements Serializable {
 
     UUID user_id;
 

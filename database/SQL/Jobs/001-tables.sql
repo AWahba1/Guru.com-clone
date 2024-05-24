@@ -255,6 +255,14 @@ CREATE TABLE saved_searches (
     not_viewed BOOLEAN DEFAULT NULL,
     not_applied BOOLEAN DEFAULT NULL
 );
+
+CREATE TABLE team_members_client (
+    owner_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    team_member_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    role VARCHAR(20) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    PRIMARY KEY (owner_id, team_member_id)
+);
 	
 -- Populate tables with sample data
 -- Users
