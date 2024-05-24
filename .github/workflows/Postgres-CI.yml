@@ -4,11 +4,11 @@ on:
   push:
     branches: [ "TempBranch" ]
     paths:
-      - 'database/SQL/*'
-#  pull_request:
-#    branches: [ "TempBranch" ]
-#    paths:
-#      - 'database/SQL/*'
+      - 'database/SQL/**'
+  pull_request:
+    branches: [ "master" ]
+    paths:
+      - 'database/SQL/**'
 
 jobs:
   build:
