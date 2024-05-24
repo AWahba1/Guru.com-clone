@@ -29,8 +29,6 @@ CREATE TABLE see_conversations (
 );
 
 
-cd etc/cassandra/cassandra.yaml
-
 
 CREATE CUSTOM INDEX search_conversation_with_conversation_name_idx
 ON see_conversations(user_with_conversation_name) 
