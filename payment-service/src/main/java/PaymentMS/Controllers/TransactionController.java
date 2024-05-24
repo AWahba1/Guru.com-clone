@@ -2,6 +2,7 @@ package PaymentMS.Controllers;
 
 import PaymentMS.Models.Transaction;
 import PaymentMS.DTOs.PaymentRequest;
+//import PaymentMS.Kafka.PaymentProducer;
 import PaymentMS.RabbitMQ.PaymentProducer;
 import PaymentMS.Services.TransactionService;
 import PaymentMS.Services.UserService;
@@ -30,17 +31,17 @@ public class TransactionController {
     private PaymentProducer paymentProducer;
 
 
-    @PostMapping("/process")
-    public ResponseEntity<Transaction> processPayment(@RequestBody PaymentRequest paymentRequest) {
-        Transaction transaction = transactionService.processPayment(paymentRequest);
-        return new ResponseEntity<>(transaction, HttpStatus.CREATED);
-    }
-
 //    @PostMapping("/process")
-//    public ResponseEntity<String> processPayment(@RequestBody PaymentRequest paymentRequest) {
-//        paymentProducer.sendPayment(paymentRequest);
-//        return ResponseEntity.accepted().body("Payment processing initiated.");
+//    public ResponseEntity<Transaction> processPayment(@RequestBody PaymentRequest paymentRequest) {
+//        Transaction transaction = transactionService.processPayment(paymentRequest);
+//        return new ResponseEntity<>(transaction, HttpStatus.CREATED);
 //    }
+
+    @PostMapping("/process")
+    public ResponseEntity<String> processPayment(@RequestBody PaymentRequest paymentRequest) {
+        paymentProducer.sendPayment(paymentRequest);
+        return ResponseEntity.accepted().body("Payment processing initiated.");
+    }
 
 
     @GetMapping("/users/{userId}/transactions")

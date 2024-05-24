@@ -6,8 +6,9 @@ networks:
 
 services:
   postgres:
-    container_name: my-postgres
-    image: postgres:latest
+    container_name: postgres
+#    image: postgres:latest
+    image: postgres
     ports:
       - "5432:5432"
     environment:
@@ -22,7 +23,9 @@ services:
 
 
   rabbitmq:
-    image: rabbitmq:3-management
+#    image: rabbitmq:3-management
+    image: rabbitmq
+    container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -36,7 +39,7 @@ services:
   springapipayment:
     build: .
     image: springapipayment
-    container_name: spring-payment-app
+    container_name: payment-app
     ports:
       - "8888:8888"
     environment:
@@ -47,8 +50,44 @@ services:
       - SPRING_RABBITMQ_PORT=5672
       - SPRING_RABBITMQ_USERNAME=guest
       - SPRING_RABBITMQ_PASSWORD=guest
+#      - SPRING_REDIS_HOST=redis
+#      - SPRING_REDIS_PORT=6379
     networks:
       - payment-network
     depends_on:
       - postgres
       - rabbitmq
+
+#      - redis
+#      - kafka
+
+
+#  redis:
+#    image: redis
+#    container_name: redis
+#    ports:
+#      - "6379:6379"
+##    command: redis-server --bind 0.0.0.0
+#    networks:
+#      - payment-network
+
+
+#  kafka:
+#    image: bitnami/kafka:latest
+#    container_name: kafka
+#    ports:
+#      - "9098:9098"
+#    environment:
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      ALLOW_PLAINTEXT_LISTENER: "yes"
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9098
+#      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9098
+#
+#  zookeeper:
+#    image: bitnami/zookeeper:latest
+#    container_name: zookeeper
+#    ports:
+#      - "21888:21888"
+#    environment:
+#      ALLOW_ANONYMOUS_LOGIN: "yes"
+

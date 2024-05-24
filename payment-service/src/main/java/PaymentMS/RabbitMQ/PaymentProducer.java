@@ -23,5 +23,6 @@ public class PaymentProducer {
 
     public void sendPayment(PaymentRequest paymentRequest) {
         rabbitTemplate.convertAndSend("payments", "payment.process", paymentRequest);
+        System.out.println("Payment request sent to the queue.");
     }
 }

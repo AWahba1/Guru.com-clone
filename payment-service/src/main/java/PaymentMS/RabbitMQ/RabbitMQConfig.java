@@ -19,6 +19,32 @@ public class RabbitMQConfig {
     public Queue queue() {
         return new Queue("paymentQueue");
     }
+
+    @Bean
+    public Queue userCreateQueue() {
+        return new Queue("userCreateQueue");
+    }
+
+    @Bean
+    public Queue userTransactionsQueue() {
+        return new Queue("userTransactionsQueue");
+    }
+
+    @Bean
+    public Queue DisputeQueue() {
+        return new Queue("DisputeQueue");
+    }
+
+//    @Bean
+//    public Queue userDepositQueue() {
+//        return new Queue("userDepositQueue");
+//    }
+//
+//    @Bean
+//    public Queue userWithdrawQueue() {
+//        return new Queue("userWithdrawQueue");
+//    }
+
     @Bean
     public MessageConverter jsonMessageConverter(){
         return new Jackson2JsonMessageConverter();
@@ -39,4 +65,29 @@ public class RabbitMQConfig {
     Binding binding(Queue queue, DirectExchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with("payment.process");
     }
+
+    @Bean
+    Binding userCreateBinding(Queue userCreateQueue, DirectExchange exchange) {
+        return BindingBuilder.bind(userCreateQueue).to(exchange).with("user.create");
+    }
+
+    @Bean
+    Binding userTransactionsBinding(Queue userTransactionsQueue, DirectExchange exchange) {
+        return BindingBuilder.bind(userTransactionsQueue).to(exchange).with("user.transactions");
+    }
+
+    @Bean
+    Binding DisputeBinding(Queue userTransactionsQueue, DirectExchange exchange) {
+        return BindingBuilder.bind(userTransactionsQueue).to(exchange).with("dispute.initiate");
+    }
+
+//    @Bean
+//    Binding userDepositBinding(Queue userDepositQueue, DirectExchange exchange) {
+//        return BindingBuilder.bind(userDepositQueue).to(exchange).with("user.deposit");
+//    }
+//
+//    @Bean
+//    Binding userWithdrawBinding(Queue userWithdrawQueue, DirectExchange exchange) {
+//        return BindingBuilder.bind(userWithdrawQueue).to(exchange).with("user.withdraw");
+//    }
 }

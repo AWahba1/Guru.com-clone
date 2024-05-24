@@ -26,7 +26,7 @@ public class CreditCardService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    @Cacheable(value = "cardCache", key = "#userId")
+    //@Cacheable(value = "cardCache", key = "#userId")
     public CreditCard addCard(Long userId, CreditCard card) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -35,7 +35,7 @@ public class CreditCardService {
         return creditCardRepository.save(card);
     }
 
-    @CacheEvict(value = "cardCache", key = "#userId")
+    //@CacheEvict(value = "cardCache", key = "#userId")
     public void deleteCard(Long userId, Long cardId) {
         CreditCard card = creditCardRepository.findById(cardId)
                 .orElseThrow(() -> new EntityNotFoundException("Credit card not found"));
@@ -48,7 +48,7 @@ public class CreditCardService {
     }
 
 
-    @Cacheable(value = "cardCache", key = "#userId")
+    //@Cacheable(value = "cardCache", key = "#userId")
     public List<CreditCard> getCardsByUserId(Long userId) {
         return creditCardRepository.findByUserId(userId);
     }
@@ -64,7 +64,7 @@ public class CreditCardService {
             throw new SecurityException("Unauthorized access to credit card");
         }
 
-        // In a real scenario, We would integrate with a payment gateway here
+        // In a real scenario, We would integrate here with a payment gateway
         System.out.println("Processing payment of " + amount + " with card " + card.getCardNumber());
 
         user.setBalance(user.getBalance().add(amount));

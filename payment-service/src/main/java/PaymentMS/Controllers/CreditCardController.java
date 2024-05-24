@@ -17,16 +17,16 @@ import java.util.List;
 public class CreditCardController {
     @Autowired
     private CreditCardService creditCardService;
-    @PostMapping("/{userId}/addCard")
+    @PostMapping("/{userId}/{addCard}")
     public ResponseEntity<CreditCard> addCard(@PathVariable Long userId, @RequestBody CreditCard card) {
         CreditCard addedCard = creditCardService.addCard(userId, card);
         return new ResponseEntity<>(addedCard, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{userId}/deleteCard/{cardId}")
-    public ResponseEntity<Void> deleteCard(@PathVariable Long userId, @PathVariable Long cardId) {
+    public ResponseEntity<String> deleteCard(@PathVariable Long userId, @PathVariable Long cardId) {
         creditCardService.deleteCard(userId, cardId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>("Card Deleted Successfully",HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/myCards")

@@ -3,6 +3,7 @@ package PaymentMS.Controllers;
 import PaymentMS.DTOs.DisputeRequest;
 import PaymentMS.Models.Dispute;
 import PaymentMS.Services.DisputeService;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +16,18 @@ public class DisputeController {
     @Autowired
     private DisputeService disputeService;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    private static final String EXCHANGE = "payments";
+
+    private static final String ROUTING_KEY_CREATE_DISPUTE = "dispute.initiate";
+
     @PostMapping("/initiate/{transactionId}")
     public ResponseEntity<Dispute> initiateDispute(@PathVariable Long transactionId, @RequestBody DisputeRequest request) {
         Dispute dispute = disputeService.createDispute(transactionId, request.getInitiatorId(), request.getReason());
         return new ResponseEntity<>(dispute, HttpStatus.CREATED);
+
     }
 
     @PutMapping("/updateStatus/{disputeId}")

@@ -57,7 +57,7 @@ public class TransactionService {
 //    }
 
     @Transactional
-    @Cacheable(value = "transactionCache", key = "#transaction.id")
+    //@Cacheable(value = "transactionCache", key = "#transaction.id", condition = "#transaction.id != null")
     public Transaction processPayment(PaymentRequest paymentRequest) {
         Long senderId = paymentRequest.getSenderId();
         Long receiverId = paymentRequest.getReceiverId();
@@ -89,10 +89,11 @@ public class TransactionService {
         transaction.setTimestamp(LocalDateTime.now());
 
         return transactionRepository.save(transaction);
+
     }
 
 
-    @Cacheable(value = "transactionCache", key = "#userId")
+    //@Cacheable(value = "transactionCache", key = "#userId")
     public List<Transaction> getTransactionsByUserId(Long userId) {
         return transactionRepository.findBySenderIdOrReceiverId(userId, userId);
     }

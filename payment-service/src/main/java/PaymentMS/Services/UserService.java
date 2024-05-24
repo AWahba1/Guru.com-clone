@@ -15,7 +15,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Cacheable(value = "userCache", key = "#user.id")
+    //@Cacheable(value = "userCache", key = "#user.id", condition = "#userId != null")
     public User createUser(User user) {
         if (user.getName() == null || user.getName().isEmpty()) {
             throw new IllegalArgumentException("Name is required.");
@@ -36,17 +36,18 @@ public class UserService {
     }
 
 
-    @Cacheable(value = "userCache", key = "#userId")
+    //@Cacheable(value = "userCache", key = "#userId", condition = "#userId != null")
     public User deposit(Long userId, BigDecimal amount) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         user.setBalance(user.getBalance().add(amount));
         return userRepository.save(user);
+
     }
 
 
-    @Cacheable(value = "userCache", key = "#userId")
+    //@Cacheable(value = "userCache", key = "#userId", condition = "#userId != null")
     public User withdraw(Long userId, BigDecimal amount) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -57,6 +58,7 @@ public class UserService {
 
         user.setBalance(user.getBalance().subtract(amount));
         return userRepository.save(user);
+
     }
 
 //    public Optional<User> getUserById(Long userId) {
@@ -64,7 +66,7 @@ public class UserService {
 //    }
 
 
-    @Cacheable(value = "userCache", key = "#userId")
+    //@Cacheable(value = "userCache", key = "#userId", condition = "#userId != null")
     public BigDecimal getUserBalance(Long userId) {
         System.out.println("Searching for User");
         Optional<User> user = userRepository.findById(userId);
