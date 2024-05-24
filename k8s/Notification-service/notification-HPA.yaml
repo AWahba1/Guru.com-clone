@@ -16,3 +16,16 @@ spec:
         target:
           type: Utilization
           averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 60  # 1 minutes stabilization window for scaling down
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 60  # Scale down by 10% at most every 60 seconds
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 60

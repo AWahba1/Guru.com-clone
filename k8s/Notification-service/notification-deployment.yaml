@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: notification
-          image: minamo0o2/scalabol:notification-service
+          image: minamo0o2/scalabol:notification-service-ci
           ports:
             - containerPort: 8089
           env:
