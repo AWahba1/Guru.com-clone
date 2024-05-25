@@ -1,6 +1,8 @@
 package com.guru.freelancerservice.controller;
 
-import com.guru.freelancerservice.commands.EditFreelancerAboutSectionCommand;
+import com.guru.freelancerservice.commands.Command;
+import com.guru.freelancerservice.commands.CommandInvoker;
+import com.guru.freelancerservice.commands.portfolio_commands.PublishPortfolioCommand;
 import com.guru.freelancerservice.dtos.freelancer.FreelancerAboutSectionDto;
 import com.guru.freelancerservice.dtos.portfolios.PortfolioRequestDto;
 import com.guru.freelancerservice.dtos.resources.ResourceDto;
@@ -23,12 +25,12 @@ import static java.lang.Thread.sleep;
 @RequestMapping("/freelancer")
 public class FreelancerController {
     FreelancerService freelancerService;
-    EditFreelancerAboutSectionCommand editFreelancerAboutSectionCommand;
+    private final CommandInvoker invoker;
 
     @Autowired
-    public FreelancerController(FreelancerService freelancerService, EditFreelancerAboutSectionCommand editFreelancerAboutSectionCommand) {
+    public FreelancerController(FreelancerService freelancerService, CommandInvoker invoker) {
         this.freelancerService = freelancerService;
-        this.editFreelancerAboutSectionCommand = editFreelancerAboutSectionCommand;
+        this.invoker = invoker;
     }
     
     @GetMapping
@@ -93,9 +95,16 @@ public class FreelancerController {
     }
 
     @PatchMapping(path = "/portfolio/publish/{portfolio_id}")
-    public ResponseEntity<Object> publishPortfolio(@PathVariable("portfolio_id") UUID portfolio_id) {
-        return freelancerService.publishPortfolio(portfolio_id);
+    public ResponseEntity<?> publishPortfolio(@PathVariable("portfolio_id") UUID portfolio_id) {
+        Command publishPortfolio= new PublishPortfolioCommand(freelancerService,portfolio_id);
+        invoker.setCommand(publishPortfolio);
+        invoker.executeCommand();
+        return invoker.getResponse();
     }
+//    @PatchMapping(path = "/portfolio/publish/{portfolio_id}")
+//    public ResponseEntity<Object> publishPortfolio(@PathVariable("portfolio_id") UUID portfolio_id) {
+//        return freelancerService.publishPortfolio(portfolio_id);
+//    }
 
     @DeleteMapping(path = "/portfolio/{portfolio_id}")
     public ResponseEntity<Object> deletePortfolio(@PathVariable("portfolio_id") UUID portfolio_id) {
