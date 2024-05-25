@@ -11,10 +11,11 @@
         <module name="UserMS" />
         <module name="spring-boot-demo" />
         <module name="NotificationMS" />
+        <module name="mediaservice" />
         <module name="PaymentMS" />
         <module name="cassandraSpring" />
-        <module name="MessagingMS" />
         <module name="MessagesMS" />
+        <module name="MessagingMS" />
         <module name="FreelancerMS" />
         <module name="Notification" />
       </profile>
@@ -35,6 +36,7 @@
       <module name="UserMS" options="-parameters" />
       <module name="cassandraSpring" options="-parameters" />
       <module name="job-service" options="-parameters" />
+      <module name="mediaservice" options="-parameters" />
       <module name="spring-boot-demo" options="-parameters" />
     </option>
   </component>
