@@ -18,7 +18,7 @@ spec:
           averageUtilization: 80
   behavior:
     scaleDown:
-      stabilizationWindowSeconds: 120  # 2 minutes stabilization window for scaling down
+      stabilizationWindowSeconds: 60  # 1 minutes stabilization window for scaling down
       policies:
         - type: Pods
           value: 1

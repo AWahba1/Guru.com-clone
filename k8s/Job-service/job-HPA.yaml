@@ -1,14 +1,14 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: notification-hpa
+  name: job-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: notification
-  minReplicas: 1
-  maxReplicas: 2
+    name: job
+  minReplicas: 2
+  maxReplicas: 5
   metrics:
     - type: Resource
       resource:
@@ -22,10 +22,10 @@ spec:
       policies:
         - type: Pods
           value: 1
-          periodSeconds: 60  # Scale down by 10% at most every 60 seconds
+          periodSeconds: 60  # Scale down by 1 pod at most every 60 seconds
     scaleUp:
       stabilizationWindowSeconds: 0
       policies:
         - type: Pods
           value: 1
-          periodSeconds: 60
+          periodSeconds: 60  # Scale up by 1 pod at most every 60 seconds
