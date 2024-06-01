@@ -18,7 +18,7 @@
 ## Table of Contents
 
 1. [Project Overview](#project-overview)
-2. [Architecture](#🏛️-architecture)
+2. [Architecture](#architecture)
 3. [Implementation](#implementation)
    - [Databases](#databases)
      - [PostgreSQL](#postgreSQL)
