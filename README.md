@@ -60,7 +60,7 @@ Guru.com-Clone is a microservices-driven platform enabling freelancers and clien
 
 ## 🏛️ Architecture
 
-<!-- ![guru-clone_arch]() -->
+![guru-clone_arch](https://github.com/AWahba1/Guru.com-clone/blob/master/Screenshots/Microservices%20Diagram.png) 
 
 
 ## 🛠️ Implementation
